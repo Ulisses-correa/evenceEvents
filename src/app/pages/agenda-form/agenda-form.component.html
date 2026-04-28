@@ -1,0 +1,117 @@
+<div class="container py-5">
+  <div class="card shadow-lg border-0 rounded-4 card-form-evento">
+    
+    <div class="card-header-form">
+      <h4 class="mb-0">
+        <i class="bi bi-calendar-plus me-2"></i>
+        Novo Evento na Agenda
+      </h4>
+    </div>
+
+    <div class="card-form-body p-5">
+
+      <form [formGroup]="agendaForm" (ngSubmit)="salvar()">
+
+        <!-- Título -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold text-white">Título do Evento</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-type"></i></span>
+            <input type="text" formControlName="titulo" class="form-control"
+              placeholder="Digite o título do evento"
+              [class.is-invalid]="agendaForm.get('titulo')?.touched && agendaForm.get('titulo')?.invalid">
+          </div>
+          <div class="invalid-feedback d-block"
+            *ngIf="agendaForm.get('titulo')?.touched && agendaForm.get('titulo')?.invalid">
+            O título deve ter pelo menos 5 caracteres.
+          </div>
+        </div>
+
+        <!-- Data + Categoria -->
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <label class="form-label fw-semibold text-white">Data</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+              <input type="date" formControlName="data" class="form-control"
+                [class.is-invalid]="agendaForm.get('data')?.touched && agendaForm.get('data')?.invalid">
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-4">
+            <label class="form-label fw-semibold text-white">Categoria</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-tags"></i></span>
+              <select formControlName="categoriaId" class="form-select"
+                [class.is-invalid]="agendaForm.get('categoriaId')?.touched && agendaForm.get('categoriaId')?.invalid">
+                <option value="">Selecione...</option>
+                @for (cat of categorias; track cat.id) {
+                  <option [value]="cat.id">{{ cat.nome }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Local -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Localização</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+            <input type="text" formControlName="local" class="form-control"
+              placeholder="Ex: Curitiba - PR"
+              [class.is-invalid]="agendaForm.get('local')?.touched && agendaForm.get('local')?.invalid">
+          </div>
+        </div>
+
+        <!-- Descrição -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold text-white">Descrição</label>
+          <textarea formControlName="descricao" class="form-control rounded-3"
+            rows="4" placeholder="Descreva o evento..."></textarea>
+        </div>
+
+        <!-- URL da Foto -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold text-white">
+            <i class="bi bi-image me-2"></i>
+            URL da Foto do Evento
+          </label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+            <input type="url" formControlName="fotoUrl" class="form-control"
+              placeholder="Ex: https://exemplo.com/foto.jpg">
+          </div>
+          <small class=" d-block mt-2 text-white ">
+            Cole o link da imagem que deseja exibir no evento. A imagem será carregada automaticamente.
+          </small>
+        </div>
+ 
+        <!--previa das imagens-->
+        <div class="mb-4" *ngIf="fotoUrlCarregada">
+          <label class="form-label fw-semibold text-white">
+            <i class="bi bi-image me-2"></i>
+            Prévia da Imagemcol
+          </label>
+          <div class="card border-0 rounded-3 overflow-hidden bg-dark">
+            <img [src]="fotoUrlCarregada" alt="Prévia da imagem" class="img-fluid" style="max-height: 400px; object-fit: cover; width: 100%;">
+          </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+          <button type="button" class="btn btn-outline-secondary px-4"
+            (click)="agendaForm.reset()">
+            <i class="bi bi-eraser me-1"></i> Limpar
+          </button>
+
+          <button type="submit" class="btn btn-primary px-4"
+            [disabled]="agendaForm.invalid">
+            <i class="bi bi-check-circle me-1"></i> Agendar
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

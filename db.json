@@ -1,0 +1,774 @@
+{
+  "categorias": [
+    {
+      "id": "1",
+      "nome": "Tecnologia"
+    },
+    {
+      "id": "2",
+      "nome": "Saúde"
+    },
+    {
+      "id": "3",
+      "nome": "Educação"
+    },
+    {
+      "id": "4",
+      "nome": "Lazer"
+    },
+    {
+      "id": "5",
+      "nome": "Negócios"
+    },
+    {
+      "id": "6",
+      "nome": "Arte"
+    },
+    {
+      "id": "7",
+      "nome": "Esportes"
+    },
+    {
+      "id": "8",
+      "nome": "Gastronomia"
+    },
+    {
+      "id": "9",
+      "nome": "Moda"
+    },
+    {
+      "id": "10",
+      "nome": "Música"
+    },
+    {
+      "id": "11",
+      "nome": "Carros Antigos"
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ford-mustang-64",
+      "titulo": "Ford Mustang 1964 - O Ícone Americano",
+      "data": "1964-04-17",
+      "local": "Detroit, EUA",
+      "categoriaId": "11",
+      "descricao": "O Ford Mustang de 1964 revolucionou o mercado automobilístico americano. Com seu design elegante e performance impressionante, tornou-se um símbolo da cultura pop dos anos 60.",
+      "fotoUrl": "https://oficinabrasil.com.br/uploads/images/do-fundo-do-bau/mustang/Mustang%2001.jpg",
+      "preco30min": 450,
+      "preco1hora": 750,
+      "disponibilidade": [
+        {
+          "id": "disp-1",
+          "eventoId": "ford-mustang-64",
+          "data": "2026-04-08",
+          "horario": "09:00",
+          "quantidadeTotal": 2,
+          "quantidadeDisponivel": 2
+        },
+        {
+          "id": "disp-2",
+          "eventoId": "ford-mustang-64",
+          "data": "2026-04-08",
+          "horario": "14:00",
+          "quantidadeTotal": 2,
+          "quantidadeDisponivel": 2
+        },
+        {
+          "id": "disp-3",
+          "eventoId": "ford-mustang-64",
+          "data": "2026-04-09",
+          "horario": "10:00",
+          "quantidadeTotal": 2,
+          "quantidadeDisponivel": 2
+        },
+        {
+          "id": "disp-4",
+          "eventoId": "ford-mustang-64",
+          "data": "2026-04-09",
+          "horario": "15:00",
+          "quantidadeTotal": 2,
+          "quantidadeDisponivel": 2
+        },
+        {
+          "id": "disp-5",
+          "eventoId": "ford-mustang-64",
+          "data": "2026-04-10",
+          "horario": "11:00",
+          "quantidadeTotal": 2,
+          "quantidadeDisponivel": 2
+        }
+      ]
+    },
+    {
+      "id": "chevrolet-corvette-53",
+      "titulo": "Chevrolet Corvette 1953 - O Esportivo Americano",
+      "data": "1953-06-30",
+      "local": "Flint, Michigan, EUA",
+      "categoriaId": "11",
+      "descricao": "O Chevrolet Corvette de 1953 foi o primeiro Corvette de produção em série. Com seu motor V8 e design aerodinâmico, estabeleceu os padrões para os carros esportivos americanos da era pós-guerra.",
+      "fotoUrl": "https://silodrome.com/wp-content/uploads/2019/11/1953-Chevrolet-Corvette-1600x900.jpg",
+      "preco30min": 380,
+      "preco1hora": 650,
+      "disponibilidade": [
+        {
+          "id": "disp-6",
+          "eventoId": "chevrolet-corvette-53",
+          "data": "2026-04-08",
+          "horario": "10:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-7",
+          "eventoId": "chevrolet-corvette-53",
+          "data": "2026-04-08",
+          "horario": "16:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-8",
+          "eventoId": "chevrolet-corvette-53",
+          "data": "2026-04-09",
+          "horario": "09:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-9",
+          "eventoId": "chevrolet-corvette-53",
+          "data": "2026-04-09",
+          "horario": "14:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        }
+      ]
+    },
+    {
+      "id": "porsche-911-63",
+      "titulo": "Porsche 911 1963 - A Lenda Alemã",
+      "data": "1963-09-12",
+      "local": "Stuttgart, Alemanha",
+      "categoriaId": "11",
+      "descricao": "O Porsche 911 de 1963 Seu design atemporal e performance excepcional o tornaram um dos carros esportivos mais duradouros da história.",
+      "fotoUrl": "https://di-uploads-pod15.dealerinspire.com/porschewestpalmbeach/uploads/2024/03/old-porsche-911-in-silver.jpg",
+      "preco30min": 520,
+      "preco1hora": 880,
+      "disponibilidade": [
+        {
+          "id": "disp-10",
+          "eventoId": "porsche-911-63",
+          "data": "2026-04-08",
+          "horario": "11:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-11",
+          "eventoId": "porsche-911-63",
+          "data": "2026-04-08",
+          "horario": "15:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-12",
+          "eventoId": "porsche-911-63",
+          "data": "2026-04-10",
+          "horario": "10:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-13",
+          "eventoId": "porsche-911-63",
+          "data": "2026-04-10",
+          "horario": "16:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        }
+      ]
+    },
+    {
+      "id": "ferrari-250-gto-62",
+      "titulo": "Ferrari 250 GTO 1962 - O Supercarro Italiano",
+      "data": "1962-03-15",
+      "local": "Maranello, Itália",
+      "categoriaId": "11",
+      "descricao": "O Ferrari 250 GTO de 1962 é considerado por muitos o maior carro de corrida de todos os tempos. Apenas 39 unidades foram produzidas, tornando-o uma das máquinas mais raras e valiosas do mundo.",
+      "fotoUrl": "https://cloudfront-us-east-1.images.arcpublishing.com/estadao/MNP6OB6VRJPZHNAUWUIG6SXHH4.jpg",
+      "preco30min": 800,
+      "preco1hora": 1350,
+      "disponibilidade": [
+        {
+          "id": "disp-14",
+          "eventoId": "ferrari-250-gto-62",
+          "data": "2026-04-09",
+          "horario": "10:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-15",
+          "eventoId": "ferrari-250-gto-62",
+          "data": "2026-04-09",
+          "horario": "15:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-16",
+          "eventoId": "ferrari-250-gto-62",
+          "data": "2026-04-11",
+          "horario": "11:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        }
+      ]
+    },
+    {
+      "id": "jaguar-e-type-61",
+      "titulo": "Jaguar E-Type 1961 - A Beleza Britânica",
+      "data": "1961-03-15",
+      "local": "Coventry, Reino Unido",
+      "categoriaId": "11",
+      "descricao": "O Jaguar E-Type de 1961 foi aclamado como 'o carro mais bonito do mundo' pelo designer Enzo Ferrari. Seu design elegante combinado com performance excepcional o tornou um ícone dos anos 60.",
+      "fotoUrl": "https://www.amalgamcollection.com/cdn/shop/products/4_103c97eb-3fd7-4ca4-8679-8ceee6d9ec7e_4000x2677_crop_center.jpg?v=1601652922",
+      "preco30min": 480,
+      "preco1hora": 800,
+      "disponibilidade": [
+        {
+          "id": "disp-17",
+          "eventoId": "jaguar-e-type-61",
+          "data": "2026-04-08",
+          "horario": "13:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-18",
+          "eventoId": "jaguar-e-type-61",
+          "data": "2026-04-09",
+          "horario": "12:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-19",
+          "eventoId": "jaguar-e-type-61",
+          "data": "2026-04-10",
+          "horario": "14:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        }
+      ]
+    },
+    {
+      "id": "mercedes-300sl-54",
+      "titulo": "Mercedes-Benz 300SL 1954 - A Flecha de Prata",
+      "data": "1954-08-06",
+      "local": "Stuttgart, Alemanha",
+      "categoriaId": "11",
+      "descricao": "O Mercedes-Benz 300SL de 1954, foi um marco na engenharia automobilística. Seu motor de 3.0L produzia 215 cv e alcançava 250 km/h.",
+      "fotoUrl": "https://cdn.rmsothebys.com/a/c/f/c/f/5/acfcf52c3aa304bbd3d60eecd931eaed28c47130.webp",
+      "preco30min": 600,
+      "preco1hora": 1000,
+      "disponibilidade": [
+        {
+          "id": "disp-20",
+          "eventoId": "mercedes-300sl-54",
+          "data": "2026-04-08",
+          "horario": "12:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-21",
+          "eventoId": "mercedes-300sl-54",
+          "data": "2026-04-09",
+          "horario": "11:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-22",
+          "eventoId": "mercedes-300sl-54",
+          "data": "2026-04-10",
+          "horario": "13:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        }
+      ]
+    },
+    {
+      "id": "cadillac-eldorado-59",
+      "titulo": "Cadillac Eldorado 1959 - O Luxo Americano",
+      "data": "1959-01-15",
+      "local": "Detroit, EUA",
+      "categoriaId": "11",
+      "descricao": "O Cadillac Eldorado de 1959 representava o auge do luxo americano. Com seu design extravagante, incluindo barbatanas traseiras enormes e interior luxuoso, era o símbolo máximo do sucesso nos anos 50.",
+      "fotoUrl": "https://www.acidadeon.com/tudoep/wp-content/uploads/sites/10/2022/09/cadillac_1200x675_02092022094914_2025-11-04_14-32-23.webp",
+      "preco30min": 420,
+      "preco1hora": 720,
+      "disponibilidade": [
+        {
+          "id": "disp-23",
+          "eventoId": "cadillac-eldorado-59",
+          "data": "2026-04-08",
+          "horario": "14:00",
+          "quantidadeTotal": 2,
+          "quantidadeDisponivel": 2
+        },
+        {
+          "id": "disp-24",
+          "eventoId": "cadillac-eldorado-59",
+          "data": "2026-04-09",
+          "horario": "13:00",
+          "quantidadeTotal": 2,
+          "quantidadeDisponivel": 2
+        },
+        {
+          "id": "disp-25",
+          "eventoId": "cadillac-eldorado-59",
+          "data": "2026-04-10",
+          "horario": "15:00",
+          "quantidadeTotal": 2,
+          "quantidadeDisponivel": 2
+        }
+      ]
+    },
+    {
+      "id": "vw-beetle-55",
+      "titulo": "Volkswagen Beetle 1955 - O Fusca",
+      "data": "1955-07-22",
+      "local": "Wolfsburg, Alemanha",
+      "categoriaId": "11",
+      "descricao": "O Volkswagen Beetle de 1955, conhecido como 'Fusca' no Brasil, foi um dos carros mais produzidos da história. Seu design simples e confiabilidade o tornaram um ícone cultural mundial.",
+      "fotoUrl": "https://images.squarespace-cdn.com/content/v1/5b6332193917ee6b4a4afc47/1663273792954-VRTZ3Y0260PGYF1LSWY2/55Beetle-001.jpg",
+      "preco30min": 180,
+      "preco1hora": 300,
+      "disponibilidade": [
+        {
+          "id": "disp-26",
+          "eventoId": "vw-beetle-55",
+          "data": "2026-04-08",
+          "horario": "09:00",
+          "quantidadeTotal": 3,
+          "quantidadeDisponivel": 3
+        },
+        {
+          "id": "disp-27",
+          "eventoId": "vw-beetle-55",
+          "data": "2026-04-08",
+          "horario": "12:00",
+          "quantidadeTotal": 3,
+          "quantidadeDisponivel": 3
+        },
+        {
+          "id": "disp-28",
+          "eventoId": "vw-beetle-55",
+          "data": "2026-04-08",
+          "horario": "15:00",
+          "quantidadeTotal": 3,
+          "quantidadeDisponivel": 3
+        },
+        {
+          "id": "disp-29",
+          "eventoId": "vw-beetle-55",
+          "data": "2026-04-09",
+          "horario": "10:00",
+          "quantidadeTotal": 3,
+          "quantidadeDisponivel": 3
+        },
+        {
+          "id": "disp-30",
+          "eventoId": "vw-beetle-55",
+          "data": "2026-04-09",
+          "horario": "14:00",
+          "quantidadeTotal": 3,
+          "quantidadeDisponivel": 3
+        }
+      ]
+    },
+    {
+      "id": "aston-martin-db5-63",
+      "titulo": "Aston Martin DB5 1963 - O Carro de James Bond",
+      "data": "1963-09-30",
+      "local": "Newport Pagnell, Reino Unido",
+      "categoriaId": "11",
+      "descricao": "O Aston Martin DB5 de 1963 ficou famoso por ser o carro de James Bond nos filmes '007 Contra Goldfinger' e '007 Contra o Satânico Dr. No'.",
+      "fotoUrl": "https://cdn.rmsothebys.com/3/2/7/1/9/8/3271987650249cc988a6569f2fcf522b459a191a.webp",
+      "preco30min": 550,
+      "preco1hora": 950,
+      "disponibilidade": [
+        {
+          "id": "disp-31",
+          "eventoId": "aston-martin-db5-63",
+          "data": "2026-04-09",
+          "horario": "11:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-32",
+          "eventoId": "aston-martin-db5-63",
+          "data": "2026-04-10",
+          "horario": "12:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-33",
+          "eventoId": "aston-martin-db5-63",
+          "data": "2026-04-11",
+          "horario": "10:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        }
+      ]
+    },
+    {
+      "id": "lamborghini-miura-66",
+      "titulo": "Lamborghini Miura 1966 - O Supercarro Revolucionário",
+      "data": "1966-05-01",
+      "local": "Sant'Agata Bolognese, Itália",
+      "categoriaId": "11",
+      "descricao": "O Lamborghini Miura de 1966 foi o primeiro supercarro com motor central-traseiro. Seu design inovador e performance extrema estabeleceram novos padrões para os carros esportivos de alto desempenho.",
+      "fotoUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Lamborghini_miura_coup%C3%A9_1967_-aa.jpg",
+      "preco30min": 700,
+      "preco1hora": 1200,
+      "disponibilidade": [
+        {
+          "id": "disp-34",
+          "eventoId": "lamborghini-miura-66",
+          "data": "2026-04-10",
+          "horario": "11:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-35",
+          "eventoId": "lamborghini-miura-66",
+          "data": "2026-04-11",
+          "horario": "12:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        },
+        {
+          "id": "disp-36",
+          "eventoId": "lamborghini-miura-66",
+          "data": "2026-04-12",
+          "horario": "10:00",
+          "quantidadeTotal": 1,
+          "quantidadeDisponivel": 1
+        }
+      ]
+    }
+  ],
+  "disponibilidade": [
+    {
+      "id": "disp-1",
+      "eventoId": "ford-mustang-64",
+      "data": "2026-04-08",
+      "horario": "09:00",
+      "quantidadeTotal": 2,
+      "quantidadeDisponivel": 2
+    },
+    {
+      "id": "disp-2",
+      "eventoId": "ford-mustang-64",
+      "data": "2026-04-08",
+      "horario": "14:00",
+      "quantidadeTotal": 2,
+      "quantidadeDisponivel": 2
+    },
+    {
+      "id": "disp-3",
+      "eventoId": "ford-mustang-64",
+      "data": "2026-04-09",
+      "horario": "10:00",
+      "quantidadeTotal": 2,
+      "quantidadeDisponivel": 2
+    },
+    {
+      "id": "disp-4",
+      "eventoId": "ford-mustang-64",
+      "data": "2026-04-09",
+      "horario": "15:00",
+      "quantidadeTotal": 2,
+      "quantidadeDisponivel": 2
+    },
+    {
+      "id": "disp-5",
+      "eventoId": "ford-mustang-64",
+      "data": "2026-04-10",
+      "horario": "11:00",
+      "quantidadeTotal": 2,
+      "quantidadeDisponivel": 2
+    },
+    {
+      "id": "disp-6",
+      "eventoId": "chevrolet-corvette-53",
+      "data": "2026-04-08",
+      "horario": "10:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-7",
+      "eventoId": "chevrolet-corvette-53",
+      "data": "2026-04-08",
+      "horario": "16:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-8",
+      "eventoId": "chevrolet-corvette-53",
+      "data": "2026-04-09",
+      "horario": "09:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-9",
+      "eventoId": "chevrolet-corvette-53",
+      "data": "2026-04-09",
+      "horario": "14:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-10",
+      "eventoId": "porsche-911-63",
+      "data": "2026-04-08",
+      "horario": "11:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-11",
+      "eventoId": "porsche-911-63",
+      "data": "2026-04-08",
+      "horario": "15:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-12",
+      "eventoId": "porsche-911-63",
+      "data": "2026-04-10",
+      "horario": "10:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-13",
+      "eventoId": "porsche-911-63",
+      "data": "2026-04-10",
+      "horario": "16:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-14",
+      "eventoId": "ferrari-250-gto-62",
+      "data": "2026-04-09",
+      "horario": "10:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-15",
+      "eventoId": "ferrari-250-gto-62",
+      "data": "2026-04-09",
+      "horario": "15:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-16",
+      "eventoId": "ferrari-250-gto-62",
+      "data": "2026-04-11",
+      "horario": "11:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-17",
+      "eventoId": "jaguar-e-type-61",
+      "data": "2026-04-08",
+      "horario": "13:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-18",
+      "eventoId": "jaguar-e-type-61",
+      "data": "2026-04-09",
+      "horario": "12:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-19",
+      "eventoId": "jaguar-e-type-61",
+      "data": "2026-04-10",
+      "horario": "14:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-20",
+      "eventoId": "mercedes-300sl-54",
+      "data": "2026-04-08",
+      "horario": "12:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-21",
+      "eventoId": "mercedes-300sl-54",
+      "data": "2026-04-09",
+      "horario": "11:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-22",
+      "eventoId": "mercedes-300sl-54",
+      "data": "2026-04-10",
+      "horario": "13:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-23",
+      "eventoId": "cadillac-eldorado-59",
+      "data": "2026-04-08",
+      "horario": "14:00",
+      "quantidadeTotal": 2,
+      "quantidadeDisponivel": 2
+    },
+    {
+      "id": "disp-24",
+      "eventoId": "cadillac-eldorado-59",
+      "data": "2026-04-09",
+      "horario": "13:00",
+      "quantidadeTotal": 2,
+      "quantidadeDisponivel": 2
+    },
+    {
+      "id": "disp-25",
+      "eventoId": "cadillac-eldorado-59",
+      "data": "2026-04-10",
+      "horario": "15:00",
+      "quantidadeTotal": 2,
+      "quantidadeDisponivel": 2
+    },
+    {
+      "id": "disp-26",
+      "eventoId": "vw-beetle-55",
+      "data": "2026-04-08",
+      "horario": "09:00",
+      "quantidadeTotal": 3,
+      "quantidadeDisponivel": 3
+    },
+    {
+      "id": "disp-27",
+      "eventoId": "vw-beetle-55",
+      "data": "2026-04-08",
+      "horario": "12:00",
+      "quantidadeTotal": 3,
+      "quantidadeDisponivel": 3
+    },
+    {
+      "id": "disp-28",
+      "eventoId": "vw-beetle-55",
+      "data": "2026-04-08",
+      "horario": "15:00",
+      "quantidadeTotal": 3,
+      "quantidadeDisponivel": 3
+    },
+    {
+      "id": "disp-29",
+      "eventoId": "vw-beetle-55",
+      "data": "2026-04-09",
+      "horario": "10:00",
+      "quantidadeTotal": 3,
+      "quantidadeDisponivel": 3
+    },
+    {
+      "id": "disp-30",
+      "eventoId": "vw-beetle-55",
+      "data": "2026-04-09",
+      "horario": "14:00",
+      "quantidadeTotal": 3,
+      "quantidadeDisponivel": 3
+    },
+    {
+      "id": "disp-31",
+      "eventoId": "aston-martin-db5-63",
+      "data": "2026-04-09",
+      "horario": "11:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-32",
+      "eventoId": "aston-martin-db5-63",
+      "data": "2026-04-10",
+      "horario": "12:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-33",
+      "eventoId": "aston-martin-db5-63",
+      "data": "2026-04-11",
+      "horario": "10:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-34",
+      "eventoId": "lamborghini-miura-66",
+      "data": "2026-04-10",
+      "horario": "11:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-35",
+      "eventoId": "lamborghini-miura-66",
+      "data": "2026-04-11",
+      "horario": "12:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    },
+    {
+      "id": "disp-36",
+      "eventoId": "lamborghini-miura-66",
+      "data": "2026-04-12",
+      "horario": "10:00",
+      "quantidadeTotal": 1,
+      "quantidadeDisponivel": 1
+    }
+  ],
+  "usuarios": [
+    {
+      "id": "1",
+      "nome": "Admin Senai",
+      "email": "admin@senai.com",
+      "senha": "123",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "nome": "Aluno Silva",
+      "email": "aluno@senai.com",
+      "senha": "123",
+      "role": "user"
+    }
+  ]
+}

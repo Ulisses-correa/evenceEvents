@@ -1,0 +1,46 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+  <div class="container">
+    <a class="navbar-brand feirao" routerLink="/">
+      <i class="bi bi-calendar-event me-2"></i>Mega Feirão
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse menuiten " id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+
+        <li class="nav-item">
+          <a class="nav-link caixa" routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+            inicio
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link caixa" routerLink="/novo-evento" routerLinkActive="active-link">
+            Nova data
+
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link caixa" routerLink="/meus-alugueis" routerLinkActive="active-link">
+            <i class="bi bi-car-front me-1"></i>
+            Meus Aluguéis
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link caixa position-relative" routerLink="/carrinho" routerLinkActive="active-link">
+            <i class="bi bi-cart3 me-1"></i>
+            Carrinho
+            <span *ngIf="quantidadeCarrinho() > 0" class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+              {{ quantidadeCarrinho() }}
+            </span>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>

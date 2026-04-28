@@ -1,0 +1,119 @@
+<div class="container py-5">
+
+  <!-- HEADER -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 bg-dark-soft p-4 rounded-4">
+    
+    <div>
+      <h2 class="fw-bold text-primary mb-1">
+        <i class="bi bi-car-front me-2"></i>
+        Feirões De Testes Automotivos 1949/1999
+      </h2>
+      <small class="fw-bold text-primary mb-1">Confira os carros e datas disponíveis</small>
+    </div>
+
+    <div class="d-flex gap-2 align-items-center">
+      <a routerLink="/novo-evento" class="btn btn-success shadow-sm">
+        <i class="bi bi-plus-circle me-1"></i>
+        Sugerir Evento
+      </a>
+    </div>
+  </div>
+
+  <!-- BUSCA -->
+  <div class="mb-4">
+    <div class="input-group shadow-sm">
+      <span class="input-group-text bg-BLACK">
+        🔎
+        <i class="bi bi-search"></i>
+      </span>
+      <input 
+        type="text" 
+        class="form-control"
+        placeholder="Buscar evento por título ou local..."
+        (input)="filtrar($event)">
+    </div>
+  </div>
+
+  <!-- LISTA -->
+  <div class="row">
+    <ng-container *ngIf="eventosFiltrados().length > 0; else vazio">
+      <div class="col-md-4 mb-4" *ngFor="let item of eventosFiltrados(); trackBy: trackByEventoId">
+        <div class="card h-100 border-0 shadow-sm rounded-4 card-hover card-evento">
+
+          <!-- IMAGEM DO EVENTO -->
+          <div class="card-image-container" *ngIf="item.fotoUrl; else imagemPadrao">
+            <img [src]="item.fotoUrl" [alt]="item.titulo" class="card-image">
+          </div>
+
+          <ng-template #imagemPadrao>
+            <div class="card-image-placeholder">
+              <i class="bi bi-image"></i>
+              <span>Sem imagem</span>
+            </div>
+          </ng-template>
+
+          <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between mb-3">
+              <span class="badge">
+                <i class="bi bi-check-circle me-1"></i>
+                Confirmado
+              </span>
+
+              <small class="fw-semibold text-info">
+                {{ item.data | date:'dd/MM/yyyy' }}
+              </small>
+            </div>
+
+            <h5 class="fw-bold text-white mb-3">{{ item.titulo }}</h5>
+
+            <p class="text-info mb-3">
+              <i class="bi bi-geo-alt-fill me-2"></i>
+              {{ item.local }}
+            </p>
+
+            <hr class="my-3">
+
+            <p class="small text-white descricao">
+              {{ item.descricao }}
+            </p>
+
+          </div>
+
+          <div class="card-footer border-0 py-3 px-4">
+            <div class="d-flex justify-content-between align-items-center gap-3">
+
+              <button class="btn btn-alugar-card flex-grow-1"
+                (click)="verDetalhes(item)">
+                <i class="bi bi-cart-plus me-2"></i>
+                ALUGAR
+              </button>
+
+              <button class="btn btn-detalhes-card"
+                (click)="abrirDetalhes(item)"
+                title="Editar evento">
+                <i class="bi bi-pencil-square me-1"></i>
+                DETALHES
+              </button>
+
+              <button class="btn btn-delete-card"
+                (click)="remover(item.id)"
+                title="Deletar evento">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #vazio>
+      <div class="text-center p-5">
+        <i class="bi bi-x-circle-fill display-5 text-danger"></i>
+        <p class="lead mt-3">Nenhum evento encontrado.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

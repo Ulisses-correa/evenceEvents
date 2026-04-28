@@ -1,0 +1,158 @@
+<div class="container-fluid bg-dark min-vh-100 py-4">
+  <div class="container-responsive">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="text-light mb-0">
+        <i class="fas fa-car me-2"></i>
+        Meus Aluguéis
+      </h1>
+      <button class="btn btn-outline-light" routerLink="/">
+        <i class="fas fa-arrow-left me-2"></i>
+        Voltar ao Início
+      </button>
+    </div>
+
+    <!-- Verificação de usuário logado -->
+    <div *ngIf="!usuarioAtual()" class="text-center py-5">
+      <div class="card mx-auto" style="max-width: 500px;">
+        <div class="card-body">
+          <i class="fas fa-user-lock fa-3x text-warning mb-3"></i>
+          <h3 class="card-title">Acesso Restrito</h3>
+          <p class="card-text text-muted">
+            Você precisa estar logado para visualizar seus aluguéis.
+          </p>
+          <button class="btn btn-primary" routerLink="/agenda-lista">
+            Fazer Login
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conteúdo para usuário logado -->
+    <div *ngIf="usuarioAtual()" class="row">
+      <!-- Informações do usuário -->
+      <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-user me-2"></i>
+              Informações do Usuário
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="text-center mb-3">
+              <div class="bg-gradient-primary rounded-circle d-inline-flex align-items-center justify-content-center"
+                   style="width: 80px; height: 80px;">
+                <i class="fas fa-user fa-2x text-white"></i>
+              </div>
+            </div>
+            <h6 class="text-center mb-2">{{ usuarioAtual()?.nome }}</h6>
+            <p class="text-muted text-center mb-3">{{ usuarioAtual()?.email }}</p>
+            <div class="row text-center">
+              <div class="col-6">
+                <div class="display-4 text-primary">{{ alugueis().length }}</div>
+                <small class="text-muted">Aluguéis</small>
+              </div>
+              <div class="col-6">
+                <div class="display-4 text-success">
+                  {{ getAlugueisAtivosCount() }}
+                </div>
+                <small class="text-muted">Ativos</small>
+              </div>
+            </div>
+            <div class="d-grid gap-2 mt-4">
+              <button class="btn btn-danger" (click)="excluirPerfil()">
+                <i class="fas fa-user-times me-2"></i>
+                Excluir perfil e entrar com outro
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de aluguéis -->
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="fas fa-list me-2"></i>
+              Histórico de Aluguéis
+            </h5>
+            <span class="badge bg-primary">{{ alugueis().length }} aluguéis</span>
+          </div>
+          <div class="card-body">
+            <!-- Sem aluguéis -->
+            <div *ngIf="alugueis().length === 0" class="text-center py-5">
+              <i class="fas fa-car fa-4x text-muted mb-3"></i>
+              <h4 class="text-muted">Nenhum aluguel encontrado</h4>
+              <p class="text-muted">Você ainda não alugou nenhum carro.</p>
+              <button class="btn btn-primary" routerLink="/agenda-lista">
+                <i class="fas fa-plus me-2"></i>
+                Alugar um Carro
+              </button>
+            </div>
+
+            <!-- Lista de aluguéis -->
+            <div *ngIf="alugueis().length > 0" class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Carro</th>
+                    <th>Data/Hora</th>
+                    <th>Duração</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let aluguel of alugueis(); trackBy: trackById">
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img [src]="aluguel.carro.fotoUrl"
+                             [alt]="aluguel.carro.titulo"
+                             class="rounded me-2 img-fluid"
+                             style="width: 60px; height: 45px; object-fit: cover;">
+                        <div>
+                          <strong>{{ aluguel.carro.titulo }}</strong>
+                          <br>
+                          <small class="text-muted">Carro clássico</small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div>{{ formatarData(aluguel.data) }}</div>
+                      <small class="text-muted">{{ aluguel.horario }}</small>
+                    </td>
+                    <td>{{ aluguel.duracao }}h</td>
+                    <td class="text-success fw-bold">
+                      R$ {{ aluguel.valorTotal.toFixed(2) }}
+                    </td>
+                    <td>
+                      <span class="badge"
+                            [class]="getStatusClass(aluguel)">
+                        {{ getStatusText(aluguel) }}
+                      </span>
+                    </td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-primary me-1"
+                              [routerLink]="['/agenda-detalhes', aluguel.carro.id]"
+                              title="Ver detalhes">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-secondary"
+                              (click)="imprimirRecibo(aluguel)"
+                              title="Imprimir recibo">
+                        <i class="fas fa-print"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,109 @@
+<div class="container-fluid bg-dark min-vh-100 py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card bg-dark border-secondary shadow-lg">
+        <div class="card-header bg-gradient-primary text-white text-center">
+          <h3 class="mb-0">
+            <i class="fas fa-user-plus me-2"></i>
+            Cadastro de Usuário
+          </h3>
+          <p class="mb-0 small">Complete seu cadastro para finalizar o aluguel</p>
+        </div>
+
+        <div class="card-body p-4">
+          <form [formGroup]="usuarioForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
+
+            <!-- Nome -->
+            <div class="mb-3">
+              <label for="nome" class="form-label text-light fw-bold">
+                <i class="fas fa-user me-2"></i>Nome Completo
+              </label>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="nome"
+                formControlName="nome"
+                placeholder="Digite seu nome completo"
+                [class.is-invalid]="usuarioForm.get('nome')?.invalid && usuarioForm.get('nome')?.touched">
+              <div class="invalid-feedback">
+                {{ getErrorMessage('nome') }}
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label text-light fw-bold">
+                <i class="fas fa-envelope me-2"></i>Email
+              </label>
+              <input
+                type="email"
+                class="form-control bg-dark text-light border-secondary"
+                id="email"
+                formControlName="email"
+                placeholder="seu@email.com"
+                [class.is-invalid]="usuarioForm.get('email')?.invalid && usuarioForm.get('email')?.touched">
+              <div class="invalid-feedback">
+                {{ getErrorMessage('email') }}
+              </div>
+            </div>
+
+            <!-- Telefone -->
+            <div class="mb-3">
+              <label for="telefone" class="form-label text-light fw-bold">
+                <i class="fas fa-phone me-2"></i>Telefone
+              </label>
+              <input
+                type="tel"
+                class="form-control bg-dark text-light border-secondary"
+                id="telefone"
+                formControlName="telefone"
+                placeholder="(11) 99999-9999"
+                [class.is-invalid]="usuarioForm.get('telefone')?.invalid && usuarioForm.get('telefone')?.touched">
+              <div class="invalid-feedback">
+                {{ getErrorMessage('telefone') }}
+              </div>
+            </div>
+
+            <!-- CPF -->
+            <div class="mb-4">
+              <label for="cpf" class="form-label text-light fw-bold">
+                <i class="fas fa-id-card me-2"></i>CPF
+              </label>
+              <input
+                type="text"
+                class="form-control bg-dark text-light border-secondary"
+                id="cpf"
+                formControlName="cpf"
+                placeholder="999.999.999-99"
+                [class.is-invalid]="usuarioForm.get('cpf')?.invalid && usuarioForm.get('cpf')?.touched">
+              <div class="invalid-feedback">
+                {{ getErrorMessage('cpf') }}
+              </div>
+            </div>
+
+            <!-- Botões -->
+            <div class="d-grid gap-2">
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg"
+                [disabled]="isSubmitting()"
+                [class.disabled]="isSubmitting()">
+                <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                <i class="fas fa-save me-2"></i>
+                {{ isSubmitting() ? 'Salvando...' : 'Finalizar Cadastro' }}
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="voltarParaInicio()">
+                <i class="fas fa-arrow-left me-2"></i>
+                Voltar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
