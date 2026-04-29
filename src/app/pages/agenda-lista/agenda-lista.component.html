@@ -1,49 +1,697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evence Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-primary: #1A3FBE;
+      --blue-dark: #0f2a8a;
+      --blue-nav: #1535A8;
+      --gold: #D4A44C;
+      --gold-light: #f0c060;
+      --text-dark: #1a1a2e;
+      --text-mid: #444;
+      --text-light: #777;
+      --bg-page: #EFEFEF;
+      --bg-white: #fff;
+      --radius-card: 16px;
+      --radius-sm: 10px;
+      --shadow-card: 0 8px 32px rgba(26,63,190,0.13);
+      --shadow-light: 0 2px 10px rgba(0,0,0,0.08);
+      --font: 'Barlow', sans-serif;
+      --font-cond: 'Barlow Condensed', sans-serif;
+    }
+
+    html { font-size: 16px; }
+    body {
+      font-family: var(--font);
+      background: var(--bg-page);
+      color: var(--text-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── ANNOUNCEMENT BAR ── */
+    .announcement-bar {
+      background: var(--blue-dark);
+      color: rgba(255,255,255,0.9);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .announcement-bar nav { display: flex; gap: 20px; flex-wrap: wrap; }
+    .announcement-bar a {
+      color: rgba(255,255,255,0.88);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .announcement-bar a:hover { color: var(--gold-light); }
+    .announcement-bar .close-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.7); font-size: 1.1rem; line-height: 1;
+      padding: 2px 6px; border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .announcement-bar .close-btn:hover { background: rgba(255,255,255,0.12); }
+
+    /* ── MAIN NAV ── */
+    .main-nav {
+      background: var(--blue-primary);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(26,63,190,0.3);
+    }
+
+    .logo {
+      font-family: var(--font-cond);
+      font-weight: 900;
+      font-size: 1.35rem;
+      line-height: 1.1;
+      color: #fff;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+    .logo span { display: block; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #fff;
+      padding: 6px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      position: relative;
+    }
+    .nav-icon-btn:hover { background: rgba(255,255,255,0.15); }
+    .nav-icon-btn svg { width: 24px; height: 24px; }
+
+    .cart-badge {
+      position: absolute;
+      top: 2px; right: 2px;
+      background: var(--gold);
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .hamburger { flex-direction: column; gap: 4px; }
+    .hamburger span {
+      display: block;
+      width: 22px; height: 2px;
+      background: #fff;
+      border-radius: 2px;
+      transition: transform 0.3s;
+    }
+
+    /* ── SEARCH SECTION ── */
+    .search-section {
+      background: var(--bg-white);
+      padding: 14px 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .location-pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--blue-primary);
+      cursor: pointer;
+      width: fit-content;
+      margin: 0 auto;
+      padding: 4px 12px;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    .location-pill:hover { background: rgba(26,63,190,0.07); }
+    .location-pill svg { width: 16px; height: 16px; color: var(--blue-primary); }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f4f6fb;
+      border: 1.5px solid #e0e6f7;
+      border-radius: 30px;
+      padding: 10px 18px;
+      gap: 10px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-bar:focus-within {
+      border-color: var(--blue-primary);
+      box-shadow: 0 0 0 3px rgba(26,63,190,0.1);
+      background: #fff;
+    }
+    .search-bar svg { width: 18px; height: 18px; color: var(--text-light); flex-shrink: 0; }
+    .search-bar input {
+      border: none;
+      background: transparent;
+      font-family: var(--font);
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      outline: none;
+      flex: 1;
+    }
+    .search-bar input::placeholder { color: var(--text-light); }
+
+    /* ── CAROUSEL SECTION ── */
+    .carousel-section {
+      padding: 20px 0 10px;
+      background: var(--bg-page);
+    }
+
+    .carousel-wrapper {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 16px;
+      padding: 8px 20px 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+
+    .carousel-card {
+      flex: 0 0 calc(100% - 60px);
+      scroll-snap-align: center;
+      position: relative;
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      background: linear-gradient(135deg, #1a1a2e 0%, #2d1a00 60%, #1a1200 100%);
+      aspect-ratio: 16/9;
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .carousel-card:hover { transform: translateY(-3px); }
+
+    .carousel-card .card-bg-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 60%, rgba(212,164,76,0.35) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 20%, rgba(26,63,190,0.2) 0%, transparent 50%);
+    }
+
+    .card-logo {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-logo-text {
+      font-family: var(--font-cond);
+      font-weight: 900;
+      font-size: 2rem;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-logo-text .logo-icon {
+      width: 44px; height: 44px;
+      background: var(--gold);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-logo-text .logo-icon svg { width: 28px; height: 28px; color: #fff; }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.92);
+      border: none;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .carousel-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
+    .carousel-arrow.prev { left: 6px; }
+    .carousel-arrow.next { right: 6px; }
+    .carousel-arrow svg { width: 18px; height: 18px; color: var(--blue-primary); }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 4px;
+      padding-bottom: 4px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #cdd5e8;
+      transition: background 0.3s, width 0.3s;
+      cursor: pointer;
+    }
+    .dot.active {
+      background: var(--blue-primary);
+      width: 22px;
+      border-radius: 4px;
+    }
+
+    /* ── EVENT DETAILS ── */
+    .event-details {
+      text-align: center;
+      padding: 16px 20px 4px;
+      background: var(--bg-page);
+    }
+    .event-title {
+      font-family: var(--font-cond);
+      font-weight: 900;
+      font-size: 1.6rem;
+      color: var(--text-dark);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .event-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .event-meta span {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-light);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── COLLECTIONS ── */
+    .collections-section {
+      background: var(--bg-white);
+      margin-top: 16px;
+      padding: 20px 20px 28px;
+      border-radius: var(--radius-card) var(--radius-card) 0 0;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+    }
+
+    .collections-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .collections-header h3 {
+      font-family: var(--font-cond);
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--text-dark);
+      letter-spacing: 0.01em;
+    }
+    .ver-tudo {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--blue-primary);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      padding: 4px 10px;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+    .ver-tudo:hover { background: rgba(26,63,190,0.08); }
+
+    .collections-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .collection-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .collection-icon-wrap {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid #e8ecf5;
+      background: #f7f9ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    }
+    .collection-item:hover .collection-icon-wrap {
+      border-color: var(--blue-primary);
+      background: #edf0ff;
+      transform: translateY(-2px);
+    }
+    .collection-icon-wrap svg { width: 32px; height: 32px; color: var(--blue-primary); opacity: 0.75; }
+
+    .collection-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #dde4f5, transparent);
+      margin: 8px 0;
+    }
+
+    /* ═══════════════════════════════════════════
+       MEDIA QUERIES
+    ═══════════════════════════════════════════ */
+
+    /* Tablet: 600px+ */
+    @media (min-width: 600px) {
+      .main-nav { padding: 16px 32px; }
+      .logo { font-size: 1.6rem; }
+
+      .search-section { padding: 16px 32px 20px; flex-direction: row; align-items: center; }
+      .location-pill { margin: 0; }
+      .search-bar { flex: 1; max-width: 480px; }
+
+      .carousel-card { flex: 0 0 calc(70% - 24px); }
+      .carousel-track { padding: 8px 32px 20px; }
+
+      .collections-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .collections-section { padding: 24px 32px 32px; }
+
+      .event-title { font-size: 1.9rem; }
+
+      .announcement-bar { padding: 10px 32px; }
+    }
+
+    /* Desktop: 900px+ */
+    @media (min-width: 900px) {
+      body { max-width: 1200px; margin: 0 auto; box-shadow: 0 0 60px rgba(0,0,0,0.1); }
+
+      .main-nav { padding: 18px 40px; border-radius: 0; }
+      .logo { font-size: 1.8rem; }
+
+      .nav-actions { gap: 20px; }
+
+      .search-section {
+        padding: 20px 40px 24px;
+        justify-content: space-between;
+      }
+      .search-bar { max-width: 560px; padding: 12px 22px; }
+
+      .carousel-section { padding: 28px 0 16px; }
+      .carousel-card { flex: 0 0 calc(60% - 24px); }
+      .carousel-track { padding: 8px 40px 24px; gap: 20px; }
+      .carousel-arrow.prev { left: 14px; }
+      .carousel-arrow.next { right: 14px; }
+
+      .event-title { font-size: 2.1rem; }
+      .event-details { padding: 20px 40px 6px; }
+
+      .collections-section { padding: 28px 40px 40px; margin-top: 20px; }
+      .collections-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; }
+      .collection-icon-wrap svg { width: 36px; height: 36px; }
+      .collection-label { font-size: 0.8rem; }
+
+      .announcement-bar { padding: 10px 40px; font-size: 0.82rem; }
+    }
+
+    /* Large Desktop: 1200px+ */
+    @media (min-width: 1200px) {
+      .collections-grid { grid-template-columns: repeat(6, 1fr); }
+      .carousel-card { flex: 0 0 calc(50% - 24px); }
+    }
+  </style>
+</head>
 <body>
-  <nav>
 
-    <h2>EVENCE EVENTS</h2>
+  <!-- Announcement Bar -->
+  <div class="announcement-bar">
+    <nav>
+      <a href="#">É Produtor?</a>
+      <a href="#">Criar evento</a>
+      <a href="#">Como funciona</a>
+    </nav>
+    <button class="close-btn" onclick="this.parentElement.style.display='none'">✕</button>
+  </div>
 
-    <!-- Botão dos tres risquinhos -->
-    <button>Exemplo</button>
+  <!-- Main Nav -->
+  <nav class="main-nav">
+    <div class="logo">
+      <span>EVENCE</span>
+      <span>EVENTS</span>
+    </div>
+    <div class="nav-actions">
+      <!-- Cart Icon -->
+      <button class="nav-icon-btn" aria-label="Carrinho">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span class="cart-badge">2</span>
+      </button>
+      <!-- Hamburger -->
+      <button class="nav-icon-btn hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </nav>
-  <!-- Barra de Pesquisa -->
-  <section>
-    <span>
-      <!-- agulha de mapa -->
-      <img src="" alt="">
+
+  <!-- Search Section -->
+  <section class="search-section">
+    <div class="location-pill">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5 14.5 7.62 14.5 9 13.38 11.5 12 11.5z"/>
+      </svg>
       Qualquer Lugar
-    </span>
-  </section>
-
-  <!-- Carrossel -->
-  <section>
-    <img src="" alt="">
-
-    <!-- detalhes do evento carrinho -->
-    <div>
-      <h3>Titulo</h3>
-      <span>Local</span>
-      <span>Data</span>
+    </div>
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" placeholder="Buscar experiências"/>
     </div>
   </section>
 
-  <!-- Coleçoes -->
-  <section>
-    <div>
-      <h3>Explore nossas coleçoes</h3>
-      <span>Ver tudo</span>
+  <!-- Carousel Section -->
+  <section class="carousel-section">
+    <div class="carousel-wrapper">
+      <div class="carousel-track" id="carouselTrack">
+
+        <div class="carousel-card">
+          <div class="card-bg-glow"></div>
+          <div class="card-logo">
+            <div class="card-logo-text">
+              <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </div>
+              AD EVENTOS
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-card">
+          <div class="card-bg-glow" style="background: radial-gradient(ellipse at 70% 40%, rgba(26,63,190,0.4) 0%, transparent 60%)"></div>
+          <div class="card-logo">
+            <div class="card-logo-text" style="color:#fff; font-size:1.6rem;">
+              🎵 FESTIVAL BEATS
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-card">
+          <div class="card-bg-glow" style="background: radial-gradient(ellipse at 50% 50%, rgba(180,60,60,0.35) 0%, transparent 60%)"></div>
+          <div class="card-logo">
+            <div class="card-logo-text" style="color:#ff9f9f; font-size:1.6rem;">
+              🎭 TEATRO 2025
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="carousel-arrow prev" id="prevBtn" aria-label="Anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button class="carousel-arrow next" id="nextBtn" aria-label="Próximo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
     </div>
 
-    <div>
-      <img src="" alt="">
-      <span>Festas e Shows</span>
+    <div class="carousel-dots" id="carouselDots">
+      <div class="dot active" onclick="goToSlide(0)"></div>
+      <div class="dot" onclick="goToSlide(1)"></div>
+      <div class="dot" onclick="goToSlide(2)"></div>
     </div>
-
-
-
-
   </section>
 
+  <!-- Event Details -->
+  <div class="event-details">
+    <h3 class="event-title" id="eventTitle">TITULO</h3>
+    <div class="event-meta">
+      <span id="eventLocal">LOCAL</span>
+      <span id="eventData">DATA</span>
+    </div>
+  </div>
 
+  <!-- Collections Section -->
+  <section class="collections-section">
+    <div class="collections-header">
+      <h3>Explore as nossas coleções</h3>
+      <a href="#" class="ver-tudo">Ver tudo</a>
+    </div>
+    <div class="section-divider"></div>
+    <div class="collections-grid">
 
+      <div class="collection-item">
+        <div class="collection-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+          </svg>
+        </div>
+        <span class="collection-label">Festas e Shows</span>
+      </div>
+
+      <div class="collection-item">
+        <div class="collection-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M2 10s3-3 3-8h14c0 5 3 8 3 8"/><path d="M6 10V2"/><path d="M18 10V2"/><path d="M2 14s3 3 3 8h14c0-5 3-8 3-8"/>
+          </svg>
+        </div>
+        <span class="collection-label">Teatros e Espetáculos</span>
+      </div>
+
+      <div class="collection-item">
+        <div class="collection-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <circle cx="12" cy="8" r="4"/><path d="M8 12s-4 2-4 6h16c0-4-4-6-4-6"/>
+          </svg>
+        </div>
+        <span class="collection-label">Stand Up</span>
+      </div>
+
+      <div class="collection-item">
+        <div class="collection-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <span class="collection-label">Eventos do Mês</span>
+      </div>
+
+      <div class="collection-item">
+        <div class="collection-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <span class="collection-label">Para Grupos</span>
+      </div>
+
+      <div class="collection-item">
+        <div class="collection-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <span class="collection-label">Destaques</span>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    const track = document.getElementById('carouselTrack');
+    const dots = document.querySelectorAll('.dot');
+    const titles = ['TITULO', 'FESTIVAL BEATS', 'TEATRO 2025'];
+    const locais = ['LOCAL', 'SÃO PAULO, SP', 'RIO DE JANEIRO, RJ'];
+    const datas = ['DATA', '15 JUN 2025', '22 AGO 2025'];
+    let current = 0;
+
+    function goToSlide(i) {
+      const cards = track.querySelectorAll('.carousel-card');
+      if (!cards[i]) return;
+      current = i;
+      cards[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      dots.forEach((d, j) => d.classList.toggle('active', j === i));
+      document.getElementById('eventTitle').textContent = titles[i] || 'TITULO';
+      document.getElementById('eventLocal').textContent = locais[i] || 'LOCAL';
+      document.getElementById('eventData').textContent = datas[i] || 'DATA';
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      goToSlide((current - 1 + titles.length) % titles.length);
+    });
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      goToSlide((current + 1) % titles.length);
+    });
+
+    // Auto-advance
+    setInterval(() => goToSlide((current + 1) % titles.length), 4000);
+
+    // Keyboard nav
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') goToSlide((current - 1 + titles.length) % titles.length);
+      if (e.key === 'ArrowRight') goToSlide((current + 1) % titles.length);
+    });
+  </script>
 </body>
+</html>
