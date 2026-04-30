@@ -1,0 +1,917 @@
+/* ================================================================
+   EVENCE EVENTS — Login Component
+   Design system em HSL, consistente com a landing page
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   1. VARIÁVEIS LOCAIS (herda da landing, estende se necessário)
+   ---------------------------------------------------------------- */
+:host {
+  /* Paleta Principal */
+  --cor-primaria: hsl(220, 80%, 35%);
+  --cor-primaria-escura: hsl(220, 85%, 25%);
+  --cor-primaria-clara: hsl(220, 75%, 50%);
+  --cor-primaria-bg: hsl(220, 60%, 96%);
+
+  /* Acento Dourado */
+  --cor-acento: hsl(38, 85%, 52%);
+  --cor-acento-escuro: hsl(38, 90%, 40%);
+  --cor-acento-claro: hsl(38, 80%, 65%);
+
+  /* Neutros */
+  --cor-fundo: hsl(220, 25%, 97%);
+  --cor-fundo-card: hsl(0, 0%, 100%);
+  --cor-borda: hsl(220, 15%, 88%);
+  --cor-borda-media: hsl(220, 15%, 78%);
+
+  /* Tipografia */
+  --cor-texto-principal: hsl(220, 25%, 18%);
+  --cor-texto-secundario: hsl(220, 15%, 45%);
+  --cor-texto-terciario: hsl(220, 10%, 62%);
+  --cor-texto-invertido: hsl(0, 0%, 100%);
+  --cor-texto-acento: hsl(220, 80%, 45%);
+
+  /* Estados / Semântica */
+  --cor-sucesso: hsl(145, 60%, 38%);
+  --cor-sucesso-bg: hsl(145, 55%, 95%);
+  --cor-sucesso-borda: hsl(145, 50%, 75%);
+  --cor-erro: hsl(4, 72%, 50%);
+  --cor-erro-bg: hsl(4, 80%, 97%);
+  --cor-erro-borda: hsl(4, 70%, 78%);
+  --cor-foco: hsl(220, 80%, 55%);
+
+  /* Branding panel */
+  --cor-branding-inicio: hsl(220, 85%, 28%);
+  --cor-branding-fim: hsl(225, 75%, 18%);
+  --cor-branding-deco: hsl(38, 85%, 52%);
+
+  /* Sombras */
+  --sombra-sm: 0 1px 4px hsla(220, 30%, 15%, 0.08);
+  --sombra-md: 0 4px 16px hsla(220, 30%, 15%, 0.12);
+  --sombra-lg: 0 8px 32px hsla(220, 30%, 15%, 0.18);
+  --sombra-card: 0 2px 24px hsla(220, 30%, 15%, 0.1);
+
+  /* Espaçamentos */
+  --espaco-xs: 0.25rem;
+  --espaco-sm: 0.5rem;
+  --espaco-md: 1rem;
+  --espaco-lg: 1.5rem;
+  --espaco-xl: 2rem;
+  --espaco-2xl: 3rem;
+
+  /* Raios */
+  --raio-sm: 6px;
+  --raio-md: 12px;
+  --raio-lg: 16px;
+  --raio-full: 9999px;
+
+  /* Transições */
+  --transicao-rapida: 150ms ease;
+  --transicao-normal: 250ms ease;
+
+  display: block;
+  font-family: 'Sora', 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ----------------------------------------------------------------
+   2. RESET
+   ---------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* ----------------------------------------------------------------
+   3. LAYOUT PRINCIPAL — Split Screen
+   ---------------------------------------------------------------- */
+.login-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ----------------------------------------------------------------
+   4. PAINEL ESQUERDO — Branding
+   ---------------------------------------------------------------- */
+.branding-painel {
+  display: none; /* escondido em mobile */
+  flex: 1;
+  position: relative;
+  background: linear-gradient(
+    155deg,
+    var(--cor-branding-inicio) 0%,
+    var(--cor-branding-fim) 100%
+  );
+  overflow: hidden;
+  padding: var(--espaco-2xl);
+}
+
+.branding-painel__conteudo {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--espaco-2xl);
+}
+
+/* Logo no branding */
+.branding-painel__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  color: var(--cor-texto-invertido);
+}
+
+.branding-painel__logo-icone {
+  background-color: var(--cor-acento);
+  color: var(--cor-primaria-escura);
+  font-size: 0.65rem;
+  font-weight: 800;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--raio-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.branding-painel__logo-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.branding-painel__logo-texto span:first-child {
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+}
+
+.branding-painel__logo-texto span:last-child {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  opacity: 0.8;
+}
+
+/* Hero text */
+.branding-painel__hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--espaco-md);
+}
+
+.branding-painel__titulo {
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 800;
+  color: var(--cor-texto-invertido);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.branding-painel__titulo--acento {
+  color: var(--cor-acento);
+}
+
+.branding-painel__subtitulo {
+  font-size: 1rem;
+  color: hsla(0, 0%, 100%, 0.7);
+  line-height: 1.6;
+  max-width: 320px;
+}
+
+/* Destaques */
+.branding-painel__destaques {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+}
+
+.destaque-item {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  color: hsla(0, 0%, 100%, 0.85);
+}
+
+.destaque-item__icone {
+  font-size: 1.2rem;
+  color: var(--cor-acento);
+  flex-shrink: 0;
+}
+
+.destaque-item__texto {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Decorações de fundo */
+.branding-painel__deco {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.branding-painel__deco--1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, hsla(38, 80%, 55%, 0.15) 0%, transparent 70%);
+  top: -100px;
+  right: -100px;
+}
+
+.branding-painel__deco--2 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, hsla(220, 70%, 60%, 0.2) 0%, transparent 70%);
+  bottom: 10%;
+  left: -80px;
+}
+
+.branding-painel__deco--3 {
+  width: 200px;
+  height: 200px;
+  border: 1.5px solid hsla(38, 80%, 55%, 0.2);
+  bottom: 30%;
+  right: 10%;
+  animation: girar 18s linear infinite;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+/* ----------------------------------------------------------------
+   5. PAINEL DIREITO — Formulário
+   ---------------------------------------------------------------- */
+.form-painel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cor-fundo);
+  padding: var(--espaco-xl) var(--espaco-md);
+  min-height: 100vh;
+}
+
+.form-painel__container {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-xl);
+}
+
+/* Logo mobile */
+.form-painel__logo-mobile {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  color: var(--cor-texto-principal);
+  justify-content: center;
+}
+
+.form-painel__logo-icone {
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-invertido);
+  font-size: 0.65rem;
+  font-weight: 800;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--raio-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.05em;
+}
+
+.form-painel__logo-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  color: var(--cor-primaria);
+  font-weight: 800;
+}
+
+.form-painel__logo-texto span:first-child {
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+}
+
+.form-painel__logo-texto span:last-child {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  opacity: 0.7;
+}
+
+/* ----------------------------------------------------------------
+   6. CARD DO FORMULÁRIO
+   ---------------------------------------------------------------- */
+.form-card {
+  background-color: var(--cor-fundo-card);
+  border-radius: var(--raio-lg);
+  padding: var(--espaco-xl);
+  box-shadow: var(--sombra-card);
+  border: 1px solid var(--cor-borda);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-lg);
+  animation: entrar 0.4s ease both;
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-card__cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-xs);
+}
+
+.form-card__titulo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--cor-texto-principal);
+  letter-spacing: -0.02em;
+}
+
+.form-card__subtitulo {
+  font-size: 0.875rem;
+  color: var(--cor-texto-secundario);
+}
+
+/* ----------------------------------------------------------------
+   7. ALERTA DE ERRO GERAL
+   ---------------------------------------------------------------- */
+.alerta-erro {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  padding: var(--espaco-sm) var(--espaco-md);
+  background-color: var(--cor-erro-bg);
+  border: 1px solid var(--cor-erro-borda);
+  border-radius: var(--raio-md);
+  animation: entrar 0.25s ease both;
+}
+
+.alerta-erro__icone {
+  font-size: 1.1rem;
+  color: var(--cor-erro);
+  flex-shrink: 0;
+}
+
+.alerta-erro__texto {
+  font-size: 0.85rem;
+  color: var(--cor-erro);
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------
+   8. SOCIAL LOGIN
+   ---------------------------------------------------------------- */
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-sm);
+  padding: var(--espaco-sm) var(--espaco-md);
+  border-radius: var(--raio-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1.5px solid var(--cor-borda);
+  background-color: var(--cor-fundo-card);
+  color: var(--cor-texto-principal);
+  transition:
+    background-color var(--transicao-rapida),
+    border-color var(--transicao-rapida),
+    box-shadow var(--transicao-rapida),
+    transform var(--transicao-rapida);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.social-btn:hover {
+  background-color: var(--cor-fundo);
+  border-color: var(--cor-borda-media);
+  box-shadow: var(--sombra-sm);
+  transform: translateY(-1px);
+}
+
+.social-btn:active {
+  transform: translateY(0);
+}
+
+.social-btn__icone {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------------------------------
+   9. DIVISOR
+   ---------------------------------------------------------------- */
+.divisor {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+}
+
+.divisor__linha {
+  flex: 1;
+  height: 1px;
+  background-color: var(--cor-borda);
+}
+
+.divisor__texto {
+  font-size: 0.78rem;
+  color: var(--cor-texto-terciario);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------
+   10. FORMULÁRIO E CAMPOS
+   ---------------------------------------------------------------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-md);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-xs);
+}
+
+.campo__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.campo__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cor-texto-principal);
+}
+
+.campo__link-esqueci {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--cor-texto-acento);
+  transition: color var(--transicao-rapida);
+}
+
+.campo__link-esqueci:hover {
+  color: var(--cor-primaria-escura);
+  text-decoration: underline;
+}
+
+/* Wrapper com ícones */
+.campo__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.campo__icone {
+  position: absolute;
+  font-size: 1.1rem;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.campo__icone--esquerda {
+  left: 14px;
+  color: var(--cor-texto-terciario);
+  transition: color var(--transicao-rapida);
+}
+
+.campo__icone--direita {
+  right: 14px;
+}
+
+.campo__icone--status {
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.campo__toggle-senha {
+  pointer-events: all;
+  cursor: pointer;
+  color: var(--cor-texto-terciario);
+  transition: color var(--transicao-rapida);
+  display: flex;
+  align-items: center;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.campo__toggle-senha:hover {
+  color: var(--cor-texto-secundario);
+}
+
+.campo__toggle-senha .material-icons {
+  font-size: 1.1rem;
+}
+
+/* Input */
+.campo__input {
+  width: 100%;
+  padding: 0.7rem var(--espaco-xl) 0.7rem 2.6rem;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  background-color: var(--cor-fundo);
+  font-size: 0.9rem;
+  color: var(--cor-texto-principal);
+  font-family: inherit;
+  outline: none;
+  transition:
+    border-color var(--transicao-normal),
+    box-shadow var(--transicao-normal),
+    background-color var(--transicao-normal);
+  -webkit-appearance: none;
+}
+
+.campo__input::placeholder {
+  color: var(--cor-texto-terciario);
+}
+
+.campo__input:focus {
+  border-color: var(--cor-primaria-clara);
+  background-color: var(--cor-fundo-card);
+  box-shadow: 0 0 0 3px hsla(220, 80%, 50%, 0.12);
+}
+
+/* Foco: ícone esquerda fica colorido */
+.campo__wrapper:focus-within .campo__icone--esquerda {
+  color: var(--cor-primaria);
+}
+
+/* Estado erro */
+.campo--erro .campo__input {
+  border-color: var(--cor-erro-borda);
+  background-color: var(--cor-erro-bg);
+}
+
+.campo--erro .campo__input:focus {
+  border-color: var(--cor-erro);
+  box-shadow: 0 0 0 3px hsla(4, 72%, 50%, 0.1);
+}
+
+.campo--erro .campo__icone--status {
+  color: var(--cor-erro);
+}
+
+/* Estado válido */
+.campo--valido .campo__input {
+  border-color: var(--cor-sucesso-borda);
+}
+
+.campo--valido .campo__icone--status {
+  color: var(--cor-sucesso);
+}
+
+/* Mensagem de erro */
+.campo__mensagem-erro {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.775rem;
+  color: var(--cor-erro);
+  font-weight: 500;
+  animation: entrar 0.2s ease both;
+}
+
+.campo__mensagem-icone {
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------------------------------
+   11. CHECKBOX LEMBRAR
+   ---------------------------------------------------------------- */
+.checkbox-row {
+  margin-top: calc(var(--espaco-xs) * -1);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.checkbox-label__custom {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--cor-borda-media);
+  border-radius: 5px;
+  background-color: var(--cor-fundo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition:
+    border-color var(--transicao-rapida),
+    background-color var(--transicao-rapida);
+}
+
+.checkbox-label__check {
+  font-size: 0.9rem;
+  color: var(--cor-texto-invertido);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity var(--transicao-rapida), transform var(--transicao-rapida);
+}
+
+.checkbox-label__input:checked ~ .checkbox-label__custom {
+  background-color: var(--cor-primaria);
+  border-color: var(--cor-primaria);
+}
+
+.checkbox-label__input:checked ~ .checkbox-label__custom .checkbox-label__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.checkbox-label:hover .checkbox-label__custom {
+  border-color: var(--cor-primaria-clara);
+}
+
+.checkbox-label__texto {
+  font-size: 0.85rem;
+  color: var(--cor-texto-secundario);
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------
+   12. BOTÃO DE SUBMIT
+   ---------------------------------------------------------------- */
+.btn-submit {
+  width: 100%;
+  padding: 0.85rem var(--espaco-lg);
+  background-color: var(--cor-primaria);
+  color: var(--cor-texto-invertido);
+  border-radius: var(--raio-md);
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-sm);
+  margin-top: var(--espaco-xs);
+  transition:
+    background-color var(--transicao-normal),
+    transform var(--transicao-normal),
+    box-shadow var(--transicao-normal),
+    opacity var(--transicao-normal);
+  box-shadow: 0 4px 14px hsla(220, 80%, 35%, 0.35);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: var(--cor-primaria-escura);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px hsla(220, 80%, 35%, 0.45);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px hsla(220, 80%, 35%, 0.3);
+}
+
+.btn-submit:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.btn-submit__conteudo {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+}
+
+.btn-submit__icone {
+  font-size: 1.15rem;
+}
+
+.btn-submit__spinner {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid hsla(0, 0%, 100%, 0.35);
+  border-top-color: var(--cor-texto-invertido);
+  border-radius: 50%;
+  animation: girar-spinner 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes girar-spinner {
+  to { transform: rotate(360deg); }
+}
+
+/* ----------------------------------------------------------------
+   13. RODAPÉ DO CARD
+   ---------------------------------------------------------------- */
+.form-card__rodape {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--cor-texto-secundario);
+}
+
+.form-card__link {
+  font-weight: 700;
+  color: var(--cor-texto-acento);
+  transition: color var(--transicao-rapida);
+}
+
+.form-card__link:hover {
+  color: var(--cor-primaria-escura);
+  text-decoration: underline;
+}
+
+/* ----------------------------------------------------------------
+   14. TELA DE SUCESSO
+   ---------------------------------------------------------------- */
+.sucesso-card {
+  background-color: var(--cor-fundo-card);
+  border-radius: var(--raio-lg);
+  padding: var(--espaco-2xl) var(--espaco-xl);
+  box-shadow: var(--sombra-card);
+  border: 1px solid var(--cor-sucesso-borda);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espaco-md);
+  text-align: center;
+  animation: entrar 0.4s ease both;
+}
+
+.sucesso-card__icone-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: var(--cor-sucesso-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulsar 0.5s ease both 0.1s;
+}
+
+@keyframes pulsar {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.sucesso-card__icone {
+  font-size: 2.5rem;
+  color: var(--cor-sucesso);
+}
+
+.sucesso-card__titulo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--cor-texto-principal);
+  letter-spacing: -0.02em;
+}
+
+.sucesso-card__texto {
+  font-size: 0.9rem;
+  color: var(--cor-texto-secundario);
+}
+
+/* ================================================================
+   15. MEDIA QUERIES
+   ================================================================ */
+
+/* ----- Tablet pequeno (480px) ----- */
+@media (min-width: 480px) {
+  .form-card {
+    padding: var(--espaco-xl) var(--espaco-xl);
+  }
+
+  .social-login {
+    flex-direction: row;
+  }
+
+  .social-btn {
+    flex: 1;
+    padding: var(--espaco-sm);
+    font-size: 0.8rem;
+  }
+}
+
+/* ----- Tablet (640px) ----- */
+@media (min-width: 640px) {
+  .form-painel {
+    padding: var(--espaco-2xl) var(--espaco-xl);
+  }
+
+  .form-painel__logo-mobile {
+    display: none; /* Logo mobile some quando branding aparece */
+  }
+}
+
+/* ----- Desktop (768px) — Painel split ativa ----- */
+@media (min-width: 768px) {
+  .branding-painel {
+    display: flex;
+    flex-direction: column;
+    max-width: 460px;
+  }
+
+  .form-painel__logo-mobile {
+    display: none;
+  }
+
+  .form-painel {
+    flex: 1;
+  }
+}
+
+/* ----- Desktop grande (1024px) ----- */
+@media (min-width: 1024px) {
+  .branding-painel {
+    max-width: 520px;
+    padding: var(--espaco-2xl) var(--espaco-2xl);
+  }
+
+  .form-card {
+    padding: var(--espaco-2xl);
+  }
+
+  .form-card__titulo {
+    font-size: 1.75rem;
+  }
+
+  .btn-submit {
+    padding: 0.95rem var(--espaco-lg);
+    font-size: 1rem;
+  }
+}
+
+/* ----- Wide (1280px) ----- */
+@media (min-width: 1280px) {
+  .branding-painel {
+    max-width: 580px;
+  }
+}

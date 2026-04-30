@@ -1,0 +1,152 @@
+<div class="faq-page">
+
+  <!-- Hero -->
+  <section class="faq-hero">
+    <div class="faq-hero__container">
+      <div class="faq-hero__conteudo">
+        <span class="faq-hero__badge">
+          <span class="material-icons">help_outline</span>
+          Central de Ajuda
+        </span>
+        <h1 class="faq-hero__titulo">Como podemos<br /><span class="faq-hero__titulo--acento">te ajudar?</span></h1>
+        <p class="faq-hero__subtitulo">Encontre respostas para as dúvidas mais frequentes sobre ingressos, pagamentos e eventos.</p>
+
+        <!-- Busca -->
+        <div class="faq-busca">
+          <div class="faq-busca__campo" [class.faq-busca__campo--ativo]="buscaTermo">
+            <span class="material-icons faq-busca__icone">search</span>
+            <input
+              type="text"
+              class="faq-busca__input"
+              placeholder="Buscar pergunta ou palavra-chave..."
+              [(ngModel)]="buscaTermo"
+              aria-label="Buscar nas perguntas frequentes"
+            />
+            <button
+              class="faq-busca__limpar"
+              *ngIf="buscaTermo"
+              (click)="limparBusca()"
+              aria-label="Limpar busca"
+            >
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decorações -->
+      <div class="faq-hero__deco faq-hero__deco--1"></div>
+      <div class="faq-hero__deco faq-hero__deco--2"></div>
+    </div>
+  </section>
+
+  <!-- Conteúdo principal -->
+  <section class="faq-conteudo">
+    <div class="faq-conteudo__container">
+
+      <!-- Filtros de categoria -->
+      <div class="categorias-wrap" *ngIf="!buscaTermo">
+        <div class="categorias">
+          <button
+            class="categoria-btn"
+            *ngFor="let cat of categorias"
+            [class.categoria-btn--ativa]="categoriaAtiva === cat.id"
+            (click)="selecionarCategoria(cat.id)"
+          >
+            <span class="material-icons categoria-btn__icone">{{ cat.icone }}</span>
+            <span>{{ cat.nome }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Resultado de busca label -->
+      <div class="busca-resultado" *ngIf="buscaTermo">
+        <span class="material-icons">search</span>
+        <span>{{ totalResultados }} resultado{{ totalResultados !== 1 ? 's' : '' }} para "<strong>{{ buscaTermo }}</strong>"</span>
+      </div>
+
+      <!-- Nenhum resultado -->
+      <div class="sem-resultado" *ngIf="perguntasFiltradas.length === 0">
+        <span class="material-icons sem-resultado__icone">search_off</span>
+        <h3 class="sem-resultado__titulo">Nenhuma pergunta encontrada</h3>
+        <p class="sem-resultado__texto">Tente outras palavras ou navegue pelas categorias.</p>
+        <button class="sem-resultado__btn" (click)="limparBusca(); selecionarCategoria('todas')">
+          Ver todas as perguntas
+        </button>
+      </div>
+
+      <!-- Lista de perguntas -->
+      <div class="accordion" *ngIf="perguntasFiltradas.length > 0">
+
+        <div
+          class="accordion-item"
+          *ngFor="let pergunta of perguntasFiltradas; let i = index"
+          [class.accordion-item--aberta]="isPerguntaAberta(pergunta.id)"
+          [style.animation-delay]="i * 50 + 'ms'"
+        >
+          <button
+            class="accordion-item__cabecalho"
+            (click)="togglePergunta(pergunta.id)"
+            [attr.aria-expanded]="isPerguntaAberta(pergunta.id)"
+            [attr.aria-controls]="'resposta-' + pergunta.id"
+          >
+            <div class="accordion-item__pergunta-wrap">
+              <div class="accordion-item__num">{{ i + 1 < 10 ? '0' + (i + 1) : (i + 1) }}</div>
+              <span class="accordion-item__pergunta">{{ pergunta.pergunta }}</span>
+            </div>
+            <span class="accordion-item__chevron material-icons">
+              {{ isPerguntaAberta(pergunta.id) ? 'expand_less' : 'expand_more' }}
+            </span>
+          </button>
+
+          <div
+            class="accordion-item__corpo"
+            [id]="'resposta-' + pergunta.id"
+            [class.accordion-item__corpo--visivel]="isPerguntaAberta(pergunta.id)"
+            role="region"
+          >
+            <div class="accordion-item__resposta">
+              {{ pergunta.resposta }}
+            </div>
+
+            <div class="accordion-item__util">
+              <span class="accordion-item__util-texto">Isso foi útil?</span>
+              <button class="util-btn util-btn--sim">
+                <span class="material-icons">thumb_up</span> Sim
+              </button>
+              <button class="util-btn util-btn--nao">
+                <span class="material-icons">thumb_down</span> Não
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CTA Suporte -->
+      <div class="suporte-cta">
+        <div class="suporte-cta__conteudo">
+          <div class="suporte-cta__icone-wrap">
+            <span class="material-icons">support_agent</span>
+          </div>
+          <div class="suporte-cta__texto">
+            <h3 class="suporte-cta__titulo">Não encontrou o que precisava?</h3>
+            <p class="suporte-cta__subtitulo">Nossa equipe de suporte está disponível 24h para te ajudar.</p>
+          </div>
+          <div class="suporte-cta__acoes">
+            <a href="mailto:suporte@evenceevents.com" class="suporte-btn suporte-btn--email">
+              <span class="material-icons">mail_outline</span>
+              Enviar e-mail
+            </a>
+            <a href="#" class="suporte-btn suporte-btn--chat">
+              <span class="material-icons">chat_bubble_outline</span>
+              Abrir chat
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>

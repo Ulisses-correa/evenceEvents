@@ -1,0 +1,238 @@
+<div class="carrinho-page">
+
+  <!-- Header interno da página -->
+  <header class="page-header">
+    <div class="page-header__container">
+      <a routerLink="/" class="page-header__voltar">
+        <span class="material-icons">arrow_back</span>
+        <span>Continuar comprando</span>
+      </a>
+      <div class="page-header__titulo-wrap">
+        <h1 class="page-header__titulo">Meu Carrinho</h1>
+        <span class="page-header__badge" *ngIf="totalItens > 0">{{ totalItens }} {{ totalItens === 1 ? 'ingresso' : 'ingressos' }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Carrinho vazio -->
+  <div class="carrinho-vazio" *ngIf="carrinhoVazio">
+    <div class="carrinho-vazio__icone-wrap">
+      <span class="material-icons carrinho-vazio__icone">shopping_cart</span>
+    </div>
+    <h2 class="carrinho-vazio__titulo">Seu carrinho está vazio</h2>
+    <p class="carrinho-vazio__texto">Explore nossos eventos e adicione ingressos ao carrinho.</p>
+    <a routerLink="/" class="carrinho-vazio__btn">
+      <span class="material-icons">explore</span>
+      Explorar eventos
+    </a>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div class="carrinho-conteudo" *ngIf="!carrinhoVazio">
+    <div class="carrinho-conteudo__container">
+
+      <!-- Coluna de itens -->
+      <section class="itens-coluna">
+        <div class="itens-lista">
+
+          <div
+            class="item-card"
+            *ngFor="let item of itens"
+            [class.item-card--saindo]="itemRemovidoId === item.id"
+          >
+            <!-- Imagem / Placeholder -->
+            <div class="item-card__imagem">
+              <div class="item-card__imagem-placeholder">
+                <span class="material-icons">confirmation_number</span>
+              </div>
+            </div>
+
+            <!-- Informações -->
+            <div class="item-card__info">
+              <div class="item-card__cabecalho">
+                <h3 class="item-card__evento">{{ item.evento }}</h3>
+                <button
+                  class="item-card__remover"
+                  (click)="removerItem(item.id)"
+                  aria-label="Remover item"
+                >
+                  <span class="material-icons">close</span>
+                </button>
+              </div>
+
+              <div class="item-card__detalhes">
+                <span class="item-detalhe">
+                  <span class="material-icons item-detalhe__icone">location_on</span>
+                  {{ item.local }}
+                </span>
+                <span class="item-detalhe">
+                  <span class="material-icons item-detalhe__icone">calendar_today</span>
+                  {{ item.data }} · {{ item.horario }}
+                </span>
+                <span class="item-detalhe item-detalhe--setor">
+                  <span class="material-icons item-detalhe__icone">event_seat</span>
+                  {{ item.setor }}
+                </span>
+              </div>
+
+              <div class="item-card__rodape">
+                <!-- Controle de quantidade -->
+                <div class="qtd-controle">
+                  <button
+                    class="qtd-controle__btn"
+                    (click)="diminuirQuantidade(item)"
+                    [attr.aria-label]="item.quantidade === 1 ? 'Remover item' : 'Diminuir quantidade'"
+                  >
+                    <span class="material-icons">{{ item.quantidade === 1 ? 'delete_outline' : 'remove' }}</span>
+                  </button>
+                  <span class="qtd-controle__valor">{{ item.quantidade }}</span>
+                  <button
+                    class="qtd-controle__btn"
+                    (click)="aumentarQuantidade(item)"
+                    [disabled]="item.quantidade >= 10"
+                    aria-label="Aumentar quantidade"
+                  >
+                    <span class="material-icons">add</span>
+                  </button>
+                </div>
+
+                <!-- Preço -->
+                <div class="item-card__preco">
+                  <span class="item-card__preco-unit">{{ formatarPreco(item.precoUnitario) }} / un.</span>
+                  <span class="item-card__preco-total">{{ formatarPreco(item.precoUnitario * item.quantidade) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Cupom -->
+        <div class="cupom-secao">
+          <h3 class="cupom-secao__titulo">
+            <span class="material-icons">sell</span>
+            Cupom de desconto
+          </h3>
+
+          <div class="cupom-aplicado" *ngIf="cupomAplicado">
+            <div class="cupom-aplicado__info">
+              <span class="material-icons cupom-aplicado__icone">check_circle</span>
+              <div>
+                <span class="cupom-aplicado__codigo">{{ cupomCodigo.toUpperCase() }}</span>
+                <span class="cupom-aplicado__desconto">{{ cupomDesconto * 100 | number:'1.0-0' }}% de desconto aplicado!</span>
+              </div>
+            </div>
+            <button class="cupom-aplicado__remover" (click)="removerCupom()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+
+          <div class="cupom-form" *ngIf="!cupomAplicado">
+            <div class="cupom-form__campo" [class.cupom-form__campo--erro]="cupomErro">
+              <input
+                type="text"
+                class="cupom-form__input"
+                placeholder="Digite seu cupom"
+                [(ngModel)]="cupomCodigo"
+                (keyup.enter)="aplicarCupom()"
+                [disabled]="cupomCarregando"
+                maxlength="20"
+              />
+              <button
+                class="cupom-form__btn"
+                (click)="aplicarCupom()"
+                [disabled]="cupomCarregando || !cupomCodigo.trim()"
+              >
+                <span class="spinner-sm" *ngIf="cupomCarregando"></span>
+                <span *ngIf="!cupomCarregando">Aplicar</span>
+              </button>
+            </div>
+            <p class="cupom-form__erro" *ngIf="cupomErro">
+              <span class="material-icons">error_outline</span>
+              {{ cupomErro }}
+            </p>
+            <p class="cupom-form__dica">Tente: EVENCE10, SHOW20 ou FESTA15</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Coluna do resumo -->
+      <aside class="resumo-coluna">
+        <div class="resumo-card">
+          <h2 class="resumo-card__titulo">Resumo do pedido</h2>
+
+          <div class="resumo-linha">
+            <span class="resumo-linha__label">Subtotal ({{ totalItens }} ingressos)</span>
+            <span class="resumo-linha__valor">{{ formatarPreco(subtotal) }}</span>
+          </div>
+
+          <div class="resumo-linha resumo-linha--desconto" *ngIf="cupomAplicado">
+            <span class="resumo-linha__label">
+              <span class="material-icons resumo-linha__icone">sell</span>
+              Desconto ({{ cupomDesconto * 100 | number:'1.0-0' }}%)
+            </span>
+            <span class="resumo-linha__valor resumo-linha__valor--desconto">-{{ formatarPreco(valorDesconto) }}</span>
+          </div>
+
+          <div class="resumo-linha">
+            <span class="resumo-linha__label">
+              Taxa de serviço (10%)
+              <span class="material-icons resumo-linha__tooltip" title="Taxa para manutenção da plataforma">info_outline</span>
+            </span>
+            <span class="resumo-linha__valor">{{ formatarPreco(valorTaxa) }}</span>
+          </div>
+
+          <div class="resumo-divisor"></div>
+
+          <div class="resumo-total">
+            <span class="resumo-total__label">Total</span>
+            <span class="resumo-total__valor">{{ formatarPreco(total) }}</span>
+          </div>
+
+          <div class="resumo-parcelamento">
+            em até <strong>12x de {{ formatarPreco(total / 12) }}</strong> sem juros
+          </div>
+
+          <button
+            class="btn-checkout"
+            (click)="finalizarCompra()"
+            [class.btn-checkout--carregando]="checkoutCarregando"
+            [disabled]="checkoutCarregando"
+          >
+            <ng-container *ngIf="!checkoutCarregando">
+              <span class="material-icons">lock</span>
+              Finalizar compra
+            </ng-container>
+            <ng-container *ngIf="checkoutCarregando">
+              <span class="spinner"></span>
+              Processando...
+            </ng-container>
+          </button>
+
+          <div class="resumo-seguranca">
+            <div class="seguranca-item">
+              <span class="material-icons">verified_user</span>
+              <span>Compra 100% segura</span>
+            </div>
+            <div class="seguranca-item">
+              <span class="material-icons">credit_card</span>
+              <span>Pagamento criptografado</span>
+            </div>
+          </div>
+
+          <div class="resumo-pagamentos">
+            <span class="resumo-pagamentos__label">Aceitamos</span>
+            <div class="resumo-pagamentos__bandeiras">
+              <span class="bandeira">VISA</span>
+              <span class="bandeira">MC</span>
+              <span class="bandeira">PIX</span>
+              <span class="bandeira">AMEX</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+</div>

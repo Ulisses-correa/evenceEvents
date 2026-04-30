@@ -1,4 +1,3 @@
-
 <!-- Banner Superior -->
 <div class="banner-superior" *ngIf="bannersuperiorVisivel">
   <nav class="banner-superior__nav">
@@ -23,7 +22,7 @@
     </a>
 
     <div class="header__acoes">
-      <button class="header__btn-icone" aria-label="Carrinho">
+      <button class="header__btn-icone" aria-label="Carrinho" routerLink="carrinho">
         <span class="material-icons">shopping_cart</span>
       </button>
       <button class="header__btn-icone" (click)="toggleMenu()" aria-label="Menu">
@@ -62,7 +61,7 @@
       </div>
 
       <div class="busca-secao__campo">
-        <img src="/icones/search.svg" alt="" class="material-icons busca-secao__lupa" width = "20">
+        <span class="material-icons busca-secao__lupa">search</span>
         <input
           type="text"
           class="busca-secao__input"
@@ -82,7 +81,7 @@
 
         <!-- Botão Anterior -->
         <button class="carrossel__nav carrossel__nav--anterior" (click)="slideAnterior()" aria-label="Slide anterior">
-          <img src="/icones/flecha-esq.svg" alt="" class="flechas">
+          <span class="material-icons">chevron_left</span>
         </button>
 
         <!-- Track dos slides -->
@@ -106,7 +105,7 @@
 
         <!-- Botão Próximo -->
         <button class="carrossel__nav carrossel__nav--proximo" (click)="proximoSlide()" aria-label="Próximo slide">
-          <img src="/icones/flecha-dir.svg" alt="" class="flechas">
+          <span class="material-icons">chevron_right</span>
         </button>
       </div>
 
@@ -139,16 +138,16 @@
       </div>
 
       <div class="colecoes-secao__grid">
-        @for (item of colecoes; track $index) {
-          <a
+        <a
           href="#"
-          class="colecao-card">
+          class="colecao-card"
+          *ngFor="let colecao of colecoes"
+        >
           <div class="colecao-card__icone-container">
-            <img class="colecao-icone" [src]="'/icones/' + item.icone + '.svg'" alt="icone da coleção">
+            <span class="material-icons colecao-card__icone">{{ colecao.icone }}</span>
           </div>
-          <span class="colecao-card__nome">{{ item.nome }}</span>
+          <span class="colecao-card__nome">{{ colecao.nome }}</span>
         </a>
-        }
       </div>
     </div>
   </section>

@@ -928,8 +928,6 @@ ul {
     font-size: 0.8rem;
   }
 
-  
-
   .produtor-secao__titulo {
     font-size: 2rem;
   }
@@ -958,14 +956,4 @@ ul {
   .footer__container {
     padding: 0 var(--espaco-2xl);
   }
-}
-
-/* Correção de bugs */
-
-.colecao-icone{
-    scale: 50%;
-  }
-
-.flechas{
-  scale: 75%;
 }

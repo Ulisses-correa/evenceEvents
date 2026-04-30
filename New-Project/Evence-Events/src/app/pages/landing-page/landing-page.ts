@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from "@angular/router";
 
 interface Evento {
   id: number;
@@ -20,7 +21,7 @@ interface Colecao {
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
 })
@@ -57,12 +58,12 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   ];
 
   colecoes: Colecao[] = [
-    { id: 1, nome: 'Festas e Shows', icone: 'nota-musical' },
-    { id: 2, nome: 'Teatros e Espetáculos', icone: 'mascaras-teatro' },
-    { id: 3, nome: 'Stand Up', icone: 'microfone' },
-    { id: 4, nome: 'Esportes', icone: 'bola' },
-    { id: 5, nome: 'Gastronomia', icone: 'talheres' },
-    { id: 6, nome: 'Arte e Cultura', icone: 'paleta' },
+    { id: 1, nome: 'Festas e Shows', icone: 'music_note' },
+    { id: 2, nome: 'Teatros e Espetáculos', icone: 'theater_comedy' },
+    { id: 3, nome: 'Stand Up', icone: 'mic' },
+    { id: 4, nome: 'Esportes', icone: 'sports_soccer' },
+    { id: 5, nome: 'Gastronomia', icone: 'restaurant' },
+    { id: 6, nome: 'Arte e Cultura', icone: 'palette' },
   ];
 
   eventoEmDestaque: Evento = this.eventos[0];
