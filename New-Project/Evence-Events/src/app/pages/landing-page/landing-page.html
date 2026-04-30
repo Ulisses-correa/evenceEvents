@@ -1,9 +1,9 @@
 <!-- Banner Superior -->
 <div class="banner-superior" *ngIf="bannersuperiorVisivel">
   <nav class="banner-superior__nav">
-    <a href="#" class="banner-superior__link">É Produtor?</a>
-    <a href="#" class="banner-superior__link">Criar evento</a>
-    <a href="#" class="banner-superior__link">Como funciona</a>
+    <a href="#" class="banner-superior__link" routerLink="new">É Produtor?</a>
+    <a href="#" class="banner-superior__link" routerLink="new">Criar evento</a>
+    <a href="#" class="banner-superior__link" routerLink="faq">Como funciona</a>
     <button class="banner-superior__fechar" (click)="fecharBannerSuperior()" aria-label="Fechar banner">
       <span class="material-icons">close</span>
     </button>
@@ -41,10 +41,10 @@
     <ul class="menu-mobile__lista">
       <li><a href="#" class="menu-mobile__link">Início</a></li>
       <li><a href="#" class="menu-mobile__link">Eventos</a></li>
-      <li><a href="#" class="menu-mobile__link">É Produtor?</a></li>
-      <li><a href="#" class="menu-mobile__link">Criar Evento</a></li>
-      <li><a href="#" class="menu-mobile__link">Como Funciona</a></li>
-      <li><a href="#" class="menu-mobile__link">Minha Conta</a></li>
+      <li><a href="#" class="menu-mobile__link" routerLink = "new">É Produtor?</a></li>
+      <li><a href="#" class="menu-mobile__link" routerLink = "new">Criar Evento</a></li>
+      <li><a href="#" class="menu-mobile__link" routerLink = "faq">Como Funciona</a></li>
+      <li><a href="#" class="menu-mobile__link" routerLink = "login">Minha Conta</a></li>
     </ul>
   </nav>
 </div>
@@ -158,7 +158,7 @@
       <div class="produtor-secao__conteudo">
         <h2 class="produtor-secao__titulo">É um produtor de eventos?</h2>
         <p class="produtor-secao__subtitulo">Crie e gerencie seus eventos com facilidade. Alcance mais pessoas.</p>
-        <a href="#" class="produtor-secao__btn">Criar meu evento</a>
+        <a href="#" class="produtor-secao__btn" routerLink = "new">Criar meu evento</a>
       </div>
     </div>
   </section>

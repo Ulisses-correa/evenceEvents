@@ -1,0 +1,383 @@
+<div class="cadastro-page">
+
+  <!-- Painel Esquerdo — Branding -->
+  <aside class="branding-painel">
+    <div class="branding-painel__conteudo">
+
+      <a routerLink="/" class="branding-painel__logo">
+        <span class="branding-painel__logo-icone">EE</span>
+        <span class="branding-painel__logo-texto">
+          <span>EVENCE</span>
+          <span>EVENTS</span>
+        </span>
+      </a>
+
+      <div class="branding-painel__hero">
+        <h1 class="branding-painel__titulo">
+          Sua próxima<br />
+          <span class="branding-painel__titulo--acento">experiência</span><br />
+          começa aqui.
+        </h1>
+        <p class="branding-painel__subtitulo">
+          Crie sua conta gratuita e tenha acesso aos melhores shows, festivais e espetáculos perto de você.
+        </p>
+      </div>
+
+      <div class="branding-painel__beneficios">
+        <div class="beneficio-item">
+          <div class="beneficio-item__icone-wrap">
+            <span class="material-icons">confirmation_number</span>
+          </div>
+          <div class="beneficio-item__info">
+            <span class="beneficio-item__titulo">Ingressos digitais</span>
+            <span class="beneficio-item__desc">Acesse pelo app, sem filas</span>
+          </div>
+        </div>
+        <div class="beneficio-item">
+          <div class="beneficio-item__icone-wrap">
+            <span class="material-icons">favorite</span>
+          </div>
+          <div class="beneficio-item__info">
+            <span class="beneficio-item__titulo">Eventos favoritos</span>
+            <span class="beneficio-item__desc">Salve e acompanhe seus eventos</span>
+          </div>
+        </div>
+        <div class="beneficio-item">
+          <div class="beneficio-item__icone-wrap">
+            <span class="material-icons">notifications_active</span>
+          </div>
+          <div class="beneficio-item__info">
+            <span class="beneficio-item__titulo">Alertas personalizados</span>
+            <span class="beneficio-item__desc">Seja o primeiro a saber</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="branding-painel__selo">
+        <span class="material-icons">verified_user</span>
+        <span>Cadastro 100% gratuito e seguro</span>
+      </div>
+
+    </div>
+
+    <div class="branding-painel__deco branding-painel__deco--1"></div>
+    <div class="branding-painel__deco branding-painel__deco--2"></div>
+    <div class="branding-painel__deco branding-painel__deco--3"></div>
+  </aside>
+
+  <!-- Painel Direito — Formulário -->
+  <main class="form-painel">
+    <div class="form-painel__container">
+
+      <!-- Logo mobile -->
+      <a routerLink="/" class="form-painel__logo-mobile">
+        <span class="form-painel__logo-icone">EE</span>
+        <span class="form-painel__logo-texto">
+          <span>EVENCE</span>
+          <span>EVENTS</span>
+        </span>
+      </a>
+
+      <!-- Tela de sucesso -->
+      <div class="sucesso-card" *ngIf="cadastroSucesso">
+        <div class="sucesso-card__icone-wrap">
+          <span class="material-icons sucesso-card__icone">celebration</span>
+        </div>
+        <h2 class="sucesso-card__titulo">Conta criada!</h2>
+        <p class="sucesso-card__texto">
+          Bem-vindo(a), <strong>{{ nomeUsuario }}</strong>! Sua conta foi criada com sucesso. Redirecionando para o login...
+        </p>
+        <a routerLink="/login" class="sucesso-card__btn">
+          <span class="material-icons">login</span>
+          Fazer login agora
+        </a>
+      </div>
+
+      <!-- Formulário -->
+      <div class="form-card" *ngIf="!cadastroSucesso">
+
+        <div class="form-card__cabecalho">
+          <h2 class="form-card__titulo">Criar conta grátis</h2>
+          <p class="form-card__subtitulo">Junte-se a milhares de pessoas que já usam a Evence</p>
+        </div>
+
+        <!-- Erro geral -->
+        <div class="alerta-erro" *ngIf="erroGeral" role="alert">
+          <span class="material-icons alerta-erro__icone">error_outline</span>
+          <span class="alerta-erro__texto">{{ erroGeral }}</span>
+        </div>
+
+        <!-- Social Sign Up -->
+        <div class="social-login">
+          <button type="button" class="social-btn social-btn--google" (click)="cadastroComGoogle()">
+            <svg class="social-btn__icone" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Cadastrar com Google
+          </button>
+
+          <button type="button" class="social-btn social-btn--facebook" (click)="cadastroComFacebook()">
+            <svg class="social-btn__icone" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/>
+            </svg>
+            Cadastrar com Facebook
+          </button>
+        </div>
+
+        <!-- Divisor -->
+        <div class="divisor">
+          <span class="divisor__linha"></span>
+          <span class="divisor__texto">ou cadastre com e-mail</span>
+          <span class="divisor__linha"></span>
+        </div>
+
+        <!-- Formulário Reativo -->
+        <form class="form" [formGroup]="cadastroForm" (ngSubmit)="onSubmit()" novalidate>
+
+          <!-- Nome completo -->
+          <div class="campo" [class.campo--erro]="campoInvalido('nome')" [class.campo--valido]="campoValido('nome')">
+            <label class="campo__label" for="nome">Nome completo</label>
+            <div class="campo__wrapper">
+              <span class="material-icons campo__icone campo__icone--esquerda">person_outline</span>
+              <input
+                class="campo__input"
+                type="text"
+                id="nome"
+                formControlName="nome"
+                placeholder="Seu nome completo"
+                autocomplete="name"
+              />
+              <span class="material-icons campo__icone campo__icone--direita campo__icone--status" *ngIf="cadastroForm.get('nome')?.touched">
+                {{ campoValido('nome') ? 'check_circle' : 'cancel' }}
+              </span>
+            </div>
+            <p class="campo__mensagem-erro" *ngIf="campoInvalido('nome')" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              {{ getMensagem('nome') }}
+            </p>
+          </div>
+
+          <!-- E-mail -->
+          <div class="campo" [class.campo--erro]="campoInvalido('email')" [class.campo--valido]="campoValido('email')">
+            <label class="campo__label" for="email">E-mail</label>
+            <div class="campo__wrapper">
+              <span class="material-icons campo__icone campo__icone--esquerda">mail_outline</span>
+              <input
+                class="campo__input"
+                type="email"
+                id="email"
+                formControlName="email"
+                placeholder="seu@email.com"
+                autocomplete="email"
+              />
+              <span class="material-icons campo__icone campo__icone--direita campo__icone--status" *ngIf="cadastroForm.get('email')?.touched">
+                {{ campoValido('email') ? 'check_circle' : 'cancel' }}
+              </span>
+            </div>
+            <p class="campo__mensagem-erro" *ngIf="campoInvalido('email')" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              {{ getMensagem('email') }}
+            </p>
+          </div>
+
+          <!-- CPF -->
+          <div class="campo" [class.campo--erro]="campoInvalido('cpf')" [class.campo--valido]="campoValido('cpf')">
+            <label class="campo__label" for="cpf">CPF</label>
+            <div class="campo__wrapper">
+              <span class="material-icons campo__icone campo__icone--esquerda">badge</span>
+              <input
+                class="campo__input"
+                type="text"
+                id="cpf"
+                formControlName="cpf"
+                placeholder="000.000.000-00"
+                maxlength="14"
+                (input)="mascararCpf($event)"
+                autocomplete="off"
+              />
+              <span class="material-icons campo__icone campo__icone--direita campo__icone--status" *ngIf="cadastroForm.get('cpf')?.touched">
+                {{ campoValido('cpf') ? 'check_circle' : 'cancel' }}
+              </span>
+            </div>
+            <p class="campo__mensagem-erro" *ngIf="campoInvalido('cpf')" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              {{ getMensagem('cpf') }}
+            </p>
+          </div>
+
+          <!-- Data de nascimento -->
+          <div class="campo" [class.campo--erro]="campoInvalido('dataNascimento')" [class.campo--valido]="campoValido('dataNascimento')">
+            <label class="campo__label" for="dataNascimento">Data de nascimento</label>
+            <div class="campo__wrapper">
+              <span class="material-icons campo__icone campo__icone--esquerda">cake</span>
+              <input
+                class="campo__input"
+                type="date"
+                id="dataNascimento"
+                formControlName="dataNascimento"
+                [max]="dataMaximaNascimento"
+              />
+            </div>
+            <p class="campo__mensagem-erro" *ngIf="campoInvalido('dataNascimento')" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              {{ getMensagem('dataNascimento') }}
+            </p>
+          </div>
+
+          <!-- Celular -->
+          <div class="campo" [class.campo--erro]="campoInvalido('celular')" [class.campo--valido]="campoValido('celular')">
+            <label class="campo__label" for="celular">Celular</label>
+            <div class="campo__wrapper">
+              <span class="material-icons campo__icone campo__icone--esquerda">phone_iphone</span>
+              <input
+                class="campo__input"
+                type="tel"
+                id="celular"
+                formControlName="celular"
+                placeholder="(00) 00000-0000"
+                maxlength="15"
+                (input)="mascararCelular($event)"
+                autocomplete="tel"
+              />
+              <span class="material-icons campo__icone campo__icone--direita campo__icone--status" *ngIf="cadastroForm.get('celular')?.touched">
+                {{ campoValido('celular') ? 'check_circle' : 'cancel' }}
+              </span>
+            </div>
+            <p class="campo__mensagem-erro" *ngIf="campoInvalido('celular')" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              {{ getMensagem('celular') }}
+            </p>
+          </div>
+
+          <!-- Senha -->
+          <div class="campo" [class.campo--erro]="campoInvalido('senha')" [class.campo--valido]="campoValido('senha')">
+            <label class="campo__label" for="senha">Senha</label>
+            <div class="campo__wrapper">
+              <span class="material-icons campo__icone campo__icone--esquerda">lock_outline</span>
+              <input
+                class="campo__input"
+                [type]="senhaVisivel ? 'text' : 'password'"
+                id="senha"
+                formControlName="senha"
+                placeholder="Mínimo 8 caracteres"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="campo__icone campo__icone--direita campo__toggle-senha"
+                (click)="toggleSenha()"
+                [attr.aria-label]="senhaVisivel ? 'Ocultar senha' : 'Mostrar senha'"
+              >
+                <span class="material-icons">{{ senhaVisivel ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+            <!-- Força da senha -->
+            <div class="forca-senha" *ngIf="cadastroForm.get('senha')?.value">
+              <div class="forca-senha__barras">
+                <div
+                  class="forca-senha__barra"
+                  *ngFor="let b of [1,2,3,4]"
+                  [class.forca-senha__barra--ativa]="forcaSenha >= b"
+                  [class]="'forca-senha__barra forca-senha__barra--nivel-' + forcaSenha + (forcaSenha >= b ? ' forca-senha__barra--ativa' : '')"
+                ></div>
+              </div>
+              <span class="forca-senha__texto">{{ labelForcaSenha }}</span>
+            </div>
+            <p class="campo__mensagem-erro" *ngIf="campoInvalido('senha')" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              {{ getMensagem('senha') }}
+            </p>
+          </div>
+
+          <!-- Confirmar Senha -->
+          <div class="campo" [class.campo--erro]="campoInvalido('confirmarSenha') || senhasNaoConferem" [class.campo--valido]="campoValido('confirmarSenha') && !senhasNaoConferem">
+            <label class="campo__label" for="confirmarSenha">Confirmar senha</label>
+            <div class="campo__wrapper">
+              <span class="material-icons campo__icone campo__icone--esquerda">lock_outline</span>
+              <input
+                class="campo__input"
+                [type]="confirmarSenhaVisivel ? 'text' : 'password'"
+                id="confirmarSenha"
+                formControlName="confirmarSenha"
+                placeholder="Repita sua senha"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="campo__icone campo__icone--direita campo__toggle-senha"
+                (click)="toggleConfirmarSenha()"
+                [attr.aria-label]="confirmarSenhaVisivel ? 'Ocultar senha' : 'Mostrar senha'"
+              >
+                <span class="material-icons">{{ confirmarSenhaVisivel ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+            <p class="campo__mensagem-erro" *ngIf="senhasNaoConferem" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              As senhas não conferem.
+            </p>
+            <p class="campo__mensagem-erro" *ngIf="campoInvalido('confirmarSenha') && !senhasNaoConferem" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              {{ getMensagem('confirmarSenha') }}
+            </p>
+          </div>
+
+          <!-- Checkboxes -->
+          <div class="checkboxes-grupo">
+            <label class="checkbox-label">
+              <input class="checkbox-label__input" type="checkbox" formControlName="aceitaTermos" />
+              <span class="checkbox-label__custom">
+                <span class="material-icons checkbox-label__check">check</span>
+              </span>
+              <span class="checkbox-label__texto">
+                Li e aceito os <a routerLink="/termos" class="campo__link">Termos de Uso</a> e a <a routerLink="/privacidade" class="campo__link">Política de Privacidade</a>
+              </span>
+            </label>
+            <p class="campo__mensagem-erro" *ngIf="campoInvalido('aceitaTermos')" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              Você precisa aceitar os termos para continuar.
+            </p>
+
+            <label class="checkbox-label">
+              <input class="checkbox-label__input" type="checkbox" formControlName="aceitaNewsletter" />
+              <span class="checkbox-label__custom">
+                <span class="material-icons checkbox-label__check">check</span>
+              </span>
+              <span class="checkbox-label__texto">Quero receber novidades e ofertas exclusivas por e-mail</span>
+            </label>
+          </div>
+
+          <!-- Botão Submit -->
+          <button
+            type="submit"
+            class="btn-submit"
+            [class.btn-submit--carregando]="carregando"
+            [disabled]="carregando"
+            [attr.aria-busy]="carregando"
+          >
+            <span class="btn-submit__conteudo" *ngIf="!carregando">
+              <span class="material-icons btn-submit__icone">person_add</span>
+              Criar minha conta
+            </span>
+            <span class="btn-submit__spinner" *ngIf="carregando" aria-hidden="true">
+              <span class="spinner"></span>
+              Criando conta...
+            </span>
+          </button>
+
+        </form>
+
+        <!-- Rodapé -->
+        <p class="form-card__rodape">
+          Já tem uma conta?
+          <a routerLink="/login" class="form-card__link">Fazer login</a>
+        </p>
+
+      </div>
+
+    </div>
+  </main>
+
+</div>

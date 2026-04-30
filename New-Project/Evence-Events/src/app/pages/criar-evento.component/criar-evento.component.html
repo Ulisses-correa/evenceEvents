@@ -1,0 +1,587 @@
+<div class="criar-evento-page">
+
+  <!-- Painel Esquerdo — Branding -->
+  <aside class="branding-painel">
+    <div class="branding-painel__conteudo">
+
+      <a href="/" class="branding-painel__logo">
+        <span class="branding-painel__logo-icone">EE</span>
+        <span class="branding-painel__logo-texto">
+          <span>EVENCE</span>
+          <span>EVENTS</span>
+        </span>
+      </a>
+
+      <div class="branding-painel__hero">
+        <h1 class="branding-painel__titulo">
+          Seu evento,<br />
+          <span class="branding-painel__titulo--acento">no centro</span><br />
+          do palco.
+        </h1>
+        <p class="branding-painel__subtitulo">
+          Crie experiências inesquecíveis e alcance milhares de pessoas apaixonadas por eventos.
+        </p>
+      </div>
+
+      <div class="branding-painel__stats">
+        <div class="stat-item">
+          <span class="stat-item__numero">+12k</span>
+          <span class="stat-item__label">Eventos criados</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-item__numero">98%</span>
+          <span class="stat-item__label">Satisfação</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-item__numero">500k+</span>
+          <span class="stat-item__label">Ingressos vendidos</span>
+        </div>
+      </div>
+
+      <div class="branding-painel__destaques">
+        <div class="destaque-item">
+          <span class="material-icons destaque-item__icone">trending_up</span>
+          <span class="destaque-item__texto">Alcance seu público ideal</span>
+        </div>
+        <div class="destaque-item">
+          <span class="material-icons destaque-item__icone">payments</span>
+          <span class="destaque-item__texto">Repasse financeiro em 2 dias</span>
+        </div>
+        <div class="destaque-item">
+          <span class="material-icons destaque-item__icone">insights</span>
+          <span class="destaque-item__texto">Dashboard em tempo real</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="branding-painel__deco branding-painel__deco--1"></div>
+    <div class="branding-painel__deco branding-painel__deco--2"></div>
+    <div class="branding-painel__deco branding-painel__deco--3"></div>
+  </aside>
+
+  <!-- Painel Direito — Formulário -->
+  <main class="form-painel">
+    <div class="form-painel__container">
+
+      <!-- Logo mobile -->
+      <a href="/" class="form-painel__logo-mobile">
+        <span class="form-painel__logo-icone">EE</span>
+        <span class="form-painel__logo-texto">
+          <span>EVENCE</span>
+          <span>EVENTS</span>
+        </span>
+      </a>
+
+      <!-- Tela de sucesso -->
+      <div class="sucesso-card" *ngIf="eventoPublicado">
+        <div class="sucesso-card__icone-wrap">
+          <span class="material-icons sucesso-card__icone">celebration</span>
+        </div>
+        <h2 class="sucesso-card__titulo">Evento publicado!</h2>
+        <p class="sucesso-card__texto">Seu evento já está disponível na plataforma. Acesse seu painel para gerenciá-lo.</p>
+        <a href="#" class="sucesso-card__btn">
+          <span class="material-icons">dashboard</span>
+          Ir para o painel
+        </a>
+      </div>
+
+      <!-- Formulário Multi-etapa -->
+      <div class="form-wrapper" *ngIf="!eventoPublicado">
+
+        <!-- Cabeçalho + Stepper -->
+        <div class="form-cabecalho">
+          <h2 class="form-cabecalho__titulo">Criar novo evento</h2>
+          <p class="form-cabecalho__subtitulo">Preencha as informações do seu evento</p>
+
+          <div class="stepper">
+            <div
+              class="stepper__etapa"
+              *ngFor="let etapa of etapas; let i = index"
+              [class.stepper__etapa--ativa]="etapaAtual === i"
+              [class.stepper__etapa--concluida]="etapaAtual > i"
+              (click)="etapaAtual > i ? irParaEtapa(i) : null"
+            >
+              <div class="stepper__circulo">
+                <span class="material-icons stepper__check" *ngIf="etapaAtual > i">check</span>
+                <span *ngIf="etapaAtual <= i">{{ i + 1 }}</span>
+              </div>
+              <span class="stepper__label">{{ etapa }}</span>
+            </div>
+            <div class="stepper__linha"></div>
+          </div>
+        </div>
+
+        <!-- Formulário Reativo -->
+        <form class="form-card" [formGroup]="eventoForm" (ngSubmit)="onSubmit()" novalidate>
+
+          <!-- ===== ETAPA 1: INFORMAÇÕES BÁSICAS ===== -->
+          <div class="form-etapa" *ngIf="etapaAtual === 0">
+
+            <!-- Nome do Evento -->
+            <div class="campo" [class.campo--erro]="campoInvalido('nome')" [class.campo--valido]="campoValido('nome')">
+              <label class="campo__label" for="nome">Nome do evento <span class="campo__obrigatorio">*</span></label>
+              <div class="campo__wrapper">
+                <span class="material-icons campo__icone campo__icone--esquerda">event</span>
+                <input
+                  class="campo__input"
+                  type="text"
+                  id="nome"
+                  formControlName="nome"
+                  placeholder="Ex: Festival de Verão 2026"
+                  maxlength="100"
+                />
+                <span class="material-icons campo__icone campo__icone--direita campo__icone--status" *ngIf="eventoForm.get('nome')?.touched">
+                  {{ campoValido('nome') ? 'check_circle' : 'cancel' }}
+                </span>
+              </div>
+              <p class="campo__mensagem-erro" *ngIf="campoInvalido('nome')" role="alert">
+                <span class="material-icons campo__mensagem-icone">info</span>
+                {{ getMensagem('nome') }}
+              </p>
+              <span class="campo__contador">{{ eventoForm.get('nome')?.value?.length || 0 }}/100</span>
+            </div>
+
+            <!-- Categoria -->
+            <div class="campo" [class.campo--erro]="campoInvalido('categoria')" [class.campo--valido]="campoValido('categoria')">
+              <label class="campo__label" for="categoria">Categoria <span class="campo__obrigatorio">*</span></label>
+              <div class="campo__wrapper campo__wrapper--select">
+                <span class="material-icons campo__icone campo__icone--esquerda">category</span>
+                <select class="campo__input campo__select" id="categoria" formControlName="categoria">
+                  <option value="" disabled>Selecione uma categoria</option>
+                  <option *ngFor="let cat of categorias" [value]="cat.valor">{{ cat.nome }}</option>
+                </select>
+                <span class="material-icons campo__icone campo__icone--direita campo__select-arrow">expand_more</span>
+              </div>
+              <p class="campo__mensagem-erro" *ngIf="campoInvalido('categoria')" role="alert">
+                <span class="material-icons campo__mensagem-icone">info</span>
+                Selecione uma categoria.
+              </p>
+            </div>
+
+            <!-- Descrição -->
+            <div class="campo" [class.campo--erro]="campoInvalido('descricao')" [class.campo--valido]="campoValido('descricao')">
+              <label class="campo__label" for="descricao">Descrição <span class="campo__obrigatorio">*</span></label>
+              <div class="campo__wrapper campo__wrapper--textarea">
+                <span class="material-icons campo__icone campo__icone--esquerda campo__icone--top">description</span>
+                <textarea
+                  class="campo__input campo__textarea"
+                  id="descricao"
+                  formControlName="descricao"
+                  placeholder="Conte sobre o seu evento, atrações, programação..."
+                  rows="4"
+                  maxlength="500"
+                ></textarea>
+              </div>
+              <div class="campo__rodape-info">
+                <p class="campo__mensagem-erro" *ngIf="campoInvalido('descricao')" role="alert">
+                  <span class="material-icons campo__mensagem-icone">info</span>
+                  {{ getMensagem('descricao') }}
+                </p>
+                <span class="campo__contador">{{ eventoForm.get('descricao')?.value?.length || 0 }}/500</span>
+              </div>
+            </div>
+
+            <!-- Imagem de Capa -->
+            <div class="campo">
+              <label class="campo__label">Imagem de capa</label>
+              <div
+                class="upload-area"
+                [class.upload-area--ativo]="imagemPreview"
+                (click)="inputImagem.click()"
+                (dragover)="$event.preventDefault()"
+                (drop)="onImagemDrop($event)"
+              >
+                <input
+                  #inputImagem
+                  type="file"
+                  accept="image/*"
+                  class="upload-area__input"
+                  (change)="onImagemSelecionada($event)"
+                />
+                <ng-container *ngIf="!imagemPreview">
+                  <span class="material-icons upload-area__icone">add_photo_alternate</span>
+                  <p class="upload-area__texto">Arraste uma imagem ou <span class="upload-area__link">clique aqui</span></p>
+                  <p class="upload-area__dica">PNG, JPG ou WEBP — máx. 5 MB</p>
+                </ng-container>
+                <ng-container *ngIf="imagemPreview">
+                  <img [src]="imagemPreview" alt="Prévia da capa" class="upload-area__preview" />
+                  <button type="button" class="upload-area__remover" (click)="removerImagem($event)">
+                    <span class="material-icons">delete</span>
+                  </button>
+                </ng-container>
+              </div>
+            </div>
+
+          </div>
+          <!-- /etapa 1 -->
+
+          <!-- ===== ETAPA 2: DATA, HORA E LOCAL ===== -->
+          <div class="form-etapa" *ngIf="etapaAtual === 1">
+
+            <!-- Grade Data/Hora -->
+            <div class="campo-grade">
+
+              <div class="campo" [class.campo--erro]="campoInvalido('dataInicio')" [class.campo--valido]="campoValido('dataInicio')">
+                <label class="campo__label" for="dataInicio">Data de início <span class="campo__obrigatorio">*</span></label>
+                <div class="campo__wrapper">
+                  <span class="material-icons campo__icone campo__icone--esquerda">calendar_today</span>
+                  <input class="campo__input" type="date" id="dataInicio" formControlName="dataInicio" />
+                </div>
+                <p class="campo__mensagem-erro" *ngIf="campoInvalido('dataInicio')" role="alert">
+                  <span class="material-icons campo__mensagem-icone">info</span>
+                  Data obrigatória.
+                </p>
+              </div>
+
+              <div class="campo" [class.campo--erro]="campoInvalido('horaInicio')" [class.campo--valido]="campoValido('horaInicio')">
+                <label class="campo__label" for="horaInicio">Hora de início <span class="campo__obrigatorio">*</span></label>
+                <div class="campo__wrapper">
+                  <span class="material-icons campo__icone campo__icone--esquerda">schedule</span>
+                  <input class="campo__input" type="time" id="horaInicio" formControlName="horaInicio" />
+                </div>
+                <p class="campo__mensagem-erro" *ngIf="campoInvalido('horaInicio')" role="alert">
+                  <span class="material-icons campo__mensagem-icone">info</span>
+                  Hora obrigatória.
+                </p>
+              </div>
+
+              <div class="campo">
+                <label class="campo__label" for="dataFim">Data de término</label>
+                <div class="campo__wrapper">
+                  <span class="material-icons campo__icone campo__icone--esquerda">event_available</span>
+                  <input class="campo__input" type="date" id="dataFim" formControlName="dataFim" />
+                </div>
+              </div>
+
+              <div class="campo">
+                <label class="campo__label" for="horaFim">Hora de término</label>
+                <div class="campo__wrapper">
+                  <span class="material-icons campo__icone campo__icone--esquerda">schedule</span>
+                  <input class="campo__input" type="time" id="horaFim" formControlName="horaFim" />
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Tipo de local -->
+            <div class="campo">
+              <label class="campo__label">Tipo de local <span class="campo__obrigatorio">*</span></label>
+              <div class="tipo-local-opcoes">
+                <label
+                  class="tipo-local-opcao"
+                  *ngFor="let tipo of tiposLocal"
+                  [class.tipo-local-opcao--ativa]="eventoForm.get('tipoLocal')?.value === tipo.valor"
+                >
+                  <input
+                    type="radio"
+                    class="tipo-local-opcao__input"
+                    formControlName="tipoLocal"
+                    [value]="tipo.valor"
+                  />
+                  <span class="material-icons tipo-local-opcao__icone">{{ tipo.icone }}</span>
+                  <span class="tipo-local-opcao__label">{{ tipo.nome }}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Local Online -->
+            <div class="campo" *ngIf="eventoForm.get('tipoLocal')?.value === 'online'">
+              <label class="campo__label" for="linkOnline">Link do evento online <span class="campo__obrigatorio">*</span></label>
+              <div class="campo__wrapper">
+                <span class="material-icons campo__icone campo__icone--esquerda">link</span>
+                <input class="campo__input" type="url" id="linkOnline" formControlName="linkOnline" placeholder="https://meet.google.com/..." />
+              </div>
+            </div>
+
+            <!-- Local Presencial -->
+            <ng-container *ngIf="eventoForm.get('tipoLocal')?.value !== 'online'">
+
+              <div class="campo" [class.campo--erro]="campoInvalido('nomeLocal')" [class.campo--valido]="campoValido('nomeLocal')">
+                <label class="campo__label" for="nomeLocal">Nome do local <span class="campo__obrigatorio">*</span></label>
+                <div class="campo__wrapper">
+                  <span class="material-icons campo__icone campo__icone--esquerda">place</span>
+                  <input class="campo__input" type="text" id="nomeLocal" formControlName="nomeLocal" placeholder="Ex: Allianz Parque" />
+                </div>
+                <p class="campo__mensagem-erro" *ngIf="campoInvalido('nomeLocal')" role="alert">
+                  <span class="material-icons campo__mensagem-icone">info</span>
+                  Nome do local obrigatório.
+                </p>
+              </div>
+
+              <div class="campo-grade">
+                <div class="campo campo--largo" [class.campo--erro]="campoInvalido('endereco')" [class.campo--valido]="campoValido('endereco')">
+                  <label class="campo__label" for="endereco">Endereço <span class="campo__obrigatorio">*</span></label>
+                  <div class="campo__wrapper">
+                    <span class="material-icons campo__icone campo__icone--esquerda">location_on</span>
+                    <input class="campo__input" type="text" id="endereco" formControlName="endereco" placeholder="Rua, número, bairro" />
+                  </div>
+                  <p class="campo__mensagem-erro" *ngIf="campoInvalido('endereco')" role="alert">
+                    <span class="material-icons campo__mensagem-icone">info</span>
+                    Endereço obrigatório.
+                  </p>
+                </div>
+
+                <div class="campo">
+                  <label class="campo__label" for="cidade">Cidade <span class="campo__obrigatorio">*</span></label>
+                  <div class="campo__wrapper">
+                    <span class="material-icons campo__icone campo__icone--esquerda">location_city</span>
+                    <input class="campo__input" type="text" id="cidade" formControlName="cidade" placeholder="São Paulo" />
+                  </div>
+                </div>
+
+                <div class="campo">
+                  <label class="campo__label" for="estado">Estado <span class="campo__obrigatorio">*</span></label>
+                  <div class="campo__wrapper campo__wrapper--select">
+                    <span class="material-icons campo__icone campo__icone--esquerda">map</span>
+                    <select class="campo__input campo__select" id="estado" formControlName="estado">
+                      <option value="" disabled>UF</option>
+                      <option *ngFor="let uf of estados" [value]="uf">{{ uf }}</option>
+                    </select>
+                    <span class="material-icons campo__icone campo__icone--direita campo__select-arrow">expand_more</span>
+                  </div>
+                </div>
+              </div>
+
+            </ng-container>
+
+          </div>
+          <!-- /etapa 2 -->
+
+          <!-- ===== ETAPA 3: INGRESSOS E VALORES ===== -->
+          <div class="form-etapa" *ngIf="etapaAtual === 2">
+
+            <!-- Tipo de ingresso -->
+            <div class="campo">
+              <label class="campo__label">Tipo de ingresso <span class="campo__obrigatorio">*</span></label>
+              <div class="tipo-local-opcoes">
+                <label
+                  class="tipo-local-opcao"
+                  *ngFor="let tipo of tiposIngresso"
+                  [class.tipo-local-opcao--ativa]="eventoForm.get('tipoIngresso')?.value === tipo.valor"
+                >
+                  <input type="radio" class="tipo-local-opcao__input" formControlName="tipoIngresso" [value]="tipo.valor" />
+                  <span class="material-icons tipo-local-opcao__icone">{{ tipo.icone }}</span>
+                  <span class="tipo-local-opcao__label">{{ tipo.nome }}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Lotes de ingressos -->
+            <div class="lotes-secao" *ngIf="eventoForm.get('tipoIngresso')?.value !== 'gratuito'">
+              <div class="lotes-secao__cabecalho">
+                <label class="campo__label">Lotes de ingressos</label>
+                <button type="button" class="btn-adicionar" (click)="adicionarLote()">
+                  <span class="material-icons">add_circle_outline</span>
+                  Adicionar lote
+                </button>
+              </div>
+
+              <div class="lote-card" *ngFor="let lote of lotes; let i = index">
+                <div class="lote-card__header">
+                  <span class="lote-card__numero">Lote {{ i + 1 }}</span>
+                  <button type="button" class="lote-card__remover" *ngIf="lotes.length > 1" (click)="removerLote(i)">
+                    <span class="material-icons">delete_outline</span>
+                  </button>
+                </div>
+                <div class="lote-card__campos">
+                  <div class="campo">
+                    <label class="campo__label" [for]="'lote-nome-' + i">Nome do lote</label>
+                    <div class="campo__wrapper">
+                      <span class="material-icons campo__icone campo__icone--esquerda">label</span>
+                      <input class="campo__input" type="text" [id]="'lote-nome-' + i" [(ngModel)]="lote.nome" [ngModelOptions]="{standalone: true}" placeholder="Ex: 1º Lote, Pista, VIP..." />
+                    </div>
+                  </div>
+                  <div class="campo">
+                    <label class="campo__label" [for]="'lote-preco-' + i">Preço (R$)</label>
+                    <div class="campo__wrapper">
+                      <span class="campo__icone campo__icone--esquerda campo__icone--texto">R$</span>
+                      <input class="campo__input campo__input--preco" type="number" [id]="'lote-preco-' + i" [(ngModel)]="lote.preco" [ngModelOptions]="{standalone: true}" placeholder="0,00" min="0" step="0.01" />
+                    </div>
+                  </div>
+                  <div class="campo">
+                    <label class="campo__label" [for]="'lote-qtd-' + i">Quantidade</label>
+                    <div class="campo__wrapper">
+                      <span class="material-icons campo__icone campo__icone--esquerda">confirmation_number</span>
+                      <input class="campo__input" type="number" [id]="'lote-qtd-' + i" [(ngModel)]="lote.quantidade" [ngModelOptions]="{standalone: true}" placeholder="100" min="1" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Capacidade total -->
+            <div class="campo">
+              <label class="campo__label" for="capacidade">Capacidade total do evento</label>
+              <div class="campo__wrapper">
+                <span class="material-icons campo__icone campo__icone--esquerda">groups</span>
+                <input class="campo__input" type="number" id="capacidade" formControlName="capacidade" placeholder="Ex: 500" min="1" />
+              </div>
+            </div>
+
+            <!-- Política de reembolso -->
+            <div class="campo" [class.campo--erro]="campoInvalido('politicaReembolso')" [class.campo--valido]="campoValido('politicaReembolso')">
+              <label class="campo__label" for="politicaReembolso">Política de reembolso <span class="campo__obrigatorio">*</span></label>
+              <div class="campo__wrapper campo__wrapper--select">
+                <span class="material-icons campo__icone campo__icone--esquerda">policy</span>
+                <select class="campo__input campo__select" id="politicaReembolso" formControlName="politicaReembolso">
+                  <option value="" disabled>Selecione uma política</option>
+                  <option value="sem_reembolso">Sem reembolso</option>
+                  <option value="ate_7_dias">Reembolso até 7 dias antes</option>
+                  <option value="ate_24h">Reembolso até 24h antes</option>
+                  <option value="qualquer_momento">Reembolso a qualquer momento</option>
+                </select>
+                <span class="material-icons campo__icone campo__icone--direita campo__select-arrow">expand_more</span>
+              </div>
+            </div>
+
+          </div>
+          <!-- /etapa 3 -->
+
+          <!-- ===== ETAPA 4: REVISÃO ===== -->
+          <div class="form-etapa" *ngIf="etapaAtual === 3">
+
+            <div class="revisao">
+
+              <div class="revisao__secao" *ngIf="imagemPreview">
+                <img [src]="imagemPreview" alt="Capa do evento" class="revisao__imagem" />
+              </div>
+
+              <div class="revisao__secao">
+                <div class="revisao__titulo-secao">
+                  <span class="material-icons">info</span>
+                  Informações básicas
+                </div>
+                <div class="revisao__linha">
+                  <span class="revisao__chave">Nome</span>
+                  <span class="revisao__valor">{{ eventoForm.get('nome')?.value || '—' }}</span>
+                </div>
+                <div class="revisao__linha">
+                  <span class="revisao__chave">Categoria</span>
+                  <span class="revisao__valor">{{ getNomeCategoria() || '—' }}</span>
+                </div>
+                <div class="revisao__linha">
+                  <span class="revisao__chave">Descrição</span>
+                  <span class="revisao__valor revisao__valor--descricao">{{ eventoForm.get('descricao')?.value || '—' }}</span>
+                </div>
+              </div>
+
+              <div class="revisao__secao">
+                <div class="revisao__titulo-secao">
+                  <span class="material-icons">schedule</span>
+                  Data e local
+                </div>
+                <div class="revisao__linha">
+                  <span class="revisao__chave">Início</span>
+                  <span class="revisao__valor">{{ eventoForm.get('dataInicio')?.value | date:'dd/MM/yyyy' }} às {{ eventoForm.get('horaInicio')?.value }}</span>
+                </div>
+                <div class="revisao__linha" *ngIf="eventoForm.get('dataFim')?.value">
+                  <span class="revisao__chave">Término</span>
+                  <span class="revisao__valor">{{ eventoForm.get('dataFim')?.value | date:'dd/MM/yyyy' }} às {{ eventoForm.get('horaFim')?.value }}</span>
+                </div>
+                <div class="revisao__linha" *ngIf="eventoForm.get('tipoLocal')?.value !== 'online'">
+                  <span class="revisao__chave">Local</span>
+                  <span class="revisao__valor">{{ eventoForm.get('nomeLocal')?.value }}, {{ eventoForm.get('cidade')?.value }}/{{ eventoForm.get('estado')?.value }}</span>
+                </div>
+                <div class="revisao__linha" *ngIf="eventoForm.get('tipoLocal')?.value === 'online'">
+                  <span class="revisao__chave">Formato</span>
+                  <span class="revisao__valor">Online</span>
+                </div>
+              </div>
+
+              <div class="revisao__secao">
+                <div class="revisao__titulo-secao">
+                  <span class="material-icons">confirmation_number</span>
+                  Ingressos
+                </div>
+                <div class="revisao__linha" *ngIf="eventoForm.get('tipoIngresso')?.value === 'gratuito'">
+                  <span class="revisao__chave">Tipo</span>
+                  <span class="revisao__valor revisao__valor--badge revisao__valor--gratuito">Gratuito</span>
+                </div>
+                <ng-container *ngIf="eventoForm.get('tipoIngresso')?.value !== 'gratuito'">
+                  <div class="revisao__linha" *ngFor="let lote of lotes; let i = index">
+                    <span class="revisao__chave">{{ lote.nome || 'Lote ' + (i + 1) }}</span>
+                    <span class="revisao__valor">R$ {{ lote.preco | number:'1.2-2' }} · {{ lote.quantidade }} ingressos</span>
+                  </div>
+                </ng-container>
+              </div>
+
+              <!-- Termos -->
+              <div class="campo">
+                <label class="checkbox-label">
+                  <input class="checkbox-label__input" type="checkbox" formControlName="aceitaTermos" />
+                  <span class="checkbox-label__custom">
+                    <span class="material-icons checkbox-label__check">check</span>
+                  </span>
+                  <span class="checkbox-label__texto">
+                    Li e aceito os <a href="#" class="campo__link">Termos de Uso</a> e a <a href="#" class="campo__link">Política de Privacidade</a> da Evence Events
+                  </span>
+                </label>
+                <p class="campo__mensagem-erro" *ngIf="tentouPublicar && !eventoForm.get('aceitaTermos')?.value" role="alert">
+                  <span class="material-icons campo__mensagem-icone">info</span>
+                  Você precisa aceitar os termos para publicar.
+                </p>
+              </div>
+
+            </div>
+          </div>
+          <!-- /etapa 4 -->
+
+          <!-- Erro geral -->
+          <div class="alerta-erro" *ngIf="erroGeral" role="alert">
+            <span class="material-icons alerta-erro__icone">error_outline</span>
+            <span class="alerta-erro__texto">{{ erroGeral }}</span>
+          </div>
+
+          <!-- Navegação entre etapas -->
+          <div class="form-navegacao">
+            <button
+              type="button"
+              class="btn-secundario"
+              *ngIf="etapaAtual > 0"
+              (click)="etapaAnterior()"
+            >
+              <span class="material-icons">arrow_back</span>
+              Voltar
+            </button>
+
+            <button
+              type="button"
+              class="btn-primario"
+              *ngIf="etapaAtual < etapas.length - 1"
+              (click)="proximaEtapa()"
+            >
+              Próximo
+              <span class="material-icons">arrow_forward</span>
+            </button>
+
+            <button
+              type="submit"
+              class="btn-submit"
+              *ngIf="etapaAtual === etapas.length - 1"
+              [class.btn-submit--carregando]="carregando"
+              [disabled]="carregando"
+              [attr.aria-busy]="carregando"
+            >
+              <span class="btn-submit__conteudo" *ngIf="!carregando">
+                <span class="material-icons btn-submit__icone">rocket_launch</span>
+                Publicar evento
+              </span>
+              <span class="btn-submit__spinner" *ngIf="carregando" aria-hidden="true">
+                <span class="spinner"></span>
+                Publicando...
+              </span>
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+      <!-- /form-wrapper -->
+
+    </div>
+  </main>
+
+</div>
