@@ -1,0 +1,182 @@
+
+<!-- Banner Superior -->
+<div class="banner-superior" *ngIf="bannersuperiorVisivel">
+  <nav class="banner-superior__nav">
+    <a href="#" class="banner-superior__link">É Produtor?</a>
+    <a href="#" class="banner-superior__link">Criar evento</a>
+    <a href="#" class="banner-superior__link">Como funciona</a>
+    <button class="banner-superior__fechar" (click)="fecharBannerSuperior()" aria-label="Fechar banner">
+      <span class="material-icons">close</span>
+    </button>
+  </nav>
+</div>
+
+<!-- Header Principal -->
+<header class="header">
+  <div class="header__container">
+    <a href="#" class="header__logo">
+      <span class="header__logo-icone">EE</span>
+      <span class="header__logo-texto">
+        <span class="header__logo-linha1">EVENCE</span>
+        <span class="header__logo-linha2">EVENTS</span>
+      </span>
+    </a>
+
+    <div class="header__acoes">
+      <button class="header__btn-icone" aria-label="Carrinho">
+        <span class="material-icons">shopping_cart</span>
+      </button>
+      <button class="header__btn-icone" (click)="toggleMenu()" aria-label="Menu">
+        <span class="material-icons">menu</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Menu Mobile Overlay -->
+<div class="menu-overlay" [class.menu-overlay--ativo]="menuAberto" (click)="toggleMenu()">
+  <nav class="menu-mobile" (click)="$event.stopPropagation()">
+    <button class="menu-mobile__fechar" (click)="toggleMenu()">
+      <span class="material-icons">close</span>
+    </button>
+    <ul class="menu-mobile__lista">
+      <li><a href="#" class="menu-mobile__link">Início</a></li>
+      <li><a href="#" class="menu-mobile__link">Eventos</a></li>
+      <li><a href="#" class="menu-mobile__link">É Produtor?</a></li>
+      <li><a href="#" class="menu-mobile__link">Criar Evento</a></li>
+      <li><a href="#" class="menu-mobile__link">Como Funciona</a></li>
+      <li><a href="#" class="menu-mobile__link">Minha Conta</a></li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Conteúdo Principal -->
+<main class="main">
+
+  <!-- Seção de Busca -->
+  <section class="busca-secao">
+    <div class="busca-secao__container">
+      <div class="busca-secao__localizacao">
+        <span class="material-icons busca-secao__pin">location_on</span>
+        <span class="busca-secao__local-texto">Qualquer lugar</span>
+      </div>
+
+      <div class="busca-secao__campo">
+        <img src="/icones/search.svg" alt="" class="material-icons busca-secao__lupa" width = "20">
+        <input
+          type="text"
+          class="busca-secao__input"
+          placeholder="Buscar experiências"
+          [(ngModel)]="buscaTermo"
+          (keyup.enter)="buscar()"
+          aria-label="Buscar experiências"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Carrossel de Eventos em Destaque -->
+  <section class="carrossel-secao">
+    <div class="carrossel-secao__container">
+      <div class="carrossel" (mouseenter)="pararAutoplay()" (mouseleave)="iniciarAutoplay()">
+
+        <!-- Botão Anterior -->
+        <button class="carrossel__nav carrossel__nav--anterior" (click)="slideAnterior()" aria-label="Slide anterior">
+          <img src="/icones/flecha-esq.svg" alt="" class="flechas">
+        </button>
+
+        <!-- Track dos slides -->
+        <div class="carrossel__track">
+          <div
+            class="carrossel__slide"
+            *ngFor="let evento of eventos; let i = index"
+            [class.carrossel__slide--ativo]="i === slideAtual"
+            [class.carrossel__slide--anterior]="i === (slideAtual - 1 + eventos.length) % eventos.length"
+            [class.carrossel__slide--proximo]="i === (slideAtual + 1) % eventos.length"
+          >
+            <div class="carrossel__card">
+              <div class="carrossel__imagem-container">
+                <div class="carrossel__imagem-placeholder">
+                  <span class="carrossel__logo-placeholder">AD EVENTOS</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botão Próximo -->
+        <button class="carrossel__nav carrossel__nav--proximo" (click)="proximoSlide()" aria-label="Próximo slide">
+          <img src="/icones/flecha-dir.svg" alt="" class="flechas">
+        </button>
+      </div>
+
+      <!-- Indicadores / Dots -->
+      <div class="carrossel__dots">
+        <button
+          class="carrossel__dot"
+          *ngFor="let evento of eventos; let i = index"
+          [class.carrossel__dot--ativo]="i === slideAtual"
+          (click)="irParaSlide(i)"
+          [attr.aria-label]="'Ir para slide ' + (i + 1)"
+        ></button>
+      </div>
+
+      <!-- Info do Evento Atual -->
+      <div class="evento-info">
+        <h2 class="evento-info__titulo">{{ eventoEmDestaque.titulo }}</h2>
+        <p class="evento-info__local">{{ eventoEmDestaque.local }}</p>
+        <p class="evento-info__data">{{ eventoEmDestaque.data }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção de Coleções -->
+  <section class="colecoes-secao">
+    <div class="colecoes-secao__container">
+      <div class="colecoes-secao__cabecalho">
+        <h2 class="colecoes-secao__titulo">Explore as nossas coleções</h2>
+        <a href="#" class="colecoes-secao__ver-tudo">Ver tudo</a>
+      </div>
+
+      <div class="colecoes-secao__grid">
+        @for (item of colecoes; track $index) {
+          <a
+          href="#"
+          class="colecao-card">
+          <div class="colecao-card__icone-container">
+            <img class="colecao-icone" [src]="'/icones/' + item.icone + '.svg'" alt="icone da coleção">
+          </div>
+          <span class="colecao-card__nome">{{ item.nome }}</span>
+        </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção CTA / Produtor -->
+  <section class="produtor-secao">
+    <div class="produtor-secao__container">
+      <div class="produtor-secao__conteudo">
+        <h2 class="produtor-secao__titulo">É um produtor de eventos?</h2>
+        <p class="produtor-secao__subtitulo">Crie e gerencie seus eventos com facilidade. Alcance mais pessoas.</p>
+        <a href="#" class="produtor-secao__btn">Criar meu evento</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer__container">
+    <a href="#" class="footer__logo">
+      <span class="footer__logo-texto">EVENCE EVENTS</span>
+    </a>
+    <div class="footer__links">
+      <a href="#" class="footer__link">Termos de Uso</a>
+      <a href="#" class="footer__link">Privacidade</a>
+      <a href="#" class="footer__link">Contato</a>
+    </div>
+    <p class="footer__copy">© 2026 Evence Events. Todos os direitos reservados.</p>
+  </div>
+</footer>
