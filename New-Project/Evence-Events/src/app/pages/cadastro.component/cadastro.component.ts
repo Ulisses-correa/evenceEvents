@@ -9,7 +9,9 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { EventosService } from '../../services/services';
+import { Usuario } from '../../interfaces/usuario.interface';
 
 // Validador customizado: CPF com formato e dígitos verificadores
 function cpfValidator(): ValidatorFn {
@@ -66,7 +68,11 @@ export class CadastroComponent implements OnInit {
   // Data máxima: deve ter pelo menos 13 anos
   dataMaximaNascimento: string;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private eventosService: EventosService,
+    private router: Router
+  ) {
     const hoje = new Date();
     hoje.setFullYear(hoje.getFullYear() - 13);
     this.dataMaximaNascimento = hoje.toISOString().split('T')[0];
@@ -84,6 +90,7 @@ export class CadastroComponent implements OnInit {
         confirmarSenha: ['', Validators.required],
         aceitaTermos: [false, Validators.requiredTrue],
         aceitaNewsletter: [false],
+        isProdutor: [false],
       },
       { validators: senhasIguaisValidator('senha', 'confirmarSenha') }
     );
@@ -180,7 +187,7 @@ export class CadastroComponent implements OnInit {
   // ----------------------------------------------------------------
   // Submit
   // ----------------------------------------------------------------
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     if (this.cadastroForm.invalid) {
       this.cadastroForm.markAllAsTouched();
       return;
@@ -189,28 +196,30 @@ export class CadastroComponent implements OnInit {
     this.carregando = true;
     this.erroGeral = '';
 
-    try {
-      await new Promise(res => setTimeout(res, 1800));
+    const formValues = this.cadastroForm.value;
+    const usuario: Usuario = {
+      nome: formValues.nome,
+      email: formValues.email,
+      cpf: formValues.cpf,
+      dataNascimento: formValues.dataNascimento,
+      celular: formValues.celular,
+      senha: formValues.senha,
+      aceitaTermos: formValues.aceitaTermos,
+      aceitaNewsletter: formValues.aceitaNewsletter,
+      isProdutor: formValues.isProdutor
+    };
 
-      const { email } = this.cadastroForm.value;
-      if (email === 'existente@teste.com') {
-        throw new Error('Este e-mail já está cadastrado.');
+    this.eventosService.cadastro(usuario).subscribe({
+      next: (novoUsuario) => {
+        this.carregando = false;
+        this.nomeUsuario = novoUsuario.nome.split(' ')[0];
+        this.cadastroSucesso = true;
+      },
+      error: (err) => {
+        this.carregando = false;
+        this.erroGeral = 'Erro inesperado. Tente novamente.';
+        console.error(err);
       }
-
-      this.nomeUsuario = this.cadastroForm.value.nome.split(' ')[0];
-      this.cadastroSucesso = true;
-    } catch (err: any) {
-      this.erroGeral = err.message || 'Erro inesperado. Tente novamente.';
-    } finally {
-      this.carregando = false;
-    }
-  }
-
-  cadastroComGoogle(): void {
-    console.log('Cadastro com Google iniciado');
-  }
-
-  cadastroComFacebook(): void {
-    console.log('Cadastro com Facebook iniciado');
+    });
   }
 }

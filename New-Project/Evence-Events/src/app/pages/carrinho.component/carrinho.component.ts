@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HeaderComponent } from '../../componentes/header/header';
 
 export interface ItemCarrinho {
   id: number;
@@ -19,7 +20,7 @@ export interface ItemCarrinho {
 @Component({
   selector: 'app-carrinho',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, HeaderComponent],
   templateUrl: './carrinho.component.html',
   styleUrl: './carrinho.component.css',
 })
@@ -41,41 +42,50 @@ export class CarrinhoComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.itens = [
-      {
-        id: 1,
-        evento: 'Festival de Verão 2026',
-        local: 'Arena São Paulo, SP',
-        data: '15 Jan 2026',
-        horario: '19:00',
-        setor: 'Pista Premium',
-        quantidade: 2,
-        precoUnitario: 180.00,
-        imagem: '',
-      },
-      {
-        id: 2,
-        evento: 'Show do Ano — Edição Especial',
-        local: 'Jeunesse Arena, RJ',
-        data: '22 Jan 2026',
-        horario: '21:00',
-        setor: 'Cadeira Numerada',
-        quantidade: 1,
-        precoUnitario: 250.00,
-        imagem: '',
-      },
-      {
-        id: 3,
-        evento: 'Stand Up — Noite de Gala',
-        local: 'Teatro Municipal, BH',
-        data: '30 Jan 2026',
-        horario: '20:30',
-        setor: 'Plateia A',
-        quantidade: 3,
-        precoUnitario: 95.00,
-        imagem: '',
-      },
-    ];
+    this.carregarCarrinho();
+  }
+
+  carregarCarrinho(): void {
+    const storedUser = localStorage.getItem('usuarioLogado');
+    if (storedUser) {
+      const usuario = JSON.parse(storedUser);
+      const cartKey = `carrinho_usuario_${usuario.id}`;
+      const cartStored = localStorage.getItem(cartKey);
+      if (cartStored) {
+        const rawCart = JSON.parse(cartStored);
+        this.itens = rawCart.map((item: any) => ({
+          id: item.eventoId,
+          evento: item.titulo,
+          local: item.local,
+          data: item.data,
+          horario: item.horario,
+          setor: 'Ingresso Geral',
+          quantidade: item.quantidade,
+          precoUnitario: item.preco,
+          imagem: '',
+        }));
+      }
+    }
+  }
+
+  salvarCarrinho(): void {
+    const storedUser = localStorage.getItem('usuarioLogado');
+    if (storedUser) {
+      const usuario = JSON.parse(storedUser);
+      const cartKey = `carrinho_usuario_${usuario.id}`;
+      
+      const cartToSave = this.itens.map(item => ({
+        eventoId: item.id,
+        titulo: item.evento,
+        local: item.local,
+        data: item.data,
+        horario: item.horario,
+        preco: item.precoUnitario,
+        quantidade: item.quantidade
+      }));
+
+      localStorage.setItem(cartKey, JSON.stringify(cartToSave));
+    }
   }
 
   get subtotal(): number {
@@ -106,12 +116,16 @@ export class CarrinhoComponent implements OnInit {
   }
 
   aumentarQuantidade(item: ItemCarrinho): void {
-    if (item.quantidade < 10) item.quantidade++;
+    if (item.quantidade < 10) {
+      item.quantidade++;
+      this.salvarCarrinho();
+    }
   }
 
   diminuirQuantidade(item: ItemCarrinho): void {
     if (item.quantidade > 1) {
       item.quantidade--;
+      this.salvarCarrinho();
     } else {
       this.removerItem(item.id);
     }
@@ -122,6 +136,7 @@ export class CarrinhoComponent implements OnInit {
     setTimeout(() => {
       this.itens = this.itens.filter((i) => i.id !== id);
       this.itemRemovidoId = null;
+      this.salvarCarrinho();
     }, 320);
   }
 

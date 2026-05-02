@@ -1,0 +1,74 @@
+<!-- Banner Superior -->
+<div class="banner-superior" *ngIf="bannersuperiorVisivel && !usuarioLogado">
+  <nav class="banner-superior__nav">
+    <a href="#" class="banner-superior__link" routerLink="/new-event">É Produtor?</a>
+    <a href="#" class="banner-superior__link" routerLink="/faq">Como funciona</a>
+    <button class="banner-superior__fechar" (click)="fecharBannerSuperior()" aria-label="Fechar banner">
+      <span class="material-icons">close</span>
+    </button>
+  </nav>
+</div>
+
+<!-- Header Principal -->
+<header class="header">
+  <div class="header__container">
+    <a routerLink="/" class="header__logo">
+      <span class="header__logo-icone">EE</span>
+      <span class="header__logo-texto">
+        <span class="header__logo-linha1">EVENCE</span>
+        <span class="header__logo-linha2">EVENTS</span>
+      </span>
+    </a>
+
+    <div class="header__acoes">
+      <!-- Usuário não logado -->
+      <a routerLink="/login" class="header__btn-texto" *ngIf="!usuarioLogado">
+        Entrar
+      </a>
+      
+      <!-- Usuário logado -->
+      <div class="header__usuario" *ngIf="usuarioLogado">
+        <button class="avatar" (click)="toggleDropdown()" [attr.aria-expanded]="dropdownAberto">
+          {{ getIniciais(usuarioLogado?.nome || '') }}
+        </button>
+        
+        <div class="dropdown-menu" *ngIf="dropdownAberto">
+          <p class="dropdown-menu__nome">Olá, {{ nomeCurto(usuarioLogado?.nome || '') }}!</p>
+          <hr class="dropdown-menu__div">
+          <a routerLink="/" class="dropdown-menu__link">
+            <span class="material-icons">person</span> Meu Perfil
+          </a>
+          <button class="dropdown-menu__link dropdown-menu__link--sair" (click)="logout()">
+            <span class="material-icons">logout</span> Sair
+          </button>
+        </div>
+      </div>
+
+      <button class="header__btn-icone" aria-label="Carrinho" routerLink="/carrinho">
+        <span class="material-icons">shopping_cart</span>
+      </button>
+      <button class="header__btn-icone" (click)="toggleMenu()" aria-label="Menu">
+        <span class="material-icons">menu</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Menu Mobile Overlay -->
+<div class="menu-overlay" [class.menu-overlay--ativo]="menuAberto" (click)="toggleMenu()">
+  <nav class="menu-mobile" (click)="$event.stopPropagation()">
+    <button class="menu-mobile__fechar" (click)="toggleMenu()">
+      <span class="material-icons">close</span>
+    </button>
+    <ul class="menu-mobile__lista">
+      <li><a class="menu-mobile__link" routerLink="/">Início</a></li>
+      <li><a class="menu-mobile__link" routerLink="/eventos">Eventos</a></li>
+      <li><a href="#" class="menu-mobile__link" routerLink="/faq">Como Funciona</a></li>
+      
+      <!-- Lógica de login no menu mobile -->
+      <li *ngIf="!usuarioLogado"><a class="menu-mobile__link" routerLink="/login">Entrar / Cadastrar</a></li>
+      <li *ngIf="usuarioLogado"><a class="menu-mobile__link" routerLink="/">Meu Perfil ({{ nomeCurto(usuarioLogado?.nome || '') }})</a></li>
+      <li *ngIf="usuarioLogado"><button class="menu-mobile__link menu-mobile__link--sair" (click)="logout()">Sair da Conta</button></li>
+    </ul>
+  </nav>
+</div>

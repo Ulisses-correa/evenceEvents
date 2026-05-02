@@ -1,0 +1,142 @@
+<app-header></app-header>
+
+<!-- Conteúdo -->
+<main class="detalhes-main">
+  <!-- Loading -->
+  <div class="loading" *ngIf="carregando">
+    <div class="spinner"></div>
+    <p>Buscando detalhes do evento...</p>
+  </div>
+
+  <!-- Erro -->
+  <div class="erro" *ngIf="erro">
+    <span class="material-icons" style="font-size: 4rem; color: #ff5252;">error_outline</span>
+    <h2>Evento não encontrado</h2>
+    <p>O evento que você está procurando não existe ou foi removido.</p>
+    <a routerLink="/eventos" style="color: var(--cor-primaria); font-weight: bold; text-decoration: none;">Voltar para lista de eventos</a>
+  </div>
+
+  <!-- Evento -->
+  <div class="evento-wrapper" *ngIf="!carregando && !erro && evento">
+    
+    <!-- Hero Section -->
+    <section class="detalhes-hero">
+      <div class="detalhes-hero__overlay"></div>
+      <div class="detalhes-hero__container">
+        <div class="detalhes-hero__conteudo">
+          <div class="detalhes-hero__badges">
+            <span class="badge badge--destaque" *ngIf="evento.destaque">
+              <span class="material-icons">star</span> Destaque
+            </span>
+            <span class="badge badge--esgotado" *ngIf="evento.esgotado">
+              Esgotado
+            </span>
+          </div>
+          <h1 class="detalhes-hero__titulo">{{ evento.titulo }}</h1>
+          <div class="detalhes-hero__info-rapida">
+            <span class="info-item">
+              <span class="material-icons">calendar_today</span>
+              {{ evento.data }} às {{ evento.horario }}
+            </span>
+            <span class="info-item">
+              <span class="material-icons">location_on</span>
+              {{ evento.cidade }}, {{ evento.estado }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Conteúdo Principal -->
+    <div class="detalhes-layout">
+      <div class="detalhes-layout__container">
+        <div class="detalhes-layout__grid">
+          
+          <!-- Lado Esquerdo: Info Detalhada -->
+          <div class="detalhes-corpo">
+            <section class="info-secao">
+              <h2 class="info-secao__titulo">Sobre o Evento</h2>
+              <p class="info-secao__texto" *ngIf="evento.descricaoLonga">
+                {{ evento.descricaoLonga }}
+              </p>
+              <p class="info-secao__texto" *ngIf="!evento.descricaoLonga">
+                Prepare-se para uma experiência única! O {{ evento.titulo }} traz o melhor do entretenimento para {{ evento.cidade }}. Garanta seu lugar e não fique de fora deste grande acontecimento.
+              </p>
+            </section>
+
+            <section class="info-secao">
+              <h2 class="info-secao__titulo">Informações Importantes</h2>
+              <div class="info-detalhes">
+                <div class="info-card">
+                  <span class="material-icons info-card__icone">place</span>
+                  <div class="info-card__texto">
+                    <h3>Localização</h3>
+                    <p>{{ evento.local }}</p>
+                    <p>{{ evento.cidade }}, {{ evento.estado }}</p>
+                  </div>
+                </div>
+                <div class="info-card">
+                  <span class="material-icons info-card__icone">category</span>
+                  <div class="info-card__texto">
+                    <h3>Categoria</h3>
+                    <p style="text-transform: capitalize;">{{ evento.categoria }}</p>
+                  </div>
+                </div>
+                <div class="info-card">
+                  <span class="material-icons info-card__icone">schedule</span>
+                  <div class="info-card__texto">
+                    <h3>Data e Horário</h3>
+                    <p>{{ evento.data }}</p>
+                    <p>Abertura dos portões: {{ evento.horario }}</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Lado Direito: Card de Compra (Sticky) -->
+          <aside class="detalhes-sidebar">
+            <div class="checkout-card">
+              <div class="checkout-card__cabecalho">
+                <span class="checkout-card__label">Ingressos a partir de</span>
+                <span class="checkout-card__preco">{{ formatarPreco(evento.precoMinimo) }}</span>
+              </div>
+
+              <div class="checkout-card__corpo" *ngIf="!evento.esgotado">
+                <div class="seletor-quantidade">
+                  <span class="seletor-quantidade__label">Quantidade de ingressos</span>
+                  <div class="seletor-quantidade__controles">
+                    <button class="btn-qty" (click)="diminuirQuantidade()" [disabled]="quantidade <= 1">
+                      <span class="material-icons">remove</span>
+                    </button>
+                    <span class="qty-valor">{{ quantidade }}</span>
+                    <button class="btn-qty" (click)="aumentarQuantidade()" [disabled]="quantidade >= 10">
+                      <span class="material-icons">add</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="total-resumo">
+                  <span class="total-resumo__label">Total</span>
+                  <span class="total-resumo__valor">{{ formatarPreco(evento.precoMinimo * quantidade) }}</span>
+                </div>
+
+                <button class="btn-comprar" (click)="adicionarAoCarrinho()">
+                  Adicionar ao Carrinho
+                  <span class="material-icons">shopping_cart</span>
+                </button>
+              </div>
+
+              <div class="checkout-card__esgotado" *ngIf="evento.esgotado">
+                <span class="material-icons">error_outline</span>
+                <p>Este evento está com ingressos esgotados.</p>
+                <button class="btn-voltar" routerLink="/eventos">Ver outros eventos</button>
+              </div>
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

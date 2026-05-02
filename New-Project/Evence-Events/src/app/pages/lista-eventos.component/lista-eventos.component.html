@@ -1,0 +1,438 @@
+<app-header></app-header>
+
+<div class="lista-page">
+
+  <!-- ============================================================
+       HEADER DA PÁGINA
+       Botão voltar + título + contador de resultados
+       ============================================================ -->
+  <header class="page-header">
+    <div class="page-header__container">
+      <!-- Botão de voltar para a landing -->
+      <a routerLink="/" class="page-header__voltar">
+        <span class="material-icons">arrow_back</span>
+        <span>Voltar</span>
+      </a>
+
+      <div class="page-header__centro">
+        <h1 class="page-header__titulo">Explorar Eventos</h1>
+        <!-- Contador dinâmico de resultados -->
+        <span class="page-header__contador">
+          {{ totalEncontrados }} {{ totalEncontrados === 1 ? 'evento' : 'eventos' }} encontrado{{ totalEncontrados === 1 ? '' : 's' }}
+        </span>
+      </div>
+
+      <!-- Botão de filtros — visível apenas no mobile -->
+      <button
+        class="page-header__filtros-btn"
+        (click)="toggleFiltrosMobile()"
+        aria-label="Abrir filtros"
+      >
+        <span class="material-icons">tune</span>
+        Filtros
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       BARRA DE BUSCA + CONTROLES SUPERIORES
+       Busca por texto, seletor de ordenação e toggle de visualização
+       ============================================================ -->
+  <div class="controles-barra">
+    <div class="controles-barra__container">
+
+      <!-- Campo de busca por texto -->
+      <div class="busca-campo" [class.busca-campo--ativo]="buscaTermo">
+        <span class="material-icons busca-campo__icone">search</span>
+        <input
+          type="text"
+          class="busca-campo__input"
+          placeholder="Buscar por evento, local ou cidade..."
+          [(ngModel)]="buscaTermo"
+          (ngModelChange)="onBuscaChange()"
+          aria-label="Buscar eventos"
+          id="busca-eventos-input"
+        />
+        <!-- Botão limpar busca — só aparece quando há texto -->
+        <button
+          class="busca-campo__limpar"
+          *ngIf="buscaTermo"
+          (click)="limparBusca()"
+          aria-label="Limpar busca"
+        >
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="controles-barra__direita">
+        <!-- Botão toggle filtros desktop -->
+        <button
+          class="toggle-filtros-desktop"
+          (click)="toggleFiltrosPainel()"
+          [attr.aria-pressed]="filtrosPainelVisivel"
+          aria-label="Mostrar/ocultar filtros"
+          id="btn-toggle-filtros"
+        >
+          <span class="material-icons">{{ filtrosPainelVisivel ? 'filter_list_off' : 'filter_list' }}</span>
+          <span class="toggle-filtros-desktop__label">Filtros</span>
+        </button>
+
+        <!-- Seletor de ordenação -->
+        <div class="select-wrap">
+          <span class="material-icons select-wrap__icone">sort</span>
+          <select
+            class="select-ordenacao"
+            [(ngModel)]="ordenacaoAtiva"
+            (ngModelChange)="mudarOrdenacao($event)"
+            aria-label="Ordenar eventos"
+            id="select-ordenacao"
+          >
+            <option *ngFor="let op of opcoesOrdenacao" [value]="op.valor">
+              {{ op.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Toggle de modo de visualização: grade vs lista -->
+        <div class="toggle-visualizacao" role="group" aria-label="Modo de visualização">
+          <button
+            class="toggle-visualizacao__btn"
+            [class.toggle-visualizacao__btn--ativo]="modoVisualizacao === 'grid'"
+            (click)="alternarVisualizacao('grid')"
+            aria-label="Visualização em grade"
+            id="btn-visualizacao-grid"
+          >
+            <span class="material-icons">grid_view</span>
+          </button>
+          <button
+            class="toggle-visualizacao__btn"
+            [class.toggle-visualizacao__btn--ativo]="modoVisualizacao === 'lista'"
+            (click)="alternarVisualizacao('lista')"
+            aria-label="Visualização em lista"
+            id="btn-visualizacao-lista"
+          >
+            <span class="material-icons">view_list</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       LAYOUT PRINCIPAL: FILTROS + CONTEÚDO
+       ============================================================ -->
+  <div class="layout-principal">
+
+    <!-- ----------------------------------------------------------
+         OVERLAY MOBILE — fecha o painel de filtros ao clicar fora
+         ---------------------------------------------------------- -->
+    <div
+      class="filtros-overlay"
+      [class.filtros-overlay--ativo]="filtrosMobileAberto"
+      (click)="toggleFiltrosMobile()"
+      aria-hidden="true"
+    ></div>
+
+    <div class="layout-principal__container" [class.layout-principal__container--sem-filtros]="!filtrosPainelVisivel">
+
+      <!-- ----------------------------------------------------------
+           PAINEL DE FILTROS LATERAL
+           ---------------------------------------------------------- -->
+      <aside
+        class="filtros-painel"
+        [class.filtros-painel--aberto]="filtrosMobileAberto"
+        [class.filtros-painel--oculto]="!filtrosPainelVisivel"
+        aria-label="Filtros de eventos"
+      >
+        <!-- Cabeçalho do painel (mobile) -->
+        <div class="filtros-painel__cabecalho">
+          <h2 class="filtros-painel__titulo">
+            <span class="material-icons">tune</span>
+            Filtros
+          </h2>
+          <button
+            class="filtros-painel__fechar"
+            (click)="toggleFiltrosMobile()"
+            aria-label="Fechar filtros"
+          >
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+
+        <!-- Grupo: Categorias -->
+        <div class="filtro-grupo">
+          <h3 class="filtro-grupo__titulo">Categoria</h3>
+          <ul class="filtro-categorias">
+            <li *ngFor="let cat of categorias">
+              <button
+                class="filtro-categoria-btn"
+                [class.filtro-categoria-btn--ativa]="categoriaAtiva === cat.id"
+                (click)="selecionarCategoria(cat.id)"
+                [attr.aria-pressed]="categoriaAtiva === cat.id"
+              >
+                <span class="material-icons filtro-categoria-btn__icone">{{ cat.icone }}</span>
+                <span>{{ cat.nome }}</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Divisor -->
+        <div class="filtro-divisor"></div>
+
+        <!-- Grupo: Preço máximo -->
+        <div class="filtro-grupo">
+          <h3 class="filtro-grupo__titulo">Preço máximo</h3>
+          <div class="filtro-preco">
+            <!-- Valor selecionado -->
+            <div class="filtro-preco__valor-wrap">
+              <span class="filtro-preco__label">até</span>
+              <span class="filtro-preco__valor">{{ formatarPreco(precoMaximo) }}</span>
+            </div>
+            <!-- Slider de preço -->
+            <input
+              type="range"
+              class="filtro-preco__slider"
+              [min]="0"
+              [max]="1000"
+              [step]="25"
+              [(ngModel)]="precoMaximo"
+              (ngModelChange)="aplicarFiltros()"
+              aria-label="Preço máximo"
+              id="slider-preco"
+            />
+            <!-- Legenda dos extremos -->
+            <div class="filtro-preco__legenda">
+              <span>Gratuito</span>
+              <span>R$ 1.000+</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divisor -->
+        <div class="filtro-divisor"></div>
+
+        <!-- Grupo: Disponibilidade -->
+        <div class="filtro-grupo">
+          <h3 class="filtro-grupo__titulo">Disponibilidade</h3>
+          <label class="filtro-toggle" for="toggle-disponivel">
+            <input
+              type="checkbox"
+              class="filtro-toggle__input"
+              [(ngModel)]="apenasDisponiveis"
+              (ngModelChange)="aplicarFiltros()"
+              id="toggle-disponivel"
+            />
+            <span class="filtro-toggle__track">
+              <span class="filtro-toggle__thumb"></span>
+            </span>
+            <span class="filtro-toggle__label">Somente disponíveis</span>
+          </label>
+        </div>
+
+      </aside>
+
+      <!-- ----------------------------------------------------------
+           ÁREA DE CONTEÚDO — eventos filtrados
+           ---------------------------------------------------------- -->
+      <main class="eventos-conteudo">
+
+        <!-- Label de resultado de busca -->
+        <div class="busca-resultado" *ngIf="buscaTermo">
+          <span class="material-icons">search</span>
+          <span>
+            Resultados para <strong>"{{ buscaTermo }}"</strong>
+            na categoria <strong>{{ labelCategoriaAtiva }}</strong>
+          </span>
+        </div>
+
+        <!-- Estado vazio — nenhum evento encontrado -->
+        <div class="estado-vazio" *ngIf="eventosFiltrados.length === 0">
+          <div class="estado-vazio__icone-wrap">
+            <span class="material-icons estado-vazio__icone">event_busy</span>
+          </div>
+          <h2 class="estado-vazio__titulo">Nenhum evento encontrado</h2>
+          <p class="estado-vazio__texto">
+            Tente ajustar os filtros ou buscar por outro termo.
+          </p>
+          <button
+            class="estado-vazio__btn"
+            (click)="limparBusca(); selecionarCategoria('todas')"
+          >
+            Limpar filtros
+          </button>
+        </div>
+
+        <!-- --------------------------------------------------------
+             MODO GRADE — cards em grid 2 ou 3 colunas
+             -------------------------------------------------------- -->
+        <div
+          class="eventos-grid"
+          *ngIf="eventosFiltrados.length > 0 && modoVisualizacao === 'grid'"
+        >
+          <article
+            class="evento-card"
+            *ngFor="let evento of eventosFiltrados"
+            [class.evento-card--esgotado]="evento.esgotado"
+            [routerLink]="['/eventos', evento.id]"
+            style="cursor: pointer;"
+          >
+            <!-- Imagem / Placeholder com gradiente -->
+            <div class="evento-card__thumb">
+              <!-- Placeholder com gradiente enquanto não há imagem real -->
+              <div class="evento-card__thumb-placeholder">
+                <span class="material-icons evento-card__thumb-icone">confirmation_number</span>
+              </div>
+
+              <!-- Badge de destaque -->
+              <span class="evento-card__badge evento-card__badge--destaque" *ngIf="evento.destaque">
+                <span class="material-icons">star</span>
+                Destaque
+              </span>
+
+              <!-- Badge de esgotado -->
+              <span class="evento-card__badge evento-card__badge--esgotado" *ngIf="evento.esgotado">
+                Esgotado
+              </span>
+
+              <!-- Badge quase esgotado -->
+              <span class="evento-card__badge evento-card__badge--urgente" *ngIf="quaseEsgotado(evento)">
+                <span class="material-icons">local_fire_department</span>
+                Quase esgotado
+              </span>
+            </div>
+
+            <!-- Corpo do card -->
+            <div class="evento-card__corpo">
+              <div class="evento-card__meta">
+                <!-- Data e horário -->
+                <span class="evento-card__data">
+                  <span class="material-icons">calendar_today</span>
+                  {{ evento.data }} · {{ evento.horario }}
+                </span>
+              </div>
+
+              <!-- Título do evento -->
+              <h3 class="evento-card__titulo">{{ evento.titulo }}</h3>
+
+              <!-- Local -->
+              <p class="evento-card__local">
+                <span class="material-icons">location_on</span>
+                {{ evento.local }}, {{ evento.cidade }}/{{ evento.estado }}
+              </p>
+
+              <!-- Barra de disponibilidade -->
+              <div class="evento-card__disponibilidade" *ngIf="!evento.esgotado">
+                <div class="disponibilidade-barra">
+                  <div
+                    class="disponibilidade-barra__preenchimento"
+                    [style.width.%]="percentualVendido(evento)"
+                    [class.disponibilidade-barra__preenchimento--critico]="quaseEsgotado(evento)"
+                  ></div>
+                </div>
+                <span class="disponibilidade-texto">
+                  {{ percentualVendido(evento) }}% vendido
+                </span>
+              </div>
+
+              <!-- Rodapé do card: preço + ação -->
+              <div class="evento-card__rodape">
+                <div class="evento-card__preco-wrap">
+                  <span class="evento-card__preco-label">A partir de</span>
+                  <span class="evento-card__preco">{{ formatarPreco(evento.precoMinimo) }}</span>
+                </div>
+
+                <!-- Botão de ação -->
+                <button
+                  class="evento-card__btn"
+                  [class.evento-card__btn--esgotado]="evento.esgotado"
+                  [disabled]="evento.esgotado"
+                  [attr.aria-label]="'Ver ingressos para ' + evento.titulo"
+                >
+                  <span *ngIf="!evento.esgotado">Ver ingressos</span>
+                  <span *ngIf="evento.esgotado">Esgotado</span>
+                  <span class="material-icons" *ngIf="!evento.esgotado">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- --------------------------------------------------------
+             MODO LISTA — cards em linha horizontal
+             -------------------------------------------------------- -->
+        <div
+          class="eventos-lista"
+          *ngIf="eventosFiltrados.length > 0 && modoVisualizacao === 'lista'"
+        >
+          <article
+            class="evento-lista-item"
+            *ngFor="let evento of eventosFiltrados"
+            [class.evento-lista-item--esgotado]="evento.esgotado"
+            [routerLink]="['/eventos', evento.id]"
+            style="cursor: pointer;"
+          >
+            <!-- Thumb menor na lista -->
+            <div class="evento-lista-item__thumb">
+              <div class="evento-lista-item__thumb-placeholder">
+                <span class="material-icons">confirmation_number</span>
+              </div>
+              <!-- Badge de destaque na lista -->
+              <span class="evento-lista-item__badge" *ngIf="evento.destaque">
+                <span class="material-icons">star</span>
+              </span>
+            </div>
+
+            <!-- Informações principais -->
+            <div class="evento-lista-item__info">
+              <h3 class="evento-lista-item__titulo">{{ evento.titulo }}</h3>
+              <div class="evento-lista-item__detalhes">
+                <span class="evento-lista-item__detalhe">
+                  <span class="material-icons">calendar_today</span>
+                  {{ evento.data }} · {{ evento.horario }}
+                </span>
+                <span class="evento-lista-item__detalhe">
+                  <span class="material-icons">location_on</span>
+                  {{ evento.local }}, {{ evento.cidade }}/{{ evento.estado }}
+                </span>
+              </div>
+
+              <!-- Barra de disponibilidade (lista) -->
+              <div class="evento-lista-item__disponibilidade" *ngIf="!evento.esgotado && quaseEsgotado(evento)">
+                <span class="disponibilidade-alerta">
+                  <span class="material-icons">local_fire_department</span>
+                  Quase esgotado — {{ percentualVendido(evento) }}% vendido
+                </span>
+              </div>
+
+              <!-- Badge esgotado inline na lista -->
+              <span class="evento-lista-item__esgotado-badge" *ngIf="evento.esgotado">
+                Esgotado
+              </span>
+            </div>
+
+            <!-- Preço e ação (lado direito) -->
+            <div class="evento-lista-item__acao">
+              <div class="evento-lista-item__preco-wrap">
+                <span class="evento-lista-item__preco-label">A partir de</span>
+                <span class="evento-lista-item__preco">{{ formatarPreco(evento.precoMinimo) }}</span>
+              </div>
+              <button
+                class="evento-lista-item__btn"
+                [class.evento-lista-item__btn--esgotado]="evento.esgotado"
+                [disabled]="evento.esgotado"
+                [attr.aria-label]="'Ver ingressos para ' + evento.titulo"
+              >
+                <span *ngIf="!evento.esgotado">Ver ingressos</span>
+                <span *ngIf="evento.esgotado">Esgotado</span>
+                <span class="material-icons" *ngIf="!evento.esgotado">arrow_forward</span>
+              </button>
+            </div>
+          </article>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+</div>

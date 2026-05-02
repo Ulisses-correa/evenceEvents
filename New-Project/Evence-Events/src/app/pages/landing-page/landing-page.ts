@@ -1,99 +1,108 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from "@angular/router";
+import { RouterLink, Router } from "@angular/router";
+import { isPlatformBrowser } from '@angular/common';
+import { Inject, PLATFORM_ID } from '@angular/core';
+import { Usuario } from '../../interfaces/usuario.interface';
 
-interface Evento {
-  id: number;
-  titulo: string;
-  local: string;
-  data: string;
-  imagem: string;
-  destaque?: boolean;
-}
+import { Evento } from '../../interfaces/evento.interface';
+import { EventosService } from '../../services/services';
 
 interface Colecao {
-  id: number;
+  id: string;
   nome: string;
   icone: string;
 }
 
+import { HeaderComponent } from '../../componentes/header/header';
+
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, HeaderComponent],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
 })
 export class LandingPageComponent implements OnInit, OnDestroy {
-  menuAberto = false;
-  bannersuperiorVisivel = true;
   buscaTermo = '';
   slideAtual = 0;
   autoplayInterval: any;
 
-  eventos: Evento[] = [
-    {
-      id: 1,
-      titulo: 'Festival de Verão 2026',
-      local: 'São Paulo, SP',
-      data: '15 Jan 2026',
-      imagem: '',
-      destaque: true,
-    },
-    {
-      id: 2,
-      titulo: 'Show do Ano',
-      local: 'Rio de Janeiro, RJ',
-      data: '22 Jan 2026',
-      imagem: '',
-    },
-    {
-      id: 3,
-      titulo: 'Noite de Gala',
-      local: 'Belo Horizonte, MG',
-      data: '30 Jan 2026',
-      imagem: '',
-    },
-  ];
+  eventos: Evento[] = [];
+  eventoEmDestaque: Evento | null = null;
+  private subscription = new Subscription();
+
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router,
+    private eventosService: EventosService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   colecoes: Colecao[] = [
-    { id: 1, nome: 'Festas e Shows', icone: 'music_note' },
-    { id: 2, nome: 'Teatros e Espetáculos', icone: 'theater_comedy' },
-    { id: 3, nome: 'Stand Up', icone: 'mic' },
-    { id: 4, nome: 'Esportes', icone: 'sports_soccer' },
-    { id: 5, nome: 'Gastronomia', icone: 'restaurant' },
-    { id: 6, nome: 'Arte e Cultura', icone: 'palette' },
+    { id: 'shows', nome: 'Festas e Shows', icone: 'music_note' },
+    { id: 'teatro', nome: 'Teatros e Espetáculos', icone: 'theater_comedy' },
+    { id: 'standup', nome: 'Stand Up', icone: 'mic' },
+    { id: 'esportes', nome: 'Esportes', icone: 'sports_soccer' },
+    { id: 'gastro', nome: 'Gastronomia', icone: 'restaurant' },
+    { id: 'cultura', nome: 'Arte e Cultura', icone: 'palette' },
   ];
 
-  eventoEmDestaque: Evento = this.eventos[0];
-
   ngOnInit(): void {
-    this.iniciarAutoplay();
+    this.carregarEventosDestaque();
+  }
+
+  carregarEventosDestaque(): void {
+    console.log('[LandingPage] Iniciando busca de eventos...');
+    const sub = this.eventosService.getEventos().subscribe({
+      next: (todos) => {
+        console.log('[LandingPage] Eventos recebidos:', todos ? todos.length : 0);
+        if (!todos) return;
+        // Pega os destaques e limita a 10
+        this.eventos = todos.filter(e => e.destaque).slice(0, 10);
+        console.log('[LandingPage] Eventos em destaque:', this.eventos.length);
+        if (this.eventos.length > 0) {
+          this.eventoEmDestaque = this.eventos[0];
+          this.iniciarAutoplay();
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('[LandingPage] Erro ao carregar destaques:', err)
+    });
+    this.subscription.add(sub);
   }
 
   ngOnDestroy(): void {
     this.pararAutoplay();
+    this.subscription.unsubscribe();
   }
 
   iniciarAutoplay(): void {
-    this.autoplayInterval = setInterval(() => {
-      this.proximoSlide();
-    }, 4000);
+    if (isPlatformBrowser(this.platformId)) {
+      this.pararAutoplay();
+      this.autoplayInterval = setInterval(() => {
+        this.proximoSlide();
+      }, 5000);
+    }
   }
 
   pararAutoplay(): void {
     if (this.autoplayInterval) {
       clearInterval(this.autoplayInterval);
+      this.autoplayInterval = null;
     }
   }
 
   proximoSlide(): void {
+    if (this.eventos.length === 0) return;
     this.slideAtual = (this.slideAtual + 1) % this.eventos.length;
     this.eventoEmDestaque = this.eventos[this.slideAtual];
   }
 
   slideAnterior(): void {
+    if (this.eventos.length === 0) return;
     this.slideAtual =
       (this.slideAtual - 1 + this.eventos.length) % this.eventos.length;
     this.eventoEmDestaque = this.eventos[this.slideAtual];
@@ -106,15 +115,11 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     this.iniciarAutoplay();
   }
 
-  fecharBannerSuperior(): void {
-    this.bannersuperiorVisivel = false;
-  }
-
-  toggleMenu(): void {
-    this.menuAberto = !this.menuAberto;
-  }
-
   buscar(): void {
-    console.log('Buscando:', this.buscaTermo);
+    if (this.buscaTermo.trim()) {
+      this.router.navigate(['/eventos'], { queryParams: { q: this.buscaTermo.trim() } });
+    } else {
+      this.router.navigate(['/eventos']);
+    }
   }
 }

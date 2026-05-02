@@ -7,7 +7,8 @@ import {
   Validators,
   AbstractControl,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { EventosService } from '../../services/services';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,11 @@ export class LoginComponent implements OnInit {
   erroGeral = '';
   loginSucesso = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private eventosService: EventosService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -81,7 +86,7 @@ export class LoginComponent implements OnInit {
     this.senhaVisivel = !this.senhaVisivel;
   }
 
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
@@ -90,30 +95,27 @@ export class LoginComponent implements OnInit {
     this.carregando = true;
     this.erroGeral = '';
 
-    // Simula chamada à API
-    try {
-      await new Promise((res) => setTimeout(res, 1800));
+    const { email, senha } = this.loginForm.value;
 
-      const { email } = this.loginForm.value;
-
-      // Simulação: só aceita um e-mail específico para demo
-      if (email === 'erro@teste.com') {
-        throw new Error('E-mail ou senha incorretos.');
+    this.eventosService.login(email, senha).subscribe({
+      next: (usuario) => {
+        this.carregando = false;
+        if (usuario) {
+          this.loginSucesso = true;
+          // Salva no localStorage para simular sessão
+          localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 1500);
+        } else {
+          this.erroGeral = 'E-mail ou senha incorretos.';
+        }
+      },
+      error: (err) => {
+        this.carregando = false;
+        this.erroGeral = 'Erro inesperado ao conectar no servidor.';
+        console.error(err);
       }
-
-      this.loginSucesso = true;
-    } catch (err: any) {
-      this.erroGeral = err.message || 'Erro inesperado. Tente novamente.';
-    } finally {
-      this.carregando = false;
-    }
-  }
-
-  loginComGoogle(): void {
-    console.log('Login com Google iniciado');
-  }
-
-  loginComFacebook(): void {
-    console.log('Login com Facebook iniciado');
+    });
   }
 }

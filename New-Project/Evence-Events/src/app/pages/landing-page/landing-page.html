@@ -1,53 +1,4 @@
-<!-- Banner Superior -->
-<div class="banner-superior" *ngIf="bannersuperiorVisivel">
-  <nav class="banner-superior__nav">
-    <a href="#" class="banner-superior__link" routerLink="new">É Produtor?</a>
-    <a href="#" class="banner-superior__link" routerLink="new">Criar evento</a>
-    <a href="#" class="banner-superior__link" routerLink="faq">Como funciona</a>
-    <button class="banner-superior__fechar" (click)="fecharBannerSuperior()" aria-label="Fechar banner">
-      <span class="material-icons">close</span>
-    </button>
-  </nav>
-</div>
-
-<!-- Header Principal -->
-<header class="header">
-  <div class="header__container">
-    <a href="#" class="header__logo">
-      <span class="header__logo-icone">EE</span>
-      <span class="header__logo-texto">
-        <span class="header__logo-linha1">EVENCE</span>
-        <span class="header__logo-linha2">EVENTS</span>
-      </span>
-    </a>
-
-    <div class="header__acoes">
-      <button class="header__btn-icone" aria-label="Carrinho" routerLink="carrinho">
-        <span class="material-icons">shopping_cart</span>
-      </button>
-      <button class="header__btn-icone" (click)="toggleMenu()" aria-label="Menu">
-        <span class="material-icons">menu</span>
-      </button>
-    </div>
-  </div>
-</header>
-
-<!-- Menu Mobile Overlay -->
-<div class="menu-overlay" [class.menu-overlay--ativo]="menuAberto" (click)="toggleMenu()">
-  <nav class="menu-mobile" (click)="$event.stopPropagation()">
-    <button class="menu-mobile__fechar" (click)="toggleMenu()">
-      <span class="material-icons">close</span>
-    </button>
-    <ul class="menu-mobile__lista">
-      <li><a href="#" class="menu-mobile__link">Início</a></li>
-      <li><a href="#" class="menu-mobile__link">Eventos</a></li>
-      <li><a href="#" class="menu-mobile__link" routerLink = "new">É Produtor?</a></li>
-      <li><a href="#" class="menu-mobile__link" routerLink = "new">Criar Evento</a></li>
-      <li><a href="#" class="menu-mobile__link" routerLink = "faq">Como Funciona</a></li>
-      <li><a href="#" class="menu-mobile__link" routerLink = "login">Minha Conta</a></li>
-    </ul>
-  </nav>
-</div>
+<app-header></app-header>
 
 <!-- Conteúdo Principal -->
 <main class="main">
@@ -75,7 +26,7 @@
   </section>
 
   <!-- Carrossel de Eventos em Destaque -->
-  <section class="carrossel-secao">
+  <section class="carrossel-secao" *ngIf="eventos.length > 0">
     <div class="carrossel-secao__container">
       <div class="carrossel" (mouseenter)="pararAutoplay()" (mouseleave)="iniciarAutoplay()">
 
@@ -90,8 +41,10 @@
             class="carrossel__slide"
             *ngFor="let evento of eventos; let i = index"
             [class.carrossel__slide--ativo]="i === slideAtual"
-            [class.carrossel__slide--anterior]="i === (slideAtual - 1 + eventos.length) % eventos.length"
-            [class.carrossel__slide--proximo]="i === (slideAtual + 1) % eventos.length"
+            [class.carrossel__slide--anterior]="eventos.length > 0 && i === (slideAtual - 1 + eventos.length) % eventos.length"
+            [class.carrossel__slide--proximo]="eventos.length > 0 && i === (slideAtual + 1) % eventos.length"
+            [routerLink]="['/eventos', evento.id]"
+            style="cursor: pointer;"
           >
             <div class="carrossel__card">
               <div class="carrossel__imagem-container">
@@ -121,10 +74,16 @@
       </div>
 
       <!-- Info do Evento Atual -->
-      <div class="evento-info">
-        <h2 class="evento-info__titulo">{{ eventoEmDestaque.titulo }}</h2>
-        <p class="evento-info__local">{{ eventoEmDestaque.local }}</p>
-        <p class="evento-info__data">{{ eventoEmDestaque.data }}</p>
+      <div class="evento-info" *ngIf="eventoEmDestaque" [routerLink]="['/eventos', eventoEmDestaque?.id]" style="cursor: pointer;">
+        <h2 class="evento-info__titulo">{{ eventoEmDestaque?.titulo }}</h2>
+        <p class="evento-info__local">
+          <span class="material-icons" style="font-size: 1rem; margin-right: 4px; vertical-align: middle;">location_on</span>
+          {{ eventoEmDestaque?.local }}, {{ eventoEmDestaque?.cidade }}/{{ eventoEmDestaque?.estado }}
+        </p>
+        <p class="evento-info__data">
+          <span class="material-icons" style="font-size: 1rem; margin-right: 4px; vertical-align: middle;">calendar_today</span>
+          {{ eventoEmDestaque?.data }} · {{ eventoEmDestaque?.horario }}
+        </p>
       </div>
     </div>
   </section>
@@ -134,13 +93,14 @@
     <div class="colecoes-secao__container">
       <div class="colecoes-secao__cabecalho">
         <h2 class="colecoes-secao__titulo">Explore as nossas coleções</h2>
-        <a href="#" class="colecoes-secao__ver-tudo">Ver tudo</a>
+        <a class="colecoes-secao__ver-tudo" routerLink="/eventos">Ver tudo</a>
       </div>
 
       <div class="colecoes-secao__grid">
         <a
-          href="#"
           class="colecao-card"
+          [routerLink]="['/eventos']"
+          [queryParams]="{ categoria: colecao.id }"
           *ngFor="let colecao of colecoes"
         >
           <div class="colecao-card__icone-container">
@@ -158,7 +118,7 @@
       <div class="produtor-secao__conteudo">
         <h2 class="produtor-secao__titulo">É um produtor de eventos?</h2>
         <p class="produtor-secao__subtitulo">Crie e gerencie seus eventos com facilidade. Alcance mais pessoas.</p>
-        <a href="#" class="produtor-secao__btn" routerLink = "new">Criar meu evento</a>
+        <a class="produtor-secao__btn" routerLink = "new-event">Criar meu evento</a>
       </div>
     </div>
   </section>
@@ -168,13 +128,13 @@
 <!-- Footer -->
 <footer class="footer">
   <div class="footer__container">
-    <a href="#" class="footer__logo">
+    <a routerLink="/" class="footer__logo">
       <span class="footer__logo-texto">EVENCE EVENTS</span>
     </a>
     <div class="footer__links">
-      <a href="#" class="footer__link">Termos de Uso</a>
-      <a href="#" class="footer__link">Privacidade</a>
-      <a href="#" class="footer__link">Contato</a>
+      <a routerLink="/extra-infos" fragment="termos" class="footer__link">Termos de Uso</a>
+      <a routerLink="/extra-infos" fragment="privacidade" class="footer__link">Privacidade</a>
+      <a routerLink="/extra-infos" fragment="contato" class="footer__link">Contato</a>
     </div>
     <p class="footer__copy">© 2026 Evence Events. Todos os direitos reservados.</p>
   </div>

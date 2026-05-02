@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../componentes/header/header';
+HeaderComponent
 
 export interface PerguntaFaq {
   id: number;
@@ -20,7 +22,7 @@ export interface CategoriaFaq {
 @Component({
   selector: 'app-faq',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
   templateUrl: './faq.component.html',
   styleUrl: './faq.component.css',
 })

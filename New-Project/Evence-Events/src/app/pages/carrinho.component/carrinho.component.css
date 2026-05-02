@@ -773,20 +773,93 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
    MEDIA QUERIES
    ================================================================ */
 
-@media (min-width: 480px) {
-  .item-card__imagem {
-    width: 88px;
-    height: 88px;
+@media (max-width: 768px) {
+  .page-header__container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--espaco-sm);
+  }
+
+  .page-header__titulo-wrap {
+    margin-left: 0;
+    justify-content: center;
+  }
+
+  .carrinho-conteudo {
+    padding-top: var(--espaco-lg);
   }
 
   .item-card {
-    padding: var(--espaco-lg);
+    flex-direction: column;
+    gap: var(--espaco-md);
+    position: relative;
+    padding-top: 40px; /* Espaço para o botão remover absoluto */
+  }
+
+  .item-card__imagem {
+    width: 100%;
+    height: 140px;
+  }
+
+  .item-card__remover {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: var(--cor-fundo);
+    z-index: 5;
+    box-shadow: var(--sombra-sm);
+  }
+
+  .item-card__info {
+    width: 100%;
+  }
+
+  .item-card__cabecalho {
+    margin-bottom: var(--espaco-xs);
+  }
+
+  .item-card__evento {
+    font-size: 1.1rem;
+    padding-right: 20px;
+  }
+
+  .item-card__rodape {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--espaco-md);
+    padding-top: var(--espaco-sm);
+    border-top: 1px dashed var(--cor-borda);
+  }
+
+  .qtd-controle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .item-card__preco {
+    align-items: center;
+    text-align: center;
+  }
+
+  .cupom-form__campo {
+    flex-direction: column;
+  }
+
+  .cupom-form__btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .resumo-card {
+    position: static;
+    margin-top: var(--espaco-lg);
   }
 }
 
-@media (min-width: 640px) {
-  .item-card__evento {
-    font-size: 1rem;
+@media (min-width: 480px) and (max-width: 768px) {
+  .item-card__imagem {
+    height: 180px;
   }
 }
 
