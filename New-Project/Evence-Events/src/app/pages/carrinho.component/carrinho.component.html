@@ -10,7 +10,8 @@
       </a>
       <div class="page-header__titulo-wrap">
         <h1 class="page-header__titulo">Meu Carrinho</h1>
-        <span class="page-header__badge" *ngIf="totalItens > 0">{{ totalItens }} {{ totalItens === 1 ? 'ingresso' : 'ingressos' }}</span>
+        <span class="page-header__badge" *ngIf="totalItens > 0">{{ totalItens }} {{ totalItens === 1 ? 'ingresso' :
+          'ingressos' }}</span>
       </div>
     </div>
   </header>
@@ -36,11 +37,7 @@
       <section class="itens-coluna">
         <div class="itens-lista">
 
-          <div
-            class="item-card"
-            *ngFor="let item of itens"
-            [class.item-card--saindo]="itemRemovidoId === item.id"
-          >
+          <div class="item-card" *ngFor="let item of itens" [class.item-card--saindo]="itemRemovidoId === item.id">
             <!-- Imagem / Placeholder -->
             <div class="item-card__imagem">
               <div class="item-card__imagem-placeholder">
@@ -52,11 +49,7 @@
             <div class="item-card__info">
               <div class="item-card__cabecalho">
                 <h3 class="item-card__evento">{{ item.evento }}</h3>
-                <button
-                  class="item-card__remover"
-                  (click)="removerItem(item.id)"
-                  aria-label="Remover item"
-                >
+                <button class="item-card__remover" (click)="removerItem(item.id)" aria-label="Remover item">
                   <span class="material-icons">close</span>
                 </button>
               </div>
@@ -75,24 +68,16 @@
                   {{ item.setor }}
                 </span>
               </div>
-
               <div class="item-card__rodape">
                 <!-- Controle de quantidade -->
                 <div class="qtd-controle">
-                  <button
-                    class="qtd-controle__btn"
-                    (click)="diminuirQuantidade(item)"
-                    [attr.aria-label]="item.quantidade === 1 ? 'Remover item' : 'Diminuir quantidade'"
-                  >
+                  <button class="qtd-controle__btn" (click)="diminuirQuantidade(item)"
+                    [attr.aria-label]="item.quantidade === 1 ? 'Remover item' : 'Diminuir quantidade'">
                     <span class="material-icons">{{ item.quantidade === 1 ? 'delete_outline' : 'remove' }}</span>
                   </button>
                   <span class="qtd-controle__valor">{{ item.quantidade }}</span>
-                  <button
-                    class="qtd-controle__btn"
-                    (click)="aumentarQuantidade(item)"
-                    [disabled]="item.quantidade >= 10"
-                    aria-label="Aumentar quantidade"
-                  >
+                  <button class="qtd-controle__btn" (click)="aumentarQuantidade(item)"
+                    [disabled]="item.quantidade >= 10" aria-label="Aumentar quantidade">
                     <span class="material-icons">add</span>
                   </button>
                 </div>
@@ -120,7 +105,8 @@
               <span class="material-icons cupom-aplicado__icone">check_circle</span>
               <div>
                 <span class="cupom-aplicado__codigo">{{ cupomCodigo.toUpperCase() }}</span>
-                <span class="cupom-aplicado__desconto">{{ cupomDesconto * 100 | number:'1.0-0' }}% de desconto aplicado!</span>
+                <span class="cupom-aplicado__desconto">{{ cupomDesconto * 100 | number:'1.0-0' }}% de desconto
+                  aplicado!</span>
               </div>
             </div>
             <button class="cupom-aplicado__remover" (click)="removerCupom()">
@@ -130,20 +116,10 @@
 
           <div class="cupom-form" *ngIf="!cupomAplicado">
             <div class="cupom-form__campo" [class.cupom-form__campo--erro]="cupomErro">
-              <input
-                type="text"
-                class="cupom-form__input"
-                placeholder="Digite seu cupom"
-                [(ngModel)]="cupomCodigo"
-                (keyup.enter)="aplicarCupom()"
-                [disabled]="cupomCarregando"
-                maxlength="20"
-              />
-              <button
-                class="cupom-form__btn"
-                (click)="aplicarCupom()"
-                [disabled]="cupomCarregando || !cupomCodigo.trim()"
-              >
+              <input type="text" class="cupom-form__input" placeholder="Digite seu cupom" [(ngModel)]="cupomCodigo"
+                (keyup.enter)="aplicarCupom()" [disabled]="cupomCarregando" maxlength="20" />
+              <button class="cupom-form__btn" (click)="aplicarCupom()"
+                [disabled]="cupomCarregando || !cupomCodigo.trim()">
                 <span class="spinner-sm" *ngIf="cupomCarregando"></span>
                 <span *ngIf="!cupomCarregando">Aplicar</span>
               </button>
@@ -178,7 +154,8 @@
           <div class="resumo-linha">
             <span class="resumo-linha__label">
               Taxa de serviço (10%)
-              <span class="material-icons resumo-linha__tooltip" title="Taxa para manutenção da plataforma">info_outline</span>
+              <span class="material-icons resumo-linha__tooltip"
+                title="Taxa para manutenção da plataforma">info_outline</span>
             </span>
             <span class="resumo-linha__valor">{{ formatarPreco(valorTaxa) }}</span>
           </div>
@@ -194,12 +171,8 @@
             em até <strong>12x de {{ formatarPreco(total / 12) }}</strong> sem juros
           </div>
 
-          <button
-            class="btn-checkout"
-            (click)="finalizarCompra()"
-            [class.btn-checkout--carregando]="checkoutCarregando"
-            [disabled]="checkoutCarregando"
-          >
+          <button class="btn-checkout" (click)="finalizarCompra()" [class.btn-checkout--carregando]="checkoutCarregando"
+            [disabled]="checkoutCarregando">
             <ng-container *ngIf="!checkoutCarregando">
               <span class="material-icons">lock</span>
               Finalizar compra

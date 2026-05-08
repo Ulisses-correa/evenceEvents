@@ -271,6 +271,18 @@
       "aceitaTermos": true,
       "aceitaNewsletter": false,
       "isProdutor": false
+    },
+    {
+      "nome": "ESDS",
+      "email": "E@GMAIL.COM",
+      "cpf": "116.320.559-10",
+      "dataNascimento": "2013-05-01",
+      "celular": "(44) 44444-4444",
+      "senha": "hY@Qf5cRCmKmhLp",
+      "aceitaTermos": true,
+      "aceitaNewsletter": true,
+      "isProdutor": true,
+      "id": 3
     }
   ]
 }
