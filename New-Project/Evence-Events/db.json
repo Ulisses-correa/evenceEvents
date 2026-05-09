@@ -152,22 +152,6 @@
       "vendidos": 600
     },
     {
-      "id": 8,
-      "titulo": "Rock in Rio — Dia 1",
-      "local": "Cidade do Rock",
-      "cidade": "Rio de Janeiro",
-      "estado": "RJ",
-      "data": "06 Mar 2026",
-      "dataISO": "2026-03-06",
-      "horario": "14:00",
-      "categoria": "shows",
-      "precoMinimo": 350,
-      "destaque": true,
-      "esgotado": false,
-      "totalIngressos": 100000,
-      "vendidos": 88000
-    },
-    {
       "id": 9,
       "titulo": "Comedy Weekend",
       "local": "Bourbon Street Music Hall",
@@ -214,41 +198,22 @@
       "esgotado": false,
       "totalIngressos": 10000,
       "vendidos": 9500
-    },
-    {
-      "id": 12,
-      "titulo": "Wine & Jazz Festival",
-      "local": "Parque Ibirapuera",
-      "cidade": "São Paulo",
-      "estado": "SP",
-      "data": "05 Abr 2026",
-      "dataISO": "2026-04-05",
-      "horario": "16:00",
-      "categoria": "gastro",
-      "precoMinimo": 70,
-      "destaque": false,
-      "esgotado": false,
-      "totalIngressos": 3000,
-      "vendidos": 1100
-    },
-    {
-      "id": 13,
-      "titulo": "Evento Teste Especial",
-      "local": "Espaço de Eventos",
-      "cidade": "Curitiba",
-      "estado": "PR",
-      "data": "15 Mai 2026",
-      "dataISO": "2026-05-15",
-      "horario": "20:00",
-      "categoria": "shows",
-      "precoMinimo": 50,
-      "destaque": true,
-      "esgotado": false,
-      "totalIngressos": 500,
-      "vendidos": 10
     }
   ],
   "usuarios": [
+    {
+      "id": 0,
+      "nome": "Admin Evence",
+      "email": "admin@evence.com",
+      "cpf": "000.000.000-00",
+      "dataNascimento": "2000-01-01",
+      "celular": "(11) 90000-0000",
+      "senha": "Admin@2026",
+      "aceitaTermos": true,
+      "aceitaNewsletter": false,
+      "isProdutor": false,
+      "isAdmin": true
+    },
     {
       "nome": "Kevin José Stadnick Knoll",
       "email": "kevinnknoll@gmail.com",

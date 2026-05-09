@@ -8,6 +8,7 @@ import { CadastroComponent } from './pages/cadastro.component/cadastro.component
 import { ExtraInfosComponent } from './pages/extra-infos.component/extra-infos.component';
 import { CriarEventoComponent } from './pages/criar-evento.component/criar-evento.component';
 import { DetalhesComponent } from './pages/detalhes/detalhes';
+import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import path from 'path';
 
 export const routes: Routes = [
@@ -19,5 +20,7 @@ export const routes: Routes = [
     { path: 'cadastro', component: CadastroComponent},
     { path: 'extra-infos', component: ExtraInfosComponent },
     { path: 'new-event', component: CriarEventoComponent},
-    { path: 'eventos/:id', component: DetalhesComponent }
+    { path: 'admin', component: AdminPageComponent },
+    { path: 'eventos/:id', component: DetalhesComponent },
+    
 ]

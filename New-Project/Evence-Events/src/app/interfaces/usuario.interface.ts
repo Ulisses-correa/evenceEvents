@@ -9,4 +9,5 @@ export interface Usuario {
   aceitaTermos?: boolean;
   aceitaNewsletter?: boolean;
   isProdutor?: boolean;
+  isAdmin?: boolean;
 }

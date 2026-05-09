@@ -39,4 +39,28 @@ export class EventosService {
     // Por simplicidade na demo, faremos o POST direto.
     return this.http.post<Usuario>(`${this.apiUrl}/usuarios`, usuario);
   }
+
+  // --- Gerenciamento de Eventos (Admin) ---
+
+  atualizarEvento(id: string | number, evento: Evento): Observable<Evento> {
+    return this.http.put<Evento>(`${this.apiUrl}/eventos/${id}`, evento);
+  }
+
+  deletarEvento(id: string | number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/eventos/${id}`);
+  }
+
+  // --- Gerenciamento de Usuários (Admin) ---
+
+  getUsuarios(): Observable<Usuario[]> {
+    return this.http.get<Usuario[]>(`${this.apiUrl}/usuarios`);
+  }
+
+  atualizarUsuario(id: string | number, usuario: Usuario): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.apiUrl}/usuarios/${id}`, usuario);
+  }
+
+  deletarUsuario(id: string | number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/usuarios/${id}`);
+  }
 }

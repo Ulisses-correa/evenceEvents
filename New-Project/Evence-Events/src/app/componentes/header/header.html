@@ -21,6 +21,17 @@
     </a>
 
     <div class="header__acoes">
+      <!-- Aba de Admin - Apenas para usuários admin -->
+      <a 
+        routerLink="/admin" 
+        class="header__btn-admin" 
+        *ngIf="usuarioLogado && usuarioLogado.isAdmin"
+        title="Painel de Administração"
+      >
+        <span class="material-icons">admin_panel_settings</span>
+        <span class="header__admin-texto">Admin</span>
+      </a>
+
       <!-- Usuário não logado -->
       <a routerLink="/login" class="header__btn-texto" *ngIf="!usuarioLogado">
         Entrar
@@ -34,9 +45,15 @@
         
         <div class="dropdown-menu" *ngIf="dropdownAberto">
           <p class="dropdown-menu__nome">Olá, {{ nomeCurto(usuarioLogado?.nome || '') }}!</p>
+          <p class="dropdown-menu__role" *ngIf="usuarioLogado.isAdmin">
+            <span class="material-icons">admin_panel_settings</span> Administrador
+          </p>
           <hr class="dropdown-menu__div">
           <a routerLink="/" class="dropdown-menu__link">
             <span class="material-icons">person</span> Meu Perfil
+          </a>
+          <a routerLink="/admin" class="dropdown-menu__link" *ngIf="usuarioLogado.isAdmin">
+            <span class="material-icons">admin_panel_settings</span> Painel Admin
           </a>
           <button class="dropdown-menu__link dropdown-menu__link--sair" (click)="logout()">
             <span class="material-icons">logout</span> Sair
@@ -64,6 +81,13 @@
       <li><a class="menu-mobile__link" routerLink="/">Início</a></li>
       <li><a class="menu-mobile__link" routerLink="/eventos">Eventos</a></li>
       <li><a href="#" class="menu-mobile__link" routerLink="/faq">Como Funciona</a></li>
+      
+      <!-- Aba de Admin Mobile - Apenas para usuários admin -->
+      <li *ngIf="usuarioLogado && usuarioLogado.isAdmin">
+        <a class="menu-mobile__link menu-mobile__link--admin" routerLink="/admin">
+          <span class="material-icons">admin_panel_settings</span> Painel Admin
+        </a>
+      </li>
       
       <!-- Lógica de login no menu mobile -->
       <li *ngIf="!usuarioLogado"><a class="menu-mobile__link" routerLink="/login">Entrar / Cadastrar</a></li>
