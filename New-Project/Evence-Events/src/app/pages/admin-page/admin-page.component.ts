@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { EventosService } from '../../services/services';
 import { Evento, Categoria } from '../../interfaces/evento.interface';
 import { Usuario } from '../../interfaces/usuario.interface';
@@ -20,7 +20,16 @@ export class AdminPageComponent implements OnInit {
   carregando = true;
   erroGeral = '';
   sucessoMensagem = '';
-  abaAtiva: 'eventos' | 'admins' = 'eventos';
+  abaAtiva: 'dashboard' | 'eventos' | 'admins' | 'aprovacoes' = 'dashboard';
+
+  // Estatísticas
+  stats = {
+    totalEventos: 0,
+    totalAdmins: 0,
+    totalVendas: 0,
+    receitaEstimada: 0,
+    pendentes: 0
+  };
 
   // Eventos
   eventos: Evento[] = [];
@@ -28,9 +37,13 @@ export class AdminPageComponent implements OnInit {
   buscaTermo = '';
   categoriaFiltro = 'todas';
   eventosFiltrados: Evento[] = [];
+  
+  // Solicitações (Aprovações)
+  solicitacoes: Evento[] = [];
 
-  // Modal de edição de evento
+  // Modal de edição/criação de evento
   modalAberto = false;
+  modoEdicao = false;
   eventoSelecionado: Evento | null = null;
   editarForm!: FormGroup;
   editarCarregando = false;
@@ -60,6 +73,7 @@ export class AdminPageComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
+    private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
     this.editarForm = this.fb.group({
@@ -69,12 +83,12 @@ export class AdminPageComponent implements OnInit {
       data: ['', [Validators.required]],
       horario: ['', [Validators.required]],
       categoria: ['', [Validators.required]],
-      precoMinimo: ['', [Validators.required, Validators.min(0)]],
+      precoMinimo: [0, [Validators.required, Validators.min(0)]],
       descricaoLonga: ['', [Validators.minLength(10)]],
       destaque: [false],
       esgotado: [false],
-      totalIngressos: ['', [Validators.required, Validators.min(1)]],
-      vendidos: ['', [Validators.required, Validators.min(0)]]
+      totalIngressos: [100, [Validators.required, Validators.min(1)]],
+      vendidos: [0, [Validators.required, Validators.min(0)]]
     });
 
     this.criarAdminForm = this.fb.group({
@@ -90,6 +104,21 @@ export class AdminPageComponent implements OnInit {
   ngOnInit(): void {
     this.verificarAcesso();
     this.carregarDados();
+
+    // Checar parâmetros de sucesso ou troca de aba vindo de redirecionamentos
+    this.route.queryParamMap.subscribe(params => {
+      const success = params.get('success');
+      const tab = params.get('tab');
+
+      if (success) {
+        this.sucessoMensagem = success;
+        setTimeout(() => this.sucessoMensagem = '', 5000);
+      }
+
+      if (tab && (tab === 'aprovacoes' || tab === 'eventos' || tab === 'admins' || tab === 'dashboard')) {
+        this.abaAtiva = tab as any;
+      }
+    });
   }
 
   verificarAcesso(): void {
@@ -124,6 +153,7 @@ export class AdminPageComponent implements OnInit {
       next: (eventos) => {
         this.eventos = eventos || [];
         this.aplicarFiltrosEventos();
+        this.calcularStats();
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -137,15 +167,76 @@ export class AdminPageComponent implements OnInit {
       next: (usuarios) => {
         this.usuarios = usuarios || [];
         this.aplicarFiltrosUsuarios();
-        this.carregando = false;
+        this.calcularStats();
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erro ao carregar usuários:', err);
-        this.carregando = false;
-        this.cdr.detectChanges();
       }
     });
+
+    this.eventosService.getSolicitacoes().subscribe({
+      next: (solicitacoes) => {
+        this.solicitacoes = solicitacoes || [];
+        this.calcularStats();
+        this.carregando = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar solicitações:', err);
+        this.carregando = false;
+      }
+    });
+  }
+
+  calcularStats(): void {
+    this.stats.totalEventos = this.eventos.length;
+    this.stats.totalAdmins = this.usuarios.filter(u => u.isAdmin).length;
+    this.stats.totalVendas = this.eventos.reduce((acc, e) => acc + (e.vendidos || 0), 0);
+    this.stats.receitaEstimada = this.eventos.reduce((acc, e) => acc + ((e.vendidos || 0) * (e.precoMinimo || 0)), 0);
+    this.stats.pendentes = this.solicitacoes.length;
+  }
+
+  // --- CURADORIA (APROVAÇÕES) ---
+
+  aprovarEvento(evento: Evento): void {
+    this.carregando = true;
+    this.eventosService.criarEvento(evento).subscribe({
+      next: () => {
+        this.eventosService.deletarSolicitacao(evento.id).subscribe({
+          next: () => {
+            this.sucessoMensagem = 'Evento aprovado e publicado com sucesso!';
+            this.carregarDados();
+            setTimeout(() => this.sucessoMensagem = '', 3000);
+          }
+        });
+      },
+      error: (err) => {
+        this.erroGeral = 'Erro ao aprovar evento';
+        this.carregando = false;
+      }
+    });
+  }
+
+  reprovarEvento(id: number): void {
+    if (!confirm('Tem certeza que deseja reprovar e deletar esta solicitação?')) return;
+    
+    this.carregando = true;
+    this.eventosService.deletarSolicitacao(id).subscribe({
+      next: () => {
+        this.sucessoMensagem = 'Solicitação removida.';
+        this.carregarDados();
+        setTimeout(() => this.sucessoMensagem = '', 3000);
+      },
+      error: (err) => {
+        this.erroGeral = 'Erro ao reprovar';
+        this.carregando = false;
+      }
+    });
+  }
+
+  trocarAba(aba: 'dashboard' | 'eventos' | 'admins' | 'aprovacoes'): void {
+    this.abaAtiva = aba;
   }
 
   // --- EVENTOS ---
@@ -177,7 +268,21 @@ export class AdminPageComponent implements OnInit {
     this.aplicarFiltrosEventos();
   }
 
+  abrirModalCriacao(): void {
+    this.modoEdicao = false;
+    this.eventoSelecionado = null;
+    this.editarForm.reset({
+      precoMinimo: 0,
+      totalIngressos: 100,
+      vendidos: 0,
+      destaque: false,
+      esgotado: false
+    });
+    this.modalAberto = true;
+  }
+
   abrirModalEdicao(evento: Evento): void {
+    this.modoEdicao = true;
     this.eventoSelecionado = evento;
     this.editarForm.patchValue({
       titulo: evento.titulo,
@@ -202,8 +307,8 @@ export class AdminPageComponent implements OnInit {
     this.editarForm.reset();
   }
 
-  salvarEdicao(): void {
-    if (this.editarForm.invalid || !this.eventoSelecionado) {
+  salvarEvento(): void {
+    if (this.editarForm.invalid) {
       this.editarForm.markAllAsTouched();
       return;
     }
@@ -212,28 +317,50 @@ export class AdminPageComponent implements OnInit {
     this.erroGeral = '';
     this.sucessoMensagem = '';
 
-    const eventoAtualizado: Evento = {
-      ...this.eventoSelecionado,
-      ...this.editarForm.value
-    };
+    const dadosForm = this.editarForm.value;
+    
+    if (this.modoEdicao && this.eventoSelecionado) {
+      // Atualizar
+      const eventoAtualizado: Evento = {
+        ...this.eventoSelecionado,
+        ...dadosForm
+      };
 
-    this.eventosService.atualizarEvento(this.eventoSelecionado.id, eventoAtualizado).subscribe({
-      next: () => {
-        this.editarCarregando = false;
-        this.sucessoMensagem = 'Evento atualizado com sucesso!';
-        this.fecharModalEdicao();
-        setTimeout(() => {
-          this.carregarDados();
-          this.sucessoMensagem = '';
-        }, 1500);
-      },
-      error: (err) => {
-        console.error('Erro ao atualizar evento:', err);
-        this.erroGeral = 'Erro ao atualizar o evento';
-        this.editarCarregando = false;
-        this.cdr.detectChanges();
-      }
-    });
+      this.eventosService.atualizarEvento(this.eventoSelecionado.id, eventoAtualizado).subscribe({
+        next: () => this.finalizarSucesso('Evento atualizado com sucesso!'),
+        error: (err) => this.finalizarErro('Erro ao atualizar o evento', err)
+      });
+    } else {
+      // Criar
+      const novoEvento: Evento = {
+        ...dadosForm,
+        id: Math.floor(Math.random() * 1000000), // Simulação de ID
+        dataISO: dadosForm.data, // Garantir consistência
+        estado: 'SP' // Valor padrão se não houver no form
+      };
+
+      this.eventosService.criarEvento(novoEvento).subscribe({
+        next: () => this.finalizarSucesso('Evento criado com sucesso!'),
+        error: (err) => this.finalizarErro('Erro ao criar o evento', err)
+      });
+    }
+  }
+
+  private finalizarSucesso(msg: string): void {
+    this.editarCarregando = false;
+    this.sucessoMensagem = msg;
+    this.fecharModalEdicao();
+    setTimeout(() => {
+      this.carregarDados();
+      this.sucessoMensagem = '';
+    }, 1500);
+  }
+
+  private finalizarErro(msg: string, err: any): void {
+    console.error(msg, err);
+    this.erroGeral = msg;
+    this.editarCarregando = false;
+    this.cdr.detectChanges();
   }
 
   abrirConfirmacaoExclusao(evento: Evento): void {
@@ -405,7 +532,4 @@ export class AdminPageComponent implements OnInit {
     return categoria ? categoria.nome : categoriaId;
   }
 
-  trocarAba(aba: 'eventos' | 'admins'): void {
-    this.abaAtiva = aba;
-  }
 }

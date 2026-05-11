@@ -1,925 +1,532 @@
-<app-header></app-header>
-
-<div class="admin-page">
-  <!-- Cabeçalho -->
-  <div class="admin-header">
-    <div class="admin-header__container">
-      <div class="admin-header__info">
-        <h1 class="admin-header__titulo">Painel de Administração</h1>
-        <p class="admin-header__subtitulo">Gerencie eventos e administradores</p>
-      </div>
-      <a routerLink="/" class="admin-header__voltar">
-        <span class="material-icons">arrow_back</span>
-        Voltar
-      </a>
-    </div>
-  </div>
-
-  <!-- Mensagens de feedback -->
-  <div class="admin-container">
-    <div class="mensagens-feedback">
-      <div class="alerta-sucesso" *ngIf="sucessoMensagem" role="alert">
-        <span class="material-icons">check_circle</span>
-        <p>{{ sucessoMensagem }}</p>
+<div class="admin-layout" *ngIf="!carregando; else loading">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar__content">
+      <div class="sidebar__user">
+        <div class="avatar">{{ usuarioLogado?.nome?.substring(0, 2)?.toUpperCase() }}</div>
+        <div class="sidebar__user-info">
+          <span class="user-name">{{ usuarioLogado?.nome }}</span>
+          <span class="user-role">Administrador</span>
+        </div>
       </div>
 
-      <div class="alerta-erro" *ngIf="erroGeral" role="alert">
-        <span class="material-icons">error_outline</span>
-        <p>{{ erroGeral }}</p>
-      </div>
-    </div>
-
-    <!-- Abas de Navegação -->
-    <div class="tabs-container">
-      <div class="tabs-header">
-        <button
-          class="tab-btn"
-          [class.tab-btn--ativo]="abaAtiva === 'eventos'"
+      <nav class="sidebar__nav">
+        <button 
+          class="nav-item" 
+          [class.nav-item--active]="abaAtiva === 'dashboard'"
+          (click)="trocarAba('dashboard')"
+        >
+          <span class="material-icons">dashboard</span>
+          Dashboard
+        </button>
+        <button 
+          class="nav-item" 
+          [class.nav-item--active]="abaAtiva === 'aprovacoes'"
+          (click)="trocarAba('aprovacoes')"
+        >
+          <span class="material-icons">verified_user</span>
+          Aprovações
+          <span class="nav-badge" *ngIf="stats.pendentes > 0">{{ stats.pendentes }}</span>
+        </button>
+        <button 
+          class="nav-item" 
+          [class.nav-item--active]="abaAtiva === 'eventos'"
           (click)="trocarAba('eventos')"
         >
           <span class="material-icons">event</span>
-          Gerenciar Eventos
+          Eventos
         </button>
-        <button
-          class="tab-btn"
-          [class.tab-btn--ativo]="abaAtiva === 'admins'"
+        <button 
+          class="nav-item" 
+          [class.nav-item--active]="abaAtiva === 'admins'"
           (click)="trocarAba('admins')"
         >
           <span class="material-icons">admin_panel_settings</span>
           Administradores
         </button>
+      </nav>
+
+      <div class="sidebar__footer">
+        <a routerLink="/" class="btn-home">
+          <span class="material-icons">home</span>
+          Voltar ao Início
+        </a>
       </div>
     </div>
+  </aside>
 
-    <!-- Carregando -->
-    <div class="estado-carregando" *ngIf="carregando">
-      <div class="spinner"></div>
-      <p>Carregando dados...</p>
-    </div>
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+    <!-- Header do Conteúdo -->
+    <header class="content-header">
+      <div class="content-header__left">
+        <h1 class="page-title">
+          {{ abaAtiva === 'dashboard' ? 'Painel de Controle' : 
+             abaAtiva === 'eventos' ? 'Gerenciar Eventos' : 
+             abaAtiva === 'aprovacoes' ? 'Aprovação de Eventos' : 'Gerenciar Administradores' }}
+        </h1>
+        <p class="page-subtitle">Centro de curadoria e gestão da Evence Events.</p>
+      </div>
+      
+      <div class="content-header__actions">
+        <div class="alert-badges">
+          <div class="alerta-sucesso" *ngIf="sucessoMensagem">
+            <span class="material-icons">check_circle</span>
+            {{ sucessoMensagem }}
+          </div>
+          <div class="alerta-erro" *ngIf="erroGeral">
+            <span class="material-icons">error_outline</span>
+            {{ erroGeral }}
+          </div>
+        </div>
+      </div>
+    </header>
 
-    <!-- ABA EVENTOS -->
-    <div class="tab-content" *ngIf="!carregando && abaAtiva === 'eventos'">
-      <!-- Controles de Filtro -->
-      <div class="controles-filtro">
-        <div class="filtro-busca">
-          <span class="material-icons">search</span>
-          <input
-            type="text"
-            placeholder="Buscar por título, local ou cidade..."
-            [(ngModel)]="buscaTermo"
-            (ngModelChange)="onBuscaChange()"
-            class="input-busca"
-          />
+    <!-- DASHBOARD VIEW -->
+    <div class="view-container" *ngIf="abaAtiva === 'dashboard'">
+      <section class="stats-grid">
+        <div class="stat-card stat-card--orange">
+          <div class="stat-card__icon">
+            <span class="material-icons">pending_actions</span>
+          </div>
+          <div class="stat-card__data">
+            <span class="stat-value">{{ stats.pendentes }}</span>
+            <span class="stat-label">Aguardando Aprovação</span>
+          </div>
         </div>
 
-        <select
-          [(ngModel)]="categoriaFiltro"
-          (ngModelChange)="onCategoriaChange()"
-          class="select-categoria"
-        >
+        <div class="stat-card stat-card--blue">
+          <div class="stat-card__icon">
+            <span class="material-icons">event</span>
+          </div>
+          <div class="stat-card__data">
+            <span class="stat-value">{{ stats.totalEventos }}</span>
+            <span class="stat-label">Eventos Ativos</span>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card--purple">
+          <div class="stat-card__icon">
+            <span class="material-icons">confirmation_number</span>
+          </div>
+          <div class="stat-card__data">
+            <span class="stat-value">{{ stats.totalVendas }}</span>
+            <span class="stat-label">Ingressos Vendidos</span>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card--green">
+          <div class="stat-card__icon">
+            <span class="material-icons">payments</span>
+          </div>
+          <div class="stat-card__data">
+            <span class="stat-value">{{ formatarPreco(stats.receitaEstimada) }}</span>
+            <span class="stat-label">Receita Estimada</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-row">
+        <div class="dashboard-card recent-events">
+          <div class="dashboard-card__header">
+            <h3>Solicitações Pendentes</h3>
+            <button class="btn-link" (click)="trocarAba('aprovacoes')">Ver todas</button>
+          </div>
+          <div class="dashboard-card__body">
+            <div class="recent-list">
+              <div class="recent-item" *ngFor="let sol of solicitacoes.slice(0, 5)">
+                <div class="recent-item__info">
+                  <span class="recent-item__name">{{ sol.titulo }}</span>
+                  <span class="recent-item__meta">{{ sol.cidade }} • {{ sol.local }}</span>
+                </div>
+                <div class="recent-item__actions">
+                   <button class="btn-mini btn-mini--approve" (click)="aprovarEvento(sol)">Aprovar</button>
+                </div>
+              </div>
+              <div class="empty-state-sm" *ngIf="solicitacoes.length === 0">
+                <p>Nenhuma solicitação pendente.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-card quick-actions">
+          <div class="dashboard-card__header">
+            <h3>Gerenciamento</h3>
+          </div>
+          <div class="dashboard-card__body">
+            <div class="actions-grid">
+              <button class="action-btn" (click)="trocarAba('aprovacoes')">
+                <span class="material-icons">fact_check</span>
+                Aprovações
+              </button>
+              <button class="action-btn" (click)="abrirModalCriarAdmin()">
+                <span class="material-icons">person_add</span>
+                Novo Admin
+              </button>
+              <button class="action-btn">
+                <span class="material-icons">assessment</span>
+                Relatórios
+              </button>
+              <button class="action-btn">
+                <span class="material-icons">settings</span>
+                Configurações
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- APROVAÇÕES VIEW -->
+    <div class="view-container" *ngIf="abaAtiva === 'aprovacoes'">
+       <div class="info-banner" *ngIf="solicitacoes.length > 0">
+         <span class="material-icons">info</span>
+         <p>Analise os detalhes de cada evento antes de aprovar para a listagem pública.</p>
+       </div>
+
+       <div class="approval-grid">
+         <div class="approval-card" *ngFor="let sol of solicitacoes">
+           <div class="approval-card__header">
+             <span class="badge-cat">{{ getNomeCategoriaExibicao(sol.categoria) }}</span>
+             <h3 class="sol-title">{{ sol.titulo }}</h3>
+           </div>
+           
+           <div class="approval-card__body">
+             <div class="sol-detail">
+               <span class="material-icons">location_on</span>
+               <span>{{ sol.local }} — {{ sol.cidade }}</span>
+             </div>
+             <div class="sol-detail">
+               <span class="material-icons">calendar_today</span>
+               <span>{{ formatarData(sol.dataISO) }} às {{ sol.horario }}</span>
+             </div>
+             <div class="sol-detail">
+               <span class="material-icons">payments</span>
+               <span>A partir de {{ formatarPreco(sol.precoMinimo) }}</span>
+             </div>
+             <p class="sol-desc">{{ sol.descricaoLonga?.substring(0, 120) }}...</p>
+           </div>
+
+           <div class="approval-card__footer">
+             <a [routerLink]="['/admin/aprovacoes', sol.id]" class="btn-preview">
+               <span class="material-icons">visibility</span>
+               Visualizar
+             </a>
+             <div class="approval-card__actions">
+               <button class="btn-approve" (click)="aprovarEvento(sol)" title="Aprovar">
+                 <span class="material-icons">check</span>
+               </button>
+               <button class="btn-reject" (click)="reprovarEvento(sol.id)" title="Reprovar">
+                 <span class="material-icons">close</span>
+               </button>
+             </div>
+           </div>
+         </div>
+       </div>
+
+       <div class="empty-state" *ngIf="solicitacoes.length === 0">
+         <span class="material-icons">done_all</span>
+         <p>Tudo em dia! Nenhuma solicitação pendente no momento.</p>
+       </div>
+    </div>
+
+    <!-- EVENTOS VIEW -->
+    <div class="view-container" *ngIf="abaAtiva === 'eventos'">
+      <div class="filter-bar">
+        <div class="search-input">
+          <span class="material-icons">search</span>
+          <input 
+            type="text" 
+            placeholder="Buscar eventos ativos..." 
+            [(ngModel)]="buscaTermo" 
+            (ngModelChange)="onBuscaChange()"
+          >
+        </div>
+        <select class="category-select" [(ngModel)]="categoriaFiltro" (ngModelChange)="onCategoriaChange()">
           <option value="todas">Todas as categorias</option>
-          <option *ngFor="let cat of categorias" [value]="cat.id">
-            {{ cat.nome }}
-          </option>
+          <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nome }}</option>
         </select>
       </div>
 
-      <!-- Lista de Eventos -->
-      <div class="eventos-lista">
-        <div class="info-resultados">
-          <p>{{ eventosFiltrados.length }} evento(s) encontrado(s)</p>
-        </div>
-
-        <!-- Tabela em desktop -->
-        <div class="tabela-eventos-desktop">
-          <table class="tabela">
-            <thead>
-              <tr>
-                <th>Título</th>
-                <th>Local</th>
-                <th>Data</th>
-                <th>Categoria</th>
-                <th>Preço</th>
-                <th>Ingressos</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let evento of eventosFiltrados" class="linha-evento">
-                <td class="celula-titulo">
-                  <strong>{{ evento.titulo }}</strong>
-                </td>
-                <td class="celula-local">{{ evento.local }}</td>
-                <td class="celula-data">{{ formatarData(evento.dataISO) }}</td>
-                <td class="celula-categoria">
-                  <span class="badge-categoria">
-                    {{ getNomeCategoriaExibicao(evento.categoria) }}
-                  </span>
-                </td>
-                <td class="celula-preco">{{ formatarPreco(evento.precoMinimo) }}</td>
-                <td class="celula-ingressos">
-                  <span [ngClass]="{'esgotado': evento.esgotado, 'disponivel': !evento.esgotado}">
-                    {{ evento.vendidos }}/{{ evento.totalIngressos }}
-                  </span>
-                </td>
-                <td class="celula-acoes">
-                  <button
-                    class="btn-acao btn-editar"
-                    (click)="abrirModalEdicao(evento)"
-                    title="Editar evento"
-                  >
-                    <span class="material-icons">edit</span>
-                  </button>
-                  <button
-                    class="btn-acao btn-deletar"
-                    (click)="abrirConfirmacaoExclusao(evento)"
-                    title="Deletar evento"
-                  >
-                    <span class="material-icons">delete</span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Se não houver eventos -->
-          <div class="estado-vazio" *ngIf="eventosFiltrados.length === 0">
-            <span class="material-icons">event_busy</span>
-            <p>Nenhum evento encontrado com os filtros aplicados</p>
-          </div>
-        </div>
-
-        <!-- Cards em mobile -->
-        <div class="eventos-cards-mobile">
-          <div class="evento-card" *ngFor="let evento of eventosFiltrados">
-            <div class="evento-card__header">
-              <h3 class="evento-card__titulo">{{ evento.titulo }}</h3>
-              <span
-                class="evento-card__status"
-                [ngClass]="{'esgotado': evento.esgotado, 'disponivel': !evento.esgotado}"
-              >
-                {{ evento.esgotado ? 'ESGOTADO' : 'DISPONÍVEL' }}
-              </span>
-            </div>
-
-            <div class="evento-card__info">
-              <div class="info-item">
-                <span class="label">Local:</span>
-                <span class="valor">{{ evento.local }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">Data:</span>
-                <span class="valor">{{ formatarData(evento.dataISO) }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">Categoria:</span>
-                <span class="valor badge-categoria">{{ getNomeCategoriaExibicao(evento.categoria) }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">Preço:</span>
-                <span class="valor">{{ formatarPreco(evento.precoMinimo) }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">Ingressos:</span>
-                <span class="valor">{{ evento.vendidos }}/{{ evento.totalIngressos }}</span>
-              </div>
-            </div>
-
-            <div class="evento-card__acoes">
-              <button
-                class="btn-acoes btn-editar-card"
-                (click)="abrirModalEdicao(evento)"
-              >
-                <span class="material-icons">edit</span>
-                Editar
-              </button>
-              <button
-                class="btn-acoes btn-deletar-card"
-                (click)="abrirConfirmacaoExclusao(evento)"
-              >
-                <span class="material-icons">delete</span>
-                Deletar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA ADMINISTRADORES -->
-    <div class="tab-content" *ngIf="!carregando && abaAtiva === 'admins'">
-      <!-- Controles -->
-      <div class="controles-filtro">
-        <div class="filtro-busca">
-          <span class="material-icons">search</span>
-          <input
-            type="text"
-            placeholder="Buscar administradores..."
-            [(ngModel)]="buscaUsuario"
-            (ngModelChange)="onBuscaUsuarioChange()"
-            class="input-busca"
-          />
-        </div>
-
-        <button class="btn-criar-admin" (click)="abrirModalCriarAdmin()">
-          <span class="material-icons">add</span>
-          Novo Administrador
-        </button>
-      </div>
-
-      <!-- Lista de Administradores -->
-      <div class="admins-lista">
-        <div class="info-resultados">
-          <p>{{ usuariosFiltrados.length }} administrador(es) encontrado(s)</p>
-        </div>
-
-        <!-- Tabela em desktop -->
-        <div class="tabela-admins-desktop">
-          <table class="tabela">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Telefone</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let admin of usuariosFiltrados" class="linha-admin">
-                <td class="celula-nome">
-                  <strong>{{ admin.nome }}</strong>
-                </td>
-                <td class="celula-email">{{ admin.email }}</td>
-                <td class="celula-telefone">{{ admin.celular }}</td>
-                <td class="celula-acoes">
-                  <button
-                    class="btn-acao btn-deletar"
-                    (click)="abrirConfirmacaoExclusaoAdmin(admin)"
-                    title="Deletar administrador"
-                    [disabled]="usuarioLogado?.id === admin.id"
-                  >
-                    <span class="material-icons">delete</span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Se não houver admins -->
-          <div class="estado-vazio" *ngIf="usuariosFiltrados.length === 0">
-            <span class="material-icons">person_off</span>
-            <p>Nenhum administrador encontrado</p>
-          </div>
-        </div>
-
-        <!-- Cards em mobile -->
-        <div class="admins-cards-mobile">
-          <div class="admin-card" *ngFor="let admin of usuariosFiltrados">
-            <div class="admin-card__header">
-              <h3 class="admin-card__nome">{{ admin.nome }}</h3>
-            </div>
-
-            <div class="admin-card__info">
-              <div class="info-item">
-                <span class="label">Email:</span>
-                <span class="valor">{{ admin.email }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">Telefone:</span>
-                <span class="valor">{{ admin.celular }}</span>
-              </div>
-            </div>
-
-            <div class="admin-card__acoes">
-              <button
-                class="btn-acoes btn-deletar-card"
-                (click)="abrirConfirmacaoExclusaoAdmin(admin)"
-                [disabled]="usuarioLogado?.id === admin.id"
-              >
-                <span class="material-icons">delete</span>
-                Deletar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal de Criação de Administrador -->
-  <div class="modal-overlay" *ngIf="modalAdminAberto" (click)="fecharModalAdmin()">
-    <div class="modal-conteudo" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2 class="modal-titulo">Criar Novo Administrador</h2>
-        <button class="btn-fechar" (click)="fecharModalAdmin()">
-          <span class="material-icons">close</span>
-        </button>
-      </div>
-
-      <form [formGroup]="criarAdminForm" class="modal-formulario">
-        <div class="form-grupo">
-          <label>Nome Completo</label>
-          <input type="text" formControlName="nome" class="input-form" />
-          <span class="erro" *ngIf="criarAdminForm.get('nome')?.invalid && criarAdminForm.get('nome')?.touched">
-            Nome é obrigatório
-          </span>
-        </div>
-
-        <div class="form-row">
-          <div class="form-grupo">
-            <label>Email</label>
-            <input type="email" formControlName="email" class="input-form" />
-            <span class="erro" *ngIf="criarAdminForm.get('email')?.invalid && criarAdminForm.get('email')?.touched">
-              Email válido é obrigatório
-            </span>
-          </div>
-          <div class="form-grupo">
-            <label>CPF</label>
-            <input type="text" formControlName="cpf" class="input-form" />
-            <span class="erro" *ngIf="criarAdminForm.get('cpf')?.invalid && criarAdminForm.get('cpf')?.touched">
-              CPF é obrigatório
-            </span>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-grupo">
-            <label>Data de Nascimento</label>
-            <input type="date" formControlName="dataNascimento" class="input-form" />
-            <span class="erro" *ngIf="criarAdminForm.get('dataNascimento')?.invalid && criarAdminForm.get('dataNascimento')?.touched">
-              Data é obrigatória
-            </span>
-          </div>
-          <div class="form-grupo">
-            <label>Celular</label>
-            <input type="tel" formControlName="celular" class="input-form" />
-            <span class="erro" *ngIf="criarAdminForm.get('celular')?.invalid && criarAdminForm.get('celular')?.touched">
-              Celular é obrigatório
-            </span>
-          </div>
-        </div>
-
-        <div class="form-grupo">
-          <label>Senha</label>
-          <input type="password" formControlName="senha" class="input-form" />
-          <span class="erro" *ngIf="criarAdminForm.get('senha')?.invalid && criarAdminForm.get('senha')?.touched">
-            Senha deve ter ao menos 6 caracteres
-          </span>
-        </div>
-
-        <div class="modal-acoes">
-          <button
-            type="button"
-            class="btn btn-cancelar"
-            (click)="fecharModalAdmin()"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            class="btn btn-salvar"
-            (click)="criarNovoAdmin()"
-            [disabled]="criandoAdmin"
-          >
-            <span class="material-icons" *ngIf="criandoAdmin">autorenew</span>
-            {{ criandoAdmin ? 'Criando...' : 'Criar Administrador' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal de Edição de Evento -->
-  <div class="modal-overlay" *ngIf="modalAberto" (click)="fecharModalEdicao()">
-    <div class="modal-conteudo" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2 class="modal-titulo">Editar Evento</h2>
-        <button class="btn-fechar" (click)="fecharModalEdicao()">
-          <span class="material-icons">close</span>
-        </button>
-      </div>
-
-      <form [formGroup]="editarForm" class="modal-formulario">
-        <div class="form-row">
-          <div class="form-grupo">
-            <label>Título</label>
-            <input type="text" formControlName="titulo" class="input-form" />
-            <span class="erro" *ngIf="editarForm.get('titulo')?.invalid && editarForm.get('titulo')?.touched">
-              Título é obrigatório
-            </span>
-          </div>
-          <div class="form-grupo">
-            <label>Categoria</label>
-            <select formControlName="categoria" class="input-form">
-              <option *ngFor="let cat of categorias" [value]="cat.id">
-                {{ cat.nome }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-grupo">
-            <label>Local</label>
-            <input type="text" formControlName="local" class="input-form" />
-            <span class="erro" *ngIf="editarForm.get('local')?.invalid && editarForm.get('local')?.touched">
-              Local é obrigatório
-            </span>
-          </div>
-          <div class="form-grupo">
-            <label>Cidade</label>
-            <input type="text" formControlName="cidade" class="input-form" />
-            <span class="erro" *ngIf="editarForm.get('cidade')?.invalid && editarForm.get('cidade')?.touched">
-              Cidade é obrigatória
-            </span>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-grupo">
-            <label>Data</label>
-            <input type="date" formControlName="data" class="input-form" />
-            <span class="erro" *ngIf="editarForm.get('data')?.invalid && editarForm.get('data')?.touched">
-              Data é obrigatória
-            </span>
-          </div>
-          <div class="form-grupo">
-            <label>Horário</label>
-            <input type="time" formControlName="horario" class="input-form" />
-            <span class="erro" *ngIf="editarForm.get('horario')?.invalid && editarForm.get('horario')?.touched">
-              Horário é obrigatório
-            </span>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-grupo">
-            <label>Preço Mínimo (R$)</label>
-            <input type="number" formControlName="precoMinimo" class="input-form" min="0" />
-            <span class="erro" *ngIf="editarForm.get('precoMinimo')?.invalid && editarForm.get('precoMinimo')?.touched">
-              Preço válido é obrigatório
-            </span>
-          </div>
-          <div class="form-grupo">
-            <label>Total de Ingressos</label>
-            <input type="number" formControlName="totalIngressos" class="input-form" min="1" />
-            <span class="erro" *ngIf="editarForm.get('totalIngressos')?.invalid && editarForm.get('totalIngressos')?.touched">
-              Total de ingressos é obrigatório
-            </span>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-grupo">
-            <label>Ingressos Vendidos</label>
-            <input type="number" formControlName="vendidos" class="input-form" min="0" />
-            <span class="erro" *ngIf="editarForm.get('vendidos')?.invalid && editarForm.get('vendidos')?.touched">
-              Ingressos vendidos obrigatório
-            </span>
-          </div>
-        </div>
-
-        <div class="form-row form-row-checkbox">
-          <label class="checkbox-wrapper">
-            <input type="checkbox" formControlName="destaque" class="checkbox-input" />
-            <span class="checkbox-label">Marcar como destaque</span>
-          </label>
-          <label class="checkbox-wrapper">
-            <input type="checkbox" formControlName="esgotado" class="checkbox-input" />
-            <span class="checkbox-label">Marcar como esgotado</span>
-          </label>
-        </div>
-
-        <div class="form-grupo">
-          <label>Descrição Longa</label>
-          <textarea
-            formControlName="descricaoLonga"
-            class="input-form textarea-form"
-            rows="4"
-          ></textarea>
-        </div>
-
-        <div class="modal-acoes">
-          <button
-            type="button"
-            class="btn btn-cancelar"
-            (click)="fecharModalEdicao()"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            class="btn btn-salvar"
-            (click)="salvarEdicao()"
-            [disabled]="editarCarregando"
-          >
-            <span class="material-icons" *ngIf="editarCarregando">autorenew</span>
-            {{ editarCarregando ? 'Salvando...' : 'Salvar Alterações' }}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal de Confirmação de Exclusão de Evento -->
-  <div class="modal-overlay" *ngIf="confirmacaoAberta" (click)="fecharConfirmacaoExclusao()">
-    <div class="modal-confirmacao" (click)="$event.stopPropagation()">
-      <div class="confirmacao-icone">
-        <span class="material-icons">warning</span>
-      </div>
-      <h2 class="confirmacao-titulo">Deletar Evento</h2>
-      <p class="confirmacao-texto">
-        Tem certeza que deseja deletar o evento <strong>{{ eventoParaExcluir?.titulo }}</strong>?
-      </p>
-      <p class="confirmacao-subtexto">
-        Esta ação não pode ser desfeita.
-      </p>
-
-      <div class="confirmacao-acoes">
-        <button
-          class="btn btn-cancelar"
-          (click)="fecharConfirmacaoExclusao()"
-          [disabled]="excluindoEvento"
-        >
-          Cancelar
-        </button>
-        <button
-          class="btn btn-deletar-confirmar"
-          (click)="confirmarExclusao()"
-          [disabled]="excluindoEvento"
-        >
-          <span class="material-icons" *ngIf="excluindoEvento">autorenew</span>
-          {{ excluindoEvento ? 'Deletando...' : 'Deletar' }}
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal de Confirmação de Exclusão de Admin -->
-  <div class="modal-overlay" *ngIf="confirmacaoAdminAberta" (click)="fecharConfirmacaoAdmin()">
-    <div class="modal-confirmacao" (click)="$event.stopPropagation()">
-      <div class="confirmacao-icone">
-        <span class="material-icons">warning</span>
-      </div>
-      <h2 class="confirmacao-titulo">Deletar Administrador</h2>
-      <p class="confirmacao-texto">
-        Tem certeza que deseja deletar o administrador <strong>{{ adminParaExcluir?.nome }}</strong>?
-      </p>
-      <p class="confirmacao-subtexto">
-        Esta ação não pode ser desfeita.
-      </p>
-
-      <div class="confirmacao-acoes">
-        <button
-          class="btn btn-cancelar"
-          (click)="fecharConfirmacaoAdmin()"
-          [disabled]="excluindoAdmin"
-        >
-          Cancelar
-        </button>
-        <button
-          class="btn btn-deletar-confirmar"
-          (click)="confirmarExclusaoAdmin()"
-          [disabled]="excluindoAdmin"
-        >
-          <span class="material-icons" *ngIf="excluindoAdmin">autorenew</span>
-          {{ excluindoAdmin ? 'Deletando...' : 'Deletar' }}
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-  <!-- Mensagens de feedback -->
-  <div class="admin-container">
-    <div class="mensagens-feedback">
-      <div class="alerta-sucesso" *ngIf="sucessoMensagem" role="alert">
-        <span class="material-icons">check_circle</span>
-        <p>{{ sucessoMensagem }}</p>
-      </div>
-
-      <div class="alerta-erro" *ngIf="erroGeral" role="alert">
-        <span class="material-icons">error_outline</span>
-        <p>{{ erroGeral }}</p>
-      </div>
-    </div>
-
-    <!-- Carregando -->
-    <div class="estado-carregando" *ngIf="carregando">
-      <div class="spinner"></div>
-      <p>Carregando eventos...</p>
-    </div>
-
-    <!-- Controles de Filtro -->
-    <div class="controles-filtro" *ngIf="!carregando">
-      <div class="filtro-busca">
-        <span class="material-icons">search</span>
-        <input
-          type="text"
-          placeholder="Buscar por título, local ou cidade..."
-          [(ngModel)]="buscaTermo"
-          (ngModelChange)="onBuscaChange()"
-          class="input-busca"
-        />
-      </div>
-
-      <select
-        [(ngModel)]="categoriaFiltro"
-        (ngModelChange)="onCategoriaChange()"
-        class="select-categoria"
-      >
-        <option value="todas">Todas as categorias</option>
-        <option *ngFor="let cat of categorias" [value]="cat.id">
-          {{ cat.nome }}
-        </option>
-      </select>
-    </div>
-
-    <!-- Lista de Eventos -->
-    <div class="eventos-lista" *ngIf="!carregando">
-      <div class="info-resultados">
-        <p>{{ eventosFiltrados.length }} evento(s) encontrado(s)</p>
-      </div>
-
-      <!-- Tabela em desktop -->
-      <div class="tabela-eventos-desktop">
-        <table class="tabela">
+      <div class="table-container premium-scroll">
+        <table class="premium-table">
           <thead>
             <tr>
-              <th>Título</th>
-              <th>Local</th>
+              <th>Evento</th>
+              <th>Localização</th>
               <th>Data</th>
-              <th>Categoria</th>
-              <th>Preço</th>
-              <th>Ingressos</th>
+              <th>Vendas</th>
+              <th>Status</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let evento of eventosFiltrados" class="linha-evento">
-              <td class="celula-titulo">
-                <strong>{{ evento.titulo }}</strong>
+            <tr *ngFor="let evento of eventosFiltrados">
+              <td>
+                <div class="table-cell-event">
+                  <span class="event-name">{{ evento.titulo }}</span>
+                  <span class="event-cat">{{ getNomeCategoriaExibicao(evento.categoria) }}</span>
+                </div>
               </td>
-              <td class="celula-local">{{ evento.local }}</td>
-              <td class="celula-data">{{ formatarData(evento.dataISO) }}</td>
-              <td class="celula-categoria">
-                <span class="badge-categoria">
-                  {{ getNomeCategoriaExibicao(evento.categoria) }}
+              <td>
+                <div class="table-cell-info">
+                  <span>{{ evento.local }}</span>
+                  <span class="subtext">{{ evento.cidade }}</span>
+                </div>
+              </td>
+              <td>{{ formatarData(evento.dataISO) }}</td>
+              <td>
+                <div class="vendas-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="(evento.vendidos / evento.totalIngressos) * 100"></div>
+                  </div>
+                  <span class="progress-text">{{ evento.vendidos }}/{{ evento.totalIngressos }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="badge" [class.badge--esgotado]="evento.esgotado">
+                  {{ evento.esgotado ? 'Esgotado' : 'Ativo' }}
                 </span>
               </td>
-              <td class="celula-preco">{{ formatarPreco(evento.precoMinimo) }}</td>
-              <td class="celula-ingressos">
-                <span [ngClass]="{'esgotado': evento.esgotado, 'disponivel': !evento.esgotado}">
-                  {{ evento.vendidos }}/{{ evento.totalIngressos }}
-                </span>
-              </td>
-              <td class="celula-acoes">
-                <button
-                  class="btn-acao btn-editar"
-                  (click)="abrirModalEdicao(evento)"
-                  title="Editar evento"
-                >
+              <td class="actions-cell">
+                <button class="btn-icon btn-icon--edit" (click)="abrirModalEdicao(evento)" title="Editar">
                   <span class="material-icons">edit</span>
                 </button>
-                <button
-                  class="btn-acao btn-deletar"
-                  (click)="abrirConfirmacaoExclusao(evento)"
-                  title="Deletar evento"
-                >
+                <button class="btn-icon btn-icon--delete" (click)="abrirConfirmacaoExclusao(evento)" title="Excluir">
                   <span class="material-icons">delete</span>
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
-
-        <!-- Se não houver eventos -->
-        <div class="estado-vazio" *ngIf="eventosFiltrados.length === 0">
-          <span class="material-icons">event_busy</span>
-          <p>Nenhum evento encontrado com os filtros aplicados</p>
-        </div>
-      </div>
-
-      <!-- Cards em mobile -->
-      <div class="eventos-cards-mobile">
-        <div class="evento-card" *ngFor="let evento of eventosFiltrados">
-          <div class="evento-card__header">
-            <h3 class="evento-card__titulo">{{ evento.titulo }}</h3>
-            <span
-              class="evento-card__status"
-              [ngClass]="{'esgotado': evento.esgotado, 'disponivel': !evento.esgotado}"
-            >
-              {{ evento.esgotado ? 'ESGOTADO' : 'DISPONÍVEL' }}
-            </span>
-          </div>
-
-          <div class="evento-card__info">
-            <div class="info-item">
-              <span class="label">Local:</span>
-              <span class="valor">{{ evento.local }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Data:</span>
-              <span class="valor">{{ formatarData(evento.dataISO) }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Categoria:</span>
-              <span class="valor badge-categoria">{{ getNomeCategoriaExibicao(evento.categoria) }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Preço:</span>
-              <span class="valor">{{ formatarPreco(evento.precoMinimo) }}</span>
-            </div>
-            <div class="info-item">
-              <span class="label">Ingressos:</span>
-              <span class="valor">{{ evento.vendidos }}/{{ evento.totalIngressos }}</span>
-            </div>
-          </div>
-
-          <div class="evento-card__acoes">
-            <button
-              class="btn-acoes btn-editar-card"
-              (click)="abrirModalEdicao(evento)"
-            >
-              <span class="material-icons">edit</span>
-              Editar
-            </button>
-            <button
-              class="btn-acoes btn-deletar-card"
-              (click)="abrirConfirmacaoExclusao(evento)"
-            >
-              <span class="material-icons">delete</span>
-              Deletar
-            </button>
-          </div>
-        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Modal de Edição -->
-  <div class="modal-overlay" *ngIf="modalAberto" (click)="fecharModalEdicao()">
-    <div class="modal-conteudo" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2 class="modal-titulo">Editar Evento</h2>
-        <button class="btn-fechar" (click)="fecharModalEdicao()">
-          <span class="material-icons">close</span>
+    <!-- ADMINS VIEW -->
+    <div class="view-container" *ngIf="abaAtiva === 'admins'">
+      <div class="filter-bar">
+        <div class="search-input">
+          <span class="material-icons">search</span>
+          <input 
+            type="text" 
+            placeholder="Buscar administradores..." 
+            [(ngModel)]="buscaUsuario" 
+            (ngModelChange)="onBuscaUsuarioChange()"
+          >
+        </div>
+        <button class="btn-primary" (click)="abrirModalCriarAdmin()">
+          <span class="material-icons">add</span>
+          Adicionar Admin
         </button>
       </div>
 
-      <form [formGroup]="editarForm" class="modal-formulario">
+      <div class="table-container premium-scroll">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Contato</th>
+              <th>CPF</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let admin of usuariosFiltrados">
+              <td>
+                <div class="user-cell">
+                  <div class="avatar-sm">{{ admin.nome.substring(0, 2).toUpperCase() }}</div>
+                  <span>{{ admin.nome }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="table-cell-info">
+                  <span>{{ admin.email }}</span>
+                  <span class="subtext">{{ admin.celular }}</span>
+                </div>
+              </td>
+              <td>{{ admin.cpf }}</td>
+              <td>
+                <span class="badge badge--success">Ativo</span>
+              </td>
+              <td class="actions-cell">
+                <button 
+                  class="btn-icon btn-icon--delete" 
+                  (click)="abrirConfirmacaoExclusaoAdmin(admin)" 
+                  [disabled]="usuarioLogado?.id === admin.id"
+                  title="Remover Acesso"
+                >
+                  <span class="material-icons">person_remove</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal Edição Evento (Mesmo para Aprovar/Editar) -->
+<div class="modal-overlay" *ngIf="modalAberto" (click)="fecharModalEdicao()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <header class="modal-card__header">
+      <h2>Editar Evento</h2>
+      <button class="btn-close" (click)="fecharModalEdicao()">
+        <span class="material-icons">close</span>
+      </button>
+    </header>
+    
+    <div class="modal-card__body">
+      <form [formGroup]="editarForm" class="premium-form">
         <div class="form-row">
-          <div class="form-grupo">
-            <label>Título</label>
-            <input type="text" formControlName="titulo" class="input-form" />
-            <span class="erro" *ngIf="editarForm.get('titulo')?.invalid && editarForm.get('titulo')?.touched">
-              Título é obrigatório
-            </span>
+          <div class="form-group">
+            <label>Título do Evento</label>
+            <input type="text" formControlName="titulo">
           </div>
-          <div class="form-grupo">
+          <div class="form-group">
             <label>Categoria</label>
-            <select formControlName="categoria" class="input-form">
-              <option *ngFor="let cat of categorias" [value]="cat.id">
-                {{ cat.nome }}
-              </option>
+            <select formControlName="categoria">
+              <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nome }}</option>
             </select>
           </div>
         </div>
 
         <div class="form-row">
-          <div class="form-grupo">
+          <div class="form-group">
             <label>Local</label>
-            <input type="text" formControlName="local" class="input-form" />
-            <span class="erro" *ngIf="editarForm.get('local')?.invalid && editarForm.get('local')?.touched">
-              Local é obrigatório
-            </span>
+            <input type="text" formControlName="local">
           </div>
-          <div class="form-grupo">
+          <div class="form-group">
             <label>Cidade</label>
-            <input type="text" formControlName="cidade" class="input-form" />
-            <span class="erro" *ngIf="editarForm.get('cidade')?.invalid && editarForm.get('cidade')?.touched">
-              Cidade é obrigatória
-            </span>
+            <input type="text" formControlName="cidade">
           </div>
         </div>
 
         <div class="form-row">
-          <div class="form-grupo">
+          <div class="form-group">
             <label>Data</label>
-            <input type="date" formControlName="data" class="input-form" />
-            <span class="erro" *ngIf="editarForm.get('data')?.invalid && editarForm.get('data')?.touched">
-              Data é obrigatória
-            </span>
+            <input type="date" formControlName="data">
           </div>
-          <div class="form-grupo">
+          <div class="form-group">
             <label>Horário</label>
-            <input type="time" formControlName="horario" class="input-form" />
-            <span class="erro" *ngIf="editarForm.get('horario')?.invalid && editarForm.get('horario')?.touched">
-              Horário é obrigatório
-            </span>
+            <input type="time" formControlName="horario">
           </div>
         </div>
 
         <div class="form-row">
-          <div class="form-grupo">
-            <label>Preço Mínimo (R$)</label>
-            <input type="number" formControlName="precoMinimo" class="input-form" min="0" />
-            <span class="erro" *ngIf="editarForm.get('precoMinimo')?.invalid && editarForm.get('precoMinimo')?.touched">
-              Preço válido é obrigatório
-            </span>
+          <div class="form-group">
+            <label>Preço Base (R$)</label>
+            <input type="number" formControlName="precoMinimo">
           </div>
-          <div class="form-grupo">
-            <label>Total de Ingressos</label>
-            <input type="number" formControlName="totalIngressos" class="input-form" min="1" />
-            <span class="erro" *ngIf="editarForm.get('totalIngressos')?.invalid && editarForm.get('totalIngressos')?.touched">
-              Total de ingressos é obrigatório
-            </span>
+          <div class="form-group">
+            <label>Capacidade Total</label>
+            <input type="number" formControlName="totalIngressos">
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-grupo">
-            <label>Ingressos Vendidos</label>
-            <input type="number" formControlName="vendidos" class="input-form" min="0" />
-            <span class="erro" *ngIf="editarForm.get('vendidos')?.invalid && editarForm.get('vendidos')?.touched">
-              Ingressos vendidos obrigatório
-            </span>
-          </div>
+        <div class="form-group">
+          <label>Descrição Detalhada</label>
+          <textarea formControlName="descricaoLonga" rows="4"></textarea>
         </div>
 
-        <div class="form-row form-row-checkbox">
-          <label class="checkbox-wrapper">
-            <input type="checkbox" formControlName="destaque" class="checkbox-input" />
-            <span class="checkbox-label">Marcar como destaque</span>
+        <div class="form-switches">
+          <label class="switch-container">
+            <input type="checkbox" formControlName="destaque">
+            <span class="switch-slider"></span>
+            <span class="switch-label">Destaque</span>
           </label>
-          <label class="checkbox-wrapper">
-            <input type="checkbox" formControlName="esgotado" class="checkbox-input" />
-            <span class="checkbox-label">Marcar como esgotado</span>
+          <label class="switch-container">
+            <input type="checkbox" formControlName="esgotado">
+            <span class="switch-slider"></span>
+            <span class="switch-label">Esgotado</span>
           </label>
-        </div>
-
-        <div class="form-grupo">
-          <label>Descrição Longa</label>
-          <textarea
-            formControlName="descricaoLonga"
-            class="input-form textarea-form"
-            rows="4"
-          ></textarea>
-        </div>
-
-        <div class="modal-acoes">
-          <button
-            type="button"
-            class="btn btn-cancelar"
-            (click)="fecharModalEdicao()"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            class="btn btn-salvar"
-            (click)="salvarEdicao()"
-            [disabled]="editarCarregando"
-          >
-            <span class="material-icons" *ngIf="editarCarregando">autorenew</span>
-            {{ editarCarregando ? 'Salvando...' : 'Salvar Alterações' }}
-          </button>
         </div>
       </form>
     </div>
+
+    <footer class="modal-card__footer">
+      <button class="btn-secondary" (click)="fecharModalEdicao()">Cancelar</button>
+      <button class="btn-primary" (click)="salvarEvento()" [disabled]="editarCarregando">
+        Salvar Alterações
+      </button>
+    </footer>
   </div>
+</div>
 
-  <!-- Modal de Confirmação de Exclusão -->
-  <div class="modal-overlay" *ngIf="confirmacaoAberta" (click)="fecharConfirmacaoExclusao()">
-    <div class="modal-confirmacao" (click)="$event.stopPropagation()">
-      <div class="confirmacao-icone">
-        <span class="material-icons">warning</span>
-      </div>
-      <h2 class="confirmacao-titulo">Deletar Evento</h2>
-      <p class="confirmacao-texto">
-        Tem certeza que deseja deletar o evento <strong>{{ eventoParaExcluir?.titulo }}</strong>?
-      </p>
-      <p class="confirmacao-subtexto">
-        Esta ação não pode ser desfeita.
-      </p>
+<!-- Modal Criar Admin -->
+<div class="modal-overlay" *ngIf="modalAdminAberto" (click)="fecharModalAdmin()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <header class="modal-card__header">
+      <h2>Novo Administrador</h2>
+      <button class="btn-close" (click)="fecharModalAdmin()">
+        <span class="material-icons">close</span>
+      </button>
+    </header>
 
-      <div class="confirmacao-acoes">
-        <button
-          class="btn btn-cancelar"
-          (click)="fecharConfirmacaoExclusao()"
-          [disabled]="excluindoEvento"
-        >
-          Cancelar
-        </button>
-        <button
-          class="btn btn-deletar-confirmar"
-          (click)="confirmarExclusao()"
-          [disabled]="excluindoEvento"
-        >
-          <span class="material-icons" *ngIf="excluindoEvento">autorenew</span>
-          {{ excluindoEvento ? 'Deletando...' : 'Deletar' }}
-        </button>
-      </div>
+    <div class="modal-card__body">
+      <form [formGroup]="criarAdminForm" class="premium-form">
+        <div class="form-group">
+          <label>Nome Completo</label>
+          <input type="text" formControlName="nome">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" formControlName="email">
+          </div>
+          <div class="form-group">
+            <label>CPF</label>
+            <input type="text" formControlName="cpf">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Celular</label>
+            <input type="tel" formControlName="celular">
+          </div>
+          <div class="form-group">
+            <label>Senha Provisória</label>
+            <input type="password" formControlName="senha">
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <footer class="modal-card__footer">
+      <button class="btn-secondary" (click)="fecharModalAdmin()">Cancelar</button>
+      <button class="btn-primary" (click)="criarNovoAdmin()" [disabled]="criandoAdmin">
+        Criar Administrador
+      </button>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal Confirmação -->
+<div class="modal-overlay" *ngIf="confirmacaoAberta || confirmacaoAdminAberta">
+  <div class="modal-confirm">
+    <div class="confirm-icon">
+      <span class="material-icons">warning</span>
+    </div>
+    <h2>Tem certeza?</h2>
+    <p>Esta ação removerá os dados permanentemente.</p>
+    <div class="confirm-actions">
+      <button class="btn-secondary" (click)="fecharConfirmacaoExclusao(); fecharConfirmacaoAdmin()">Cancelar</button>
+      <button 
+        class="btn-danger" 
+        (click)="confirmacaoAberta ? confirmarExclusao() : confirmarExclusaoAdmin()"
+      >
+        Confirmar
+      </button>
     </div>
   </div>
 </div>
+
+<!-- Loading State -->
+<ng-template #loading>
+  <div class="admin-loading">
+    <div class="loader"></div>
+    <p>Atualizando painel...</p>
+  </div>
+</ng-template>

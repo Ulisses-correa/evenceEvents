@@ -1,0 +1,155 @@
+<app-header></app-header>
+
+<main class="preview-main">
+  <!-- Banner de Modo Admin -->
+  <div class="admin-banner">
+    <div class="admin-banner__container">
+      <div class="admin-banner__info">
+        <span class="material-icons">visibility</span>
+        <div>
+          <strong>Modo de Visualização</strong>
+          <p>Você está analisando uma solicitação pendente.</p>
+        </div>
+      </div>
+      <div class="admin-banner__actions">
+        <button class="btn-banner btn-banner--reject" (click)="reprovar()" [disabled]="processando">
+          <span class="material-icons">close</span>
+          Reprovar
+        </button>
+        <button class="btn-banner btn-banner--approve" (click)="aprovar()" [disabled]="processando">
+          <span class="material-icons">check</span>
+          Aprovar Publicação
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="carregando">
+    <div class="spinner"></div>
+    <p>Carregando prévia do evento...</p>
+  </div>
+
+  <!-- Erro -->
+  <div class="erro" *ngIf="erro">
+    <span class="material-icons">error_outline</span>
+    <h2>Solicitação expirada ou não encontrada</h2>
+    <a routerLink="/admin" class="btn-voltar">Voltar ao Painel</a>
+  </div>
+
+  <!-- Conteúdo idêntico ao Detalhes mas em modo Read-only -->
+  <div class="evento-wrapper" *ngIf="!carregando && !erro && solicitacao">
+    <section class="detalhes-hero">
+      <div class="detalhes-hero__overlay"></div>
+      <div class="detalhes-hero__container">
+        <div class="detalhes-hero__conteudo">
+          <h1 class="detalhes-hero__titulo">{{ solicitacao.titulo }}</h1>
+          <div class="detalhes-hero__info-rapida">
+            <span class="info-item"><span class="material-icons">calendar_today</span> {{ solicitacao.data }} às {{ solicitacao.horario }}</span>
+            <span class="info-item"><span class="material-icons">location_on</span> {{ solicitacao.cidade }}, {{ solicitacao.estado }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="detalhes-layout">
+      <div class="detalhes-layout__container">
+        <div class="detalhes-layout__grid">
+          
+          <!-- Lado Esquerdo: Info Detalhada -->
+          <div class="detalhes-corpo">
+            <section class="info-secao">
+              <h2 class="info-secao__titulo">Sobre o Evento</h2>
+              <p class="info-secao__texto" *ngIf="solicitacao.descricaoLonga">
+                {{ solicitacao.descricaoLonga }}
+              </p>
+              <p class="info-secao__texto" *ngIf="!solicitacao.descricaoLonga">
+                Prepare-se para uma experiência única! O {{ solicitacao.titulo }} traz o melhor do entretenimento para {{ solicitacao.cidade }}. Garanta seu lugar e não fique de fora deste grande acontecimento.
+              </p>
+            </section>
+
+            <section class="info-secao">
+              <h2 class="info-secao__titulo">Informações Importantes</h2>
+              <div class="info-detalhes">
+                <div class="info-card">
+                  <span class="material-icons info-card__icone">place</span>
+                  <div class="info-card__texto">
+                    <h3>Localização</h3>
+                    <p>{{ solicitacao.local }}</p>
+                    <p>{{ solicitacao.cidade }}, {{ solicitacao.estado }}</p>
+                  </div>
+                </div>
+                <div class="info-card">
+                  <span class="material-icons info-card__icone">category</span>
+                  <div class="info-card__texto">
+                    <h3>Categoria</h3>
+                    <p style="text-transform: capitalize;">{{ solicitacao.categoria }}</p>
+                  </div>
+                </div>
+                <div class="info-card">
+                  <span class="material-icons info-card__icone">schedule</span>
+                  <div class="info-card__texto">
+                    <h3>Data e Horário</h3>
+                    <p>{{ solicitacao.data }}</p>
+                    <p>Abertura dos portões: {{ solicitacao.horario }}</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Lado Direito: Sidebar -->
+          <aside class="detalhes-sidebar">
+            <div class="checkout-card checkout-card--preview">
+              <div class="checkout-card__cabecalho">
+                <span class="checkout-card__label">Preço sugerido</span>
+                <span class="checkout-card__preco">{{ formatarPreco(solicitacao.precoMinimo) }}</span>
+              </div>
+              
+              <div class="preview-notice">
+                <span class="material-icons">info</span>
+                <p>Vendas bloqueadas em modo de prévia.</p>
+              </div>
+            </div>
+
+            <!-- Card do Produtor Identico -->
+            <div class="produtor-card" *ngIf="produtor">
+              <div class="produtor-card__header">
+                <div class="avatar-prod">
+                  {{ produtor.nomeEmpresa ? produtor.nomeEmpresa.substring(0, 1) : produtor.nome.substring(0, 1) }}
+                </div>
+                <div class="prod-info">
+                  <span class="prod-label">Organizado por</span>
+                  <h3 class="prod-nome">{{ produtor.nomeEmpresa || produtor.nome }}</h3>
+                  <div class="prod-tipo">
+                    <span class="material-icons">{{ produtor.tipoPessoa === 'juridica' ? 'verified' : 'person_pin' }}</span>
+                    {{ produtor.tipoPessoa === 'juridica' ? 'Empresa Verificada' : 'Produtor Verificado' }}
+                  </div>
+                </div>
+              </div>
+              <div class="produtor-card__body">
+                <p class="prod-desc" *ngIf="produtor.tipoPessoa === 'juridica'">
+                  A <strong>{{ produtor.nomeEmpresa }}</strong> é uma organização parceira da Evence Events, focada em trazer as melhores experiências para o público.
+                </p>
+                <div class="prod-stats">
+                  <div class="stat">
+                    <span class="stat-num">4.9</span>
+                    <span class="stat-lbl">Avaliação</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-num">+50</span>
+                    <span class="stat-lbl">Eventos</span>
+                  </div>
+                </div>
+                <button class="btn-contato" disabled>
+                  <span class="material-icons">mail_outline</span>
+                  Entrar em contato
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

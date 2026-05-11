@@ -133,6 +133,42 @@
                 <button class="btn-voltar" routerLink="/eventos">Ver outros eventos</button>
               </div>
             </div>
+
+            <!-- Card do Produtor -->
+            <div class="produtor-card" *ngIf="produtor">
+              <div class="produtor-card__header">
+                <div class="avatar-prod">
+                  {{ produtor.nomeEmpresa ? produtor.nomeEmpresa.substring(0, 1) : produtor.nome.substring(0, 1) }}
+                </div>
+                <div class="prod-info">
+                  <span class="prod-label">Organizado por</span>
+                  <h3 class="prod-nome">{{ produtor.nomeEmpresa || produtor.nome }}</h3>
+                  <div class="prod-tipo">
+                    <span class="material-icons">{{ produtor.tipoPessoa === 'juridica' ? 'verified' : 'person_pin' }}</span>
+                    {{ produtor.tipoPessoa === 'juridica' ? 'Empresa Verificada' : 'Produtor Verificado' }}
+                  </div>
+                </div>
+              </div>
+              <div class="produtor-card__body">
+                <p class="prod-desc" *ngIf="produtor.tipoPessoa === 'juridica'">
+                  A <strong>{{ produtor.nomeEmpresa }}</strong> é uma organização parceira da Evence Events, focada em trazer as melhores experiências para o público.
+                </p>
+                <div class="prod-stats">
+                  <div class="stat">
+                    <span class="stat-num">4.9</span>
+                    <span class="stat-lbl">Avaliação</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-num">+50</span>
+                    <span class="stat-lbl">Eventos</span>
+                  </div>
+                </div>
+                <button class="btn-contato">
+                  <span class="material-icons">mail_outline</span>
+                  Entrar em contato
+                </button>
+              </div>
+            </div>
           </aside>
 
         </div>

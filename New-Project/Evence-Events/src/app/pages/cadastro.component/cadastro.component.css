@@ -359,6 +359,48 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 /* ----------------------------------------------------------------
    FORM + CAMPOS
    ---------------------------------------------------------------- */
+/* ----------------------------------------------------------------
+   TIPO PESSOA TOGGLE
+   ---------------------------------------------------------------- */
+.tipo-pessoa-toggle {
+  display: flex;
+  gap: var(--espaco-sm);
+  background-color: var(--cor-fundo);
+  padding: 6px;
+  border-radius: var(--raio-md);
+  border: 1px solid var(--cor-borda);
+  margin-bottom: var(--espaco-sm);
+}
+
+.toggle-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: calc(var(--raio-md) - 4px);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+  transition: var(--transicao-normal);
+}
+
+.toggle-btn input {
+  display: none;
+}
+
+.toggle-btn .material-icons {
+  font-size: 1.1rem;
+}
+
+.toggle-btn--active {
+  background-color: var(--cor-fundo-card);
+  color: var(--cor-primaria);
+  box-shadow: 0 2px 8px hsla(220, 30%, 15%, 0.08);
+}
+
 .form { display: flex; flex-direction: column; gap: var(--espaco-md); }
 
 .campo { display: flex; flex-direction: column; gap: var(--espaco-xs); }

@@ -110,9 +110,23 @@
         <!-- Formulário Reativo -->
         <form class="form" [formGroup]="cadastroForm" (ngSubmit)="onSubmit()" novalidate>
 
-          <!-- Nome completo -->
+          <!-- Tipo de Pessoa -->
+          <div class="tipo-pessoa-toggle">
+            <label class="toggle-btn" [class.toggle-btn--active]="tipoPessoa === 'fisica'">
+              <input type="radio" formControlName="tipoPessoa" value="fisica">
+              <span class="material-icons">person</span>
+              Pessoa Física
+            </label>
+            <label class="toggle-btn" [class.toggle-btn--active]="tipoPessoa === 'juridica'">
+              <input type="radio" formControlName="tipoPessoa" value="juridica">
+              <span class="material-icons">business</span>
+              Empresa
+            </label>
+          </div>
+
+          <!-- Nome completo / Razão Social -->
           <div class="campo" [class.campo--erro]="campoInvalido('nome')" [class.campo--valido]="campoValido('nome')">
-            <label class="campo__label" for="nome">Nome completo</label>
+            <label class="campo__label" for="nome">{{ tipoPessoa === 'fisica' ? 'Nome completo' : 'Responsável Legal' }}</label>
             <div class="campo__wrapper">
               <span class="material-icons campo__icone campo__icone--esquerda">person_outline</span>
               <input
@@ -120,7 +134,7 @@
                 type="text"
                 id="nome"
                 formControlName="nome"
-                placeholder="Seu nome completo"
+                [placeholder]="tipoPessoa === 'fisica' ? 'Seu nome completo' : 'Nome do responsável'"
                 autocomplete="name"
               />
               <span class="material-icons campo__icone campo__icone--direita campo__icone--status" *ngIf="cadastroForm.get('nome')?.touched">
@@ -130,6 +144,25 @@
             <p class="campo__mensagem-erro" *ngIf="campoInvalido('nome')" role="alert">
               <span class="material-icons campo__mensagem-icone">info</span>
               {{ getMensagem('nome') }}
+            </p>
+          </div>
+
+          <!-- Nome da Empresa (Apenas Jurídica) -->
+          <div class="campo" *ngIf="tipoPessoa === 'juridica'" [class.campo--erro]="campoInvalido('nomeEmpresa')" [class.campo--valido]="campoValido('nomeEmpresa')">
+            <label class="campo__label" for="nomeEmpresa">Razão Social</label>
+            <div class="campo__wrapper">
+              <span class="material-icons campo__icone campo__icone--esquerda">business_center</span>
+              <input
+                class="campo__input"
+                type="text"
+                id="nomeEmpresa"
+                formControlName="nomeEmpresa"
+                placeholder="Razão Social da Empresa"
+              />
+            </div>
+            <p class="campo__mensagem-erro" *ngIf="campoInvalido('nomeEmpresa')" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              {{ getMensagem('nomeEmpresa') }}
             </p>
           </div>
 
@@ -156,8 +189,8 @@
             </p>
           </div>
 
-          <!-- CPF -->
-          <div class="campo" [class.campo--erro]="campoInvalido('cpf')" [class.campo--valido]="campoValido('cpf')">
+          <!-- CPF / CNPJ -->
+          <div class="campo" *ngIf="tipoPessoa === 'fisica'" [class.campo--erro]="campoInvalido('cpf')" [class.campo--valido]="campoValido('cpf')">
             <label class="campo__label" for="cpf">CPF</label>
             <div class="campo__wrapper">
               <span class="material-icons campo__icone campo__icone--esquerda">badge</span>
@@ -181,8 +214,32 @@
             </p>
           </div>
 
-          <!-- Data de nascimento -->
-          <div class="campo" [class.campo--erro]="campoInvalido('dataNascimento')" [class.campo--valido]="campoValido('dataNascimento')">
+          <div class="campo" *ngIf="tipoPessoa === 'juridica'" [class.campo--erro]="campoInvalido('cnpj')" [class.campo--valido]="campoValido('cnpj')">
+            <label class="campo__label" for="cnpj">CNPJ</label>
+            <div class="campo__wrapper">
+              <span class="material-icons campo__icone campo__icone--esquerda">corporate_fare</span>
+              <input
+                class="campo__input"
+                type="text"
+                id="cnpj"
+                formControlName="cnpj"
+                placeholder="00.000.000/0000-00"
+                maxlength="18"
+                (input)="mascararCnpj($event)"
+                autocomplete="off"
+              />
+              <span class="material-icons campo__icone campo__icone--direita campo__icone--status" *ngIf="cadastroForm.get('cnpj')?.touched">
+                {{ campoValido('cnpj') ? 'check_circle' : 'cancel' }}
+              </span>
+            </div>
+            <p class="campo__mensagem-erro" *ngIf="campoInvalido('cnpj')" role="alert">
+              <span class="material-icons campo__mensagem-icone">info</span>
+              {{ getMensagem('cnpj') }}
+            </p>
+          </div>
+
+          <!-- Data de nascimento (Apenas Física) -->
+          <div class="campo" *ngIf="tipoPessoa === 'fisica'" [class.campo--erro]="campoInvalido('dataNascimento')" [class.campo--valido]="campoValido('dataNascimento')">
             <label class="campo__label" for="dataNascimento">Data de nascimento</label>
             <div class="campo__wrapper">
               <span class="material-icons campo__icone campo__icone--esquerda">cake</span>

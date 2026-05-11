@@ -16,6 +16,7 @@ import { HeaderComponent } from '../../componentes/header/header';
 })
 export class DetalhesComponent implements OnInit {
   evento: Evento | null = null;
+  produtor: Usuario | null = null;
   carregando = true;
   erro = false;
 
@@ -32,8 +33,10 @@ export class DetalhesComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
+      const isPreview = this.route.snapshot.queryParamMap.get('preview') === 'true';
+      
       if (id) {
-        this.carregarEvento(id);
+        this.carregarEvento(id, isPreview);
       } else {
         this.erro = true;
         this.carregando = false;
@@ -41,13 +44,33 @@ export class DetalhesComponent implements OnInit {
     });
   }
 
-  carregarEvento(id: string): void {
+  carregarEvento(id: string, isPreview: boolean = false): void {
     this.carregando = true;
-    this.eventosService.getEventoById(id).subscribe({
+    
+    const request = isPreview 
+      ? this.eventosService.getSolicitacaoById(id)
+      : this.eventosService.getEventoById(id);
+
+    request.subscribe({
       next: (dados) => {
         this.evento = dados;
-        this.carregando = false;
-        this.cdr.detectChanges();
+        
+        if (this.evento?.produtorId) {
+          this.eventosService.getUsuarioById(this.evento.produtorId).subscribe({
+            next: (produtor) => {
+              this.produtor = produtor;
+              this.carregando = false;
+              this.cdr.detectChanges();
+            },
+            error: () => {
+              this.carregando = false;
+              this.cdr.detectChanges();
+            }
+          });
+        } else {
+          this.carregando = false;
+          this.cdr.detectChanges();
+        }
       },
       error: (err) => {
         console.error('Erro ao carregar o evento:', err);

@@ -78,13 +78,13 @@
       <!-- Tela de sucesso -->
       <div class="sucesso-card" *ngIf="eventoPublicado">
         <div class="sucesso-card__icone-wrap">
-          <span class="material-icons sucesso-card__icone">celebration</span>
+          <span class="material-icons sucesso-card__icone">verified</span>
         </div>
-        <h2 class="sucesso-card__titulo">Evento publicado!</h2>
-        <p class="sucesso-card__texto">Seu evento já está disponível na plataforma. Acesse seu painel para gerenciá-lo.</p>
-        <a href="#" class="sucesso-card__btn">
-          <span class="material-icons">dashboard</span>
-          Ir para o painel
+        <h2 class="sucesso-card__titulo">Solicitação Enviada!</h2>
+        <p class="sucesso-card__texto">Seu evento foi enviado para nossa equipe de curadoria. Assim que for aprovado, ele aparecerá na listagem pública.</p>
+        <a routerLink="/" class="sucesso-card__btn">
+          <span class="material-icons">home</span>
+          Voltar ao Início
         </a>
       </div>
 
@@ -93,7 +93,7 @@
 
         <!-- Cabeçalho + Stepper -->
         <div class="form-cabecalho">
-          <h2 class="form-cabecalho__titulo">Criar novo evento</h2>
+          <h2 class="form-cabecalho__titulo">Sugerir novo evento</h2>
           <p class="form-cabecalho__subtitulo">Preencha as informações do seu evento</p>
 
           <div class="stepper">
@@ -521,7 +521,7 @@
                 </label>
                 <p class="campo__mensagem-erro" *ngIf="tentouPublicar && !eventoForm.get('aceitaTermos')?.value" role="alert">
                   <span class="material-icons campo__mensagem-icone">info</span>
-                  Você precisa aceitar os termos para publicar.
+                  Você precisa aceitar os termos para enviar.
                 </p>
               </div>
 
@@ -566,12 +566,12 @@
               [attr.aria-busy]="carregando"
             >
               <span class="btn-submit__conteudo" *ngIf="!carregando">
-                <span class="material-icons btn-submit__icone">rocket_launch</span>
-                Publicar evento
+                <span class="material-icons btn-submit__icone">send</span>
+                Enviar para Aprovação
               </span>
               <span class="btn-submit__spinner" *ngIf="carregando" aria-hidden="true">
                 <span class="spinner"></span>
-                Publicando...
+                Enviando...
               </span>
             </button>
           </div>

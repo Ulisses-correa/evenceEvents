@@ -14,6 +14,7 @@ export interface Evento {
   totalIngressos: number;
   vendidos: number;
   descricaoLonga?: string;
+  produtorId?: number | string;
 }
 
 export interface Categoria {

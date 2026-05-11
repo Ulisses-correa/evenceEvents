@@ -43,13 +43,16 @@
 /* ----------------------------------------------------------------
    HERO SECTION
    ---------------------------------------------------------------- */
+/* ----------------------------------------------------------------
+   HERO SECTION
+   ---------------------------------------------------------------- */
 .detalhes-hero {
   position: relative;
-  height: 460px;
+  min-height: 500px;
   background: linear-gradient(135deg, var(--cor-primaria-escura) 0%, var(--cor-primaria) 100%);
   display: flex;
-  align-items: flex-end;
-  padding-bottom: 60px;
+  align-items: center;
+  padding: 120px 0 80px;
   overflow: hidden;
 }
 
@@ -65,9 +68,8 @@
 
 .detalhes-hero__overlay {
   position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 100%;
-  background: linear-gradient(to top, hsla(220, 30%, 10%, 0.8) 0%, transparent 70%);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to top, hsla(220, 30%, 10%, 0.8) 0%, transparent 100%);
   z-index: 2;
 }
 
@@ -119,17 +121,18 @@
 }
 
 .detalhes-hero__titulo {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 800;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 900;
   color: white;
   line-height: 1.1;
   margin-bottom: var(--espaco-lg);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  text-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .detalhes-hero__info-rapida {
   display: flex;
-  gap: 24px;
+  gap: 32px;
   color: hsla(0, 0%, 100%, 0.9);
   font-weight: 500;
 }
@@ -137,7 +140,7 @@
 .info-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .info-item .material-icons {
@@ -149,7 +152,7 @@
    LAYOUT GRID
    ---------------------------------------------------------------- */
 .detalhes-layout {
-  margin-top: -40px;
+  margin-top: 40px;
   padding-bottom: 80px;
   position: relative;
   z-index: 10;
@@ -255,7 +258,12 @@
    SIDEBAR (CHECKOUT CARD)
    ---------------------------------------------------------------- */
 .detalhes-sidebar {
-  position: relative;
+  position: sticky;
+  top: 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: fit-content;
 }
 
 .checkout-card {
@@ -264,8 +272,6 @@
   box-shadow: var(--sombra-premium);
   border: 1px solid var(--cor-primaria-clara);
   padding: 32px;
-  position: sticky;
-  top: 100px;
   animation: entrar-side 0.6s ease-out both 0.2s;
 }
 
@@ -440,6 +446,123 @@
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Produtor Card */
+.produtor-card {
+  background-color: white;
+  border-radius: var(--raio-lg);
+  padding: 24px;
+  box-shadow: var(--sombra-card);
+  border: 1px solid var(--cor-borda);
+}
+
+.produtor-card__header {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.avatar-prod {
+  width: 56px;
+  height: 56px;
+  background: var(--cor-primaria-bg);
+  color: var(--cor-primaria);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  border: 2px solid var(--cor-borda);
+}
+
+.prod-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.prod-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cor-texto-terciario);
+  font-weight: 700;
+}
+
+.prod-nome {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--cor-texto-principal);
+}
+
+.prod-tipo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--cor-sucesso);
+  font-weight: 700;
+}
+
+.prod-tipo .material-icons {
+  font-size: 0.9rem;
+}
+
+.prod-desc {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--cor-texto-secundario);
+  margin-bottom: 20px;
+}
+
+.prod-stats {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: var(--cor-fundo);
+  border-radius: var(--raio-md);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-num {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--cor-texto-principal);
+}
+
+.stat-lbl {
+  font-size: 0.7rem;
+  color: var(--cor-texto-terciario);
+  font-weight: 600;
+}
+
+.btn-contato {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--raio-md);
+  border: 1.5px solid var(--cor-borda);
+  background-color: white;
+  color: var(--cor-texto-principal);
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-contato:hover {
+  background-color: var(--cor-fundo);
+  border-color: var(--cor-borda-media);
+}
+
 /* ----------------------------------------------------------------
    RESPONSIVIDADE (MOBILE FONT SIZES)
    ---------------------------------------------------------------- */
@@ -462,7 +585,7 @@
   }
 
   .detalhes-layout {
-    margin-top: -20px;
+    margin-top: 20px;
     padding-bottom: 40px;
   }
 

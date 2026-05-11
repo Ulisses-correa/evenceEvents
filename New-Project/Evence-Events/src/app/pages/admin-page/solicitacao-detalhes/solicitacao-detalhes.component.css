@@ -1,0 +1,108 @@
+/* Reaproveitando estilos globais e adicionando específicos de preview */
+.preview-main {
+  min-height: 100vh;
+  background-color: hsl(220, 25%, 97%);
+  padding-bottom: 50px;
+}
+
+.admin-banner {
+  background-color: hsl(220, 85%, 20%);
+  color: white;
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Ajustar o topo da sidebar para respeitar a barra de admin grudada */
+:host ::ng-deep .detalhes-sidebar {
+  top: 80px !important;
+}
+
+.admin-banner__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.admin-banner__info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-banner__info strong { font-size: 0.95rem; display: block; }
+.admin-banner__info p { font-size: 0.8rem; opacity: 0.7; }
+
+.admin-banner__actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-banner {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-banner--reject {
+  background-color: rgba(255,255,255,0.1);
+  color: white;
+}
+.btn-banner--reject:hover { background-color: hsl(4, 72%, 50%); }
+
+.btn-banner--approve {
+  background-color: hsl(145, 60%, 45%);
+  color: white;
+}
+.btn-banner--approve:hover { background-color: hsl(145, 60%, 35%); }
+
+.preview-notice {
+  margin-top: 20px;
+  padding: 12px;
+  background-color: hsl(220, 60%, 96%);
+  border: 1px dashed hsl(220, 15%, 80%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: hsl(220, 15%, 45%);
+}
+
+.btn-contato:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--cor-fundo);
+}
+
+/* Importar estilos da página de detalhes para consistência */
+@import "../../detalhes/detalhes.css";
+
+/* Ajustes de responsividade para o banner */
+@media (max-width: 768px) {
+  .admin-banner__container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .admin-banner__actions {
+    width: 100%;
+  }
+  .btn-banner {
+    flex: 1;
+    justify-content: center;
+  }
+}

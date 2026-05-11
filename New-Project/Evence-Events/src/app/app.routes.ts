@@ -9,7 +9,7 @@ import { ExtraInfosComponent } from './pages/extra-infos.component/extra-infos.c
 import { CriarEventoComponent } from './pages/criar-evento.component/criar-evento.component';
 import { DetalhesComponent } from './pages/detalhes/detalhes';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
-import path from 'path';
+import { SolicitacaoDetalhesComponent } from './pages/admin-page/solicitacao-detalhes/solicitacao-detalhes.component';
 
 export const routes: Routes = [
     { path:'', component:LandingPageComponent },
@@ -21,6 +21,6 @@ export const routes: Routes = [
     { path: 'extra-infos', component: ExtraInfosComponent },
     { path: 'new-event', component: CriarEventoComponent},
     { path: 'admin', component: AdminPageComponent },
+    { path: 'admin/aprovacoes/:id', component: SolicitacaoDetalhesComponent },
     { path: 'eventos/:id', component: DetalhesComponent },
-    
 ]

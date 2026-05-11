@@ -8,6 +8,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { EventosService } from '../../services/services';
+import { Evento } from '../../interfaces/evento.interface';
 
 interface Lote {
   nome: string;
@@ -78,9 +80,13 @@ export class CriarEventoComponent implements OnInit {
     'SP','SE','TO',
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private eventosService: EventosService
+  ) {}
 
   ngOnInit(): void {
+    // ... mantendo o resto igual
     this.eventoForm = this.fb.group({
       // Etapa 1
       nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -227,21 +233,56 @@ export class CriarEventoComponent implements OnInit {
   async onSubmit(): Promise<void> {
     this.tentouPublicar = true;
 
-    if (!this.eventoForm.get('aceitaTermos')?.value) {
+    if (this.eventoForm.invalid || !this.eventoForm.get('aceitaTermos')?.value) {
+      this.eventoForm.markAllAsTouched();
       return;
     }
 
     this.carregando = true;
     this.erroGeral = '';
 
-    try {
-      // Simula chamada à API
-      await new Promise(res => setTimeout(res, 2000));
-      this.eventoPublicado = true;
-    } catch {
-      this.erroGeral = 'Erro ao publicar o evento. Tente novamente.';
-    } finally {
-      this.carregando = false;
-    }
+    const form = this.eventoForm.value;
+    
+    // Pegar ID do produtor logado
+    const userStr = localStorage.getItem('usuarioLogado');
+    const user = userStr ? JSON.parse(userStr) : null;
+
+    // Mapeamento para a interface Evento
+    const novaSolicitacao: Evento = {
+      id: Math.floor(Math.random() * 1000000),
+      titulo: form.nome,
+      local: form.nomeLocal || 'Online',
+      cidade: form.cidade || 'Remoto',
+      estado: form.estado || '--',
+      data: this.formatarDataExibicao(form.dataInicio),
+      dataISO: form.dataInicio,
+      horario: form.horaInicio,
+      categoria: form.categoria,
+      precoMinimo: this.lotes[0]?.preco || 0,
+      destaque: false,
+      esgotado: false,
+      totalIngressos: form.capacidade || 100,
+      vendidos: 0,
+      descricaoLonga: form.descricao,
+      produtorId: user?.id
+    };
+
+    this.eventosService.enviarSolicitacao(novaSolicitacao).subscribe({
+      next: () => {
+        this.carregando = false;
+        this.eventoPublicado = true;
+      },
+      error: (err) => {
+        console.error('Erro ao enviar solicitação:', err);
+        this.erroGeral = 'Ocorreu um erro ao enviar sua solicitação. Tente novamente.';
+        this.carregando = false;
+      }
+    });
+  }
+
+  private formatarDataExibicao(data: string): string {
+    if (!data) return '';
+    const [ano, mes, dia] = data.split('-');
+    return `${dia}/${mes}/${ano}`;
   }
 }

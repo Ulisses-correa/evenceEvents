@@ -198,6 +198,41 @@
       "esgotado": false,
       "totalIngressos": 10000,
       "vendidos": 9500
+    },
+    {
+      "id": 399173,
+      "titulo": "Kevin José Stadnick Knoll",
+      "local": "Kevin José Stadnick Knoll",
+      "cidade": "Rio do Sul",
+      "estado": "SC",
+      "data": "05/06/2026",
+      "dataISO": "2026-06-05",
+      "horario": "18:19",
+      "categoria": "infantil",
+      "precoMinimo": 1000,
+      "destaque": false,
+      "esgotado": false,
+      "totalIngressos": 750,
+      "vendidos": 0,
+      "descricaoLonga": "Tengotengotengotengont"
+    },
+    {
+      "id": 749263,
+      "titulo": "asdlasdlkasdkasd",
+      "local": "Kevin José Stadnick Knoll",
+      "cidade": "Rio do Sul",
+      "estado": "SC",
+      "data": "30/04/2026",
+      "dataISO": "2026-04-30",
+      "horario": "12:03",
+      "categoria": "shows",
+      "precoMinimo": 1,
+      "destaque": false,
+      "esgotado": false,
+      "totalIngressos": 70000,
+      "vendidos": 0,
+      "descricaoLonga": "admlhaksdjhjoasdjasdhkjhadkjasd",
+      "produtorId": 5
     }
   ],
   "usuarios": [
@@ -212,7 +247,8 @@
       "aceitaTermos": true,
       "aceitaNewsletter": false,
       "isProdutor": false,
-      "isAdmin": true
+      "isAdmin": true,
+      "tipoPessoa": "fisica"
     },
     {
       "nome": "Kevin José Stadnick Knoll",
@@ -223,6 +259,7 @@
       "senha": "017890Ke",
       "aceitaTermos": true,
       "aceitaNewsletter": false,
+      "tipoPessoa": "fisica",
       "id": 1
     },
     {
@@ -235,7 +272,8 @@
       "senha": "senha123",
       "aceitaTermos": true,
       "aceitaNewsletter": false,
-      "isProdutor": false
+      "isProdutor": false,
+      "tipoPessoa": "fisica"
     },
     {
       "nome": "ESDS",
@@ -247,7 +285,56 @@
       "aceitaTermos": true,
       "aceitaNewsletter": true,
       "isProdutor": true,
+      "tipoPessoa": "fisica",
       "id": 3
+    },
+    {
+      "id": 4,
+      "nome": "Ricardo Almeida",
+      "nomeEmpresa": "Mega Events Corp",
+      "email": "contato@megaevents.com",
+      "cnpj": "12.345.678/0001-99",
+      "tipoPessoa": "juridica",
+      "dataNascimento": "1985-10-20",
+      "celular": "(11) 98888-7777",
+      "senha": "senhaempresa",
+      "aceitaTermos": true,
+      "aceitaNewsletter": true,
+      "isProdutor": true
+    },
+    {
+      "nome": "Kevin José Stadnick Knoll",
+      "email": "frahn@gmail.com",
+      "cnpj": "27.133.259/0001-67",
+      "nomeEmpresa": "Frahm LTDA",
+      "tipoPessoa": "juridica",
+      "dataNascimento": "N/A",
+      "celular": "(55) 47992-6637",
+      "senha": "017890Ke",
+      "aceitaTermos": true,
+      "aceitaNewsletter": false,
+      "isProdutor": true,
+      "id": 5
+    }
+  ],
+  "solicitacoes": [
+    {
+      "id": 143301,
+      "titulo": "Kevin José Stadnick Knoll",
+      "local": "Kevin José Stadnick Knoll",
+      "cidade": "Rio do Sul",
+      "estado": "SC",
+      "data": "01/11/11111",
+      "dataISO": "11111-11-01",
+      "horario": "11:11",
+      "categoria": "teatro",
+      "precoMinimo": 11111,
+      "destaque": false,
+      "esgotado": false,
+      "totalIngressos": 76000,
+      "vendidos": 0,
+      "descricaoLonga": "asdasdsadasdasdasdasdads",
+      "produtorId": 5
     }
   ]
 }

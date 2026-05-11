@@ -42,6 +42,10 @@ export class EventosService {
 
   // --- Gerenciamento de Eventos (Admin) ---
 
+  criarEvento(evento: Evento): Observable<Evento> {
+    return this.http.post<Evento>(`${this.apiUrl}/eventos`, evento);
+  }
+
   atualizarEvento(id: string | number, evento: Evento): Observable<Evento> {
     return this.http.put<Evento>(`${this.apiUrl}/eventos/${id}`, evento);
   }
@@ -56,11 +60,33 @@ export class EventosService {
     return this.http.get<Usuario[]>(`${this.apiUrl}/usuarios`);
   }
 
+  getUsuarioById(id: string | number): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.apiUrl}/usuarios/${id}`);
+  }
+
   atualizarUsuario(id: string | number, usuario: Usuario): Observable<Usuario> {
     return this.http.put<Usuario>(`${this.apiUrl}/usuarios/${id}`, usuario);
   }
 
   deletarUsuario(id: string | number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/usuarios/${id}`);
+  }
+
+  // --- Solicitações de Eventos (Curadoria) ---
+
+  getSolicitacoes(): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.apiUrl}/solicitacoes`);
+  }
+
+  getSolicitacaoById(id: string | number): Observable<Evento> {
+    return this.http.get<Evento>(`${this.apiUrl}/solicitacoes/${id}`);
+  }
+
+  enviarSolicitacao(evento: Evento): Observable<Evento> {
+    return this.http.post<Evento>(`${this.apiUrl}/solicitacoes`, evento);
+  }
+
+  deletarSolicitacao(id: string | number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/solicitacoes/${id}`);
   }
 }
