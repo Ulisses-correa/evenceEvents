@@ -326,6 +326,13 @@
   transition: border-color var(--transicao-rapida), transform var(--transicao-rapida);
 }
 
+.avatar-img-header {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
 .admin-badge {
   position: absolute;
   bottom: -2px;

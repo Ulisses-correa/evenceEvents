@@ -15,4 +15,5 @@ export interface Usuario {
   isAdmin?: boolean;
   verificado?: boolean;
   estaSuspenso?: boolean;
+  foto?: string;
 }

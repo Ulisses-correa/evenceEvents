@@ -28,6 +28,10 @@
   <!-- Carrossel de Eventos em Destaque -->
   <section class="carrossel-secao" *ngIf="eventos.length > 0">
     <div class="carrossel-secao__container">
+      <!-- Link Ver Tudo no canto superior direito -->
+      <div class="carrossel-secao__topo">
+        <a class="carrossel-secao__ver-tudo" routerLink="/eventos">Ver todos os eventos</a>
+      </div>
       <div class="carrossel" (mouseenter)="pararAutoplay()" (mouseleave)="iniciarAutoplay()">
 
         <!-- Botão Anterior -->
@@ -48,8 +52,16 @@
           >
             <div class="carrossel__card">
               <div class="carrossel__imagem-container">
-                <div class="carrossel__imagem-placeholder">
-                  <span class="carrossel__logo-placeholder">AD EVENTOS</span>
+                <!-- Foto real do evento -->
+                <img
+                  *ngIf="evento.imagens && evento.imagens.length > 0"
+                  [src]="evento.imagens[0]"
+                  [alt]="evento.titulo"
+                  class="carrossel__imagem-real"
+                >
+                <!-- Placeholder com gradiente quando não há foto -->
+                <div class="carrossel__imagem-placeholder" *ngIf="!evento.imagens || evento.imagens.length === 0">
+                  <span class="carrossel__logo-placeholder">{{ evento.titulo }}</span>
                 </div>
               </div>
             </div>
@@ -74,15 +86,15 @@
       </div>
 
       <!-- Info do Evento Atual -->
-      <div class="evento-info" *ngIf="eventoEmDestaque" [routerLink]="['/eventos', eventoEmDestaque?.id]" style="cursor: pointer;">
-        <h2 class="evento-info__titulo">{{ eventoEmDestaque?.titulo }}</h2>
+      <div class="evento-info" *ngIf="eventoEmDestaque" [routerLink]="['/eventos', eventoEmDestaque.id]" style="cursor: pointer;">
+        <h2 class="evento-info__titulo">{{ eventoEmDestaque.titulo }}</h2>
         <p class="evento-info__local">
           <span class="material-icons" style="font-size: 1rem; margin-right: 4px; vertical-align: middle;">location_on</span>
-          {{ eventoEmDestaque?.local }}, {{ eventoEmDestaque?.cidade }}/{{ eventoEmDestaque?.estado }}
+          {{ eventoEmDestaque.local }}, {{ eventoEmDestaque.cidade }}/{{ eventoEmDestaque.estado }}
         </p>
         <p class="evento-info__data">
           <span class="material-icons" style="font-size: 1rem; margin-right: 4px; vertical-align: middle;">calendar_today</span>
-          {{ eventoEmDestaque?.data }} · {{ eventoEmDestaque?.horario }}
+          {{ eventoEmDestaque.data }} · {{ eventoEmDestaque.horario }}
         </p>
       </div>
     </div>
@@ -93,7 +105,6 @@
     <div class="colecoes-secao__container">
       <div class="colecoes-secao__cabecalho">
         <h2 class="colecoes-secao__titulo">Explore as nossas coleções</h2>
-        <a class="colecoes-secao__ver-tudo" routerLink="/eventos">Ver tudo</a>
       </div>
 
       <div class="colecoes-secao__grid">
@@ -108,17 +119,6 @@
           </div>
           <span class="colecao-card__nome">{{ colecao.nome }}</span>
         </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Seção CTA / Produtor -->
-  <section class="produtor-secao">
-    <div class="produtor-secao__container">
-      <div class="produtor-secao__conteudo">
-        <h2 class="produtor-secao__titulo">É um produtor de eventos?</h2>
-        <p class="produtor-secao__subtitulo">Crie e gerencie seus eventos com facilidade. Alcance mais pessoas.</p>
-        <a class="produtor-secao__btn" routerLink = "new-event">Criar meu evento</a>
       </div>
     </div>
   </section>

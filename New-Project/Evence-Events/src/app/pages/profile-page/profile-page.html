@@ -4,10 +4,33 @@
   <!-- Header do Perfil -->
   <header class="profile-header">
     <div class="profile-header__content">
-      <div class="profile-avatar">
-        {{ iniciais }}
-        <div class="profile-badge" *ngIf="usuario?.isAdmin" title="Administrador">
-          <span class="material-icons">verified_user</span>
+      <div class="profile-avatar-container" (click)="toggleFotoMenu()">
+        <div class="profile-avatar">
+          <img *ngIf="usuario?.foto" [src]="usuario?.foto" alt="Foto de perfil" class="avatar-img">
+          <span *ngIf="!usuario?.foto">{{ iniciais }}</span>
+          
+          <div class="avatar-overlay">
+            <span class="material-icons">edit</span>
+          </div>
+
+          <div class="profile-badge" *ngIf="usuario?.isAdmin" title="Administrador">
+            <span class="material-icons">verified_user</span>
+          </div>
+        </div>
+
+        <!-- Input de Arquivo Oculto -->
+        <input type="file" #fileInput style="display: none;" accept="image/*" (change)="onFileSelected($event)">
+
+        <!-- Dropdown Menu da Foto -->
+        <div class="foto-menu" *ngIf="mostrarMenuFoto" (click)="$event.stopPropagation()">
+          <div class="foto-menu-item" (click)="alterarFoto()">
+            <span class="material-icons">add_photo_alternate</span>
+            {{ usuario?.foto ? 'Alterar foto' : 'Adicionar foto' }}
+          </div>
+          <div class="foto-menu-item item-danger" *ngIf="usuario?.foto" (click)="removerFoto()">
+            <span class="material-icons">delete</span>
+            Remover foto
+          </div>
         </div>
       </div>
       <div class="profile-title">
@@ -16,10 +39,7 @@
       </div>
     </div>
 
-    <button class="btn-back" (click)="voltar()">
-      <span class="material-icons">arrow_back</span>
-      Voltar
-    </button>
+
   </header>
 
   <!-- Sistema de Abas -->

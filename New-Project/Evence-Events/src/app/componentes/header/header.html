@@ -38,8 +38,9 @@
       <!-- Usuário logado -->
       <div class="header__usuario" *ngIf="usuarioLogado">
         <div class="avatar-wrapper">
-          <button class="avatar" (click)="toggleDropdown()" [attr.aria-expanded]="dropdownAberto">
-            {{ getIniciais(usuarioLogado?.nome || '') }}
+          <button class="avatar" (click)="toggleDropdown()" [attr.aria-expanded]="dropdownAberto" [style.overflow]="'hidden'">
+            <img *ngIf="usuarioLogado?.foto" [src]="usuarioLogado?.foto" alt="Avatar" class="avatar-img-header">
+            <span *ngIf="!usuarioLogado?.foto">{{ getIniciais(usuarioLogado?.nome || '') }}</span>
           </button>
           <div class="admin-badge" *ngIf="usuarioLogado.isAdmin" title="Você é Administrador">
             <span class="material-icons">verified_user</span>

@@ -3,7 +3,10 @@
   <aside class="sidebar">
     <div class="sidebar__content">
       <div class="sidebar__user">
-        <div class="avatar">{{ usuarioLogado?.nome?.substring(0, 2)?.toUpperCase() }}</div>
+        <div class="avatar" style="overflow: hidden;">
+          <img *ngIf="usuarioLogado?.foto" [src]="usuarioLogado?.foto" alt="Avatar" class="avatar-img-sidebar">
+          <span *ngIf="!usuarioLogado?.foto">{{ usuarioLogado?.nome?.substring(0, 2)?.toUpperCase() }}</span>
+        </div>
         <div class="sidebar__user-info">
           <span class="user-name">{{ usuarioLogado?.nome }}</span>
           <span class="user-role">Administrador</span>
@@ -345,8 +348,9 @@
             <tr *ngFor="let user of usuariosFiltrados">
               <td>
                 <div class="user-cell">
-                  <div class="avatar-sm">
-                    {{ user.nome.substring(0, 2).toUpperCase() }}
+                  <div class="avatar-sm" style="overflow: hidden;">
+                    <img *ngIf="user.foto" [src]="user.foto" alt="Avatar" class="avatar-img-sm">
+                    <span *ngIf="!user.foto">{{ user.nome.substring(0, 2).toUpperCase() }}</span>
                   </div>
                   <div class="table-cell-info">
                     <span class="main-text">{{ user.nome }}</span>
@@ -444,8 +448,9 @@
             <tr *ngFor="let user of usuariosFiltrados" [class.row-suspended]="user.estaSuspenso">
               <td>
                 <div class="user-cell">
-                  <div class="avatar-sm" [class.avatar-sm--prod]="user.isProdutor" [class.avatar-sm--suspended]="user.estaSuspenso">
-                    {{ (user.nomeEmpresa || user.nome).substring(0, 2).toUpperCase() }}
+                  <div class="avatar-sm" [class.avatar-sm--prod]="user.isProdutor" [class.avatar-sm--suspended]="user.estaSuspenso" style="overflow: hidden;">
+                    <img *ngIf="user.foto" [src]="user.foto" alt="Avatar" class="avatar-img-sm">
+                    <span *ngIf="!user.foto">{{ (user.nomeEmpresa || user.nome).substring(0, 2).toUpperCase() }}</span>
                   </div>
                   <div class="table-cell-info">
                     <div class="main-text-group">
@@ -680,8 +685,9 @@
             (click)="toggleSelecaoUsuario(user.id)"
           >
             <div class="user-selection-info">
-              <div class="avatar-sm" [class.avatar-sm--prod]="user.isProdutor">
-                {{ user.nome.substring(0, 2).toUpperCase() }}
+              <div class="avatar-sm" [class.avatar-sm--prod]="user.isProdutor" style="overflow: hidden;">
+                <img *ngIf="user.foto" [src]="user.foto" alt="Avatar" class="avatar-img-sm">
+                <span *ngIf="!user.foto">{{ user.nome.substring(0, 2).toUpperCase() }}</span>
               </div>
               <div class="user-text">
                 <span class="user-name">{{ user.nome }}</span>

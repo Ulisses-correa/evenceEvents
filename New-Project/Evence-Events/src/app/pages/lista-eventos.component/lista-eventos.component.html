@@ -279,8 +279,11 @@
           >
             <!-- Imagem / Placeholder com gradiente -->
             <div class="evento-card__thumb">
+              <!-- Imagem Real do Evento -->
+              <img *ngIf="evento.imagens && evento.imagens.length > 0" [src]="evento.imagens[0]" alt="{{ evento.titulo }}" class="evento-card__img-real">
+              
               <!-- Placeholder com gradiente enquanto não há imagem real -->
-              <div class="evento-card__thumb-placeholder">
+              <div class="evento-card__thumb-placeholder" *ngIf="!evento.imagens || evento.imagens.length === 0">
                 <span class="material-icons evento-card__thumb-icone">confirmation_number</span>
               </div>
 
@@ -304,6 +307,10 @@
 
             <!-- Corpo do card -->
             <div class="evento-card__corpo">
+              <div class="evento-card__categoria-chip">
+                {{ getCategoriaNome(evento.categoria) }}
+              </div>
+
               <div class="evento-card__meta">
                 <!-- Data e horário -->
                 <span class="evento-card__data">
@@ -314,6 +321,15 @@
 
               <!-- Título do evento -->
               <h3 class="evento-card__titulo">{{ evento.titulo }}</h3>
+
+              <!-- Produtor Info -->
+              <div class="evento-card__produtor">
+                <div class="produtor-avatar">
+                  <img *ngIf="getProdutorFoto(evento.produtorId)" [src]="getProdutorFoto(evento.produtorId)" alt="Produtor" class="produtor-img">
+                  <span *ngIf="!getProdutorFoto(evento.produtorId)">{{ getProdutorNome(evento.produtorId).substring(0, 2) | uppercase }}</span>
+                </div>
+                <span class="produtor-nome">Por <strong>{{ getProdutorNome(evento.produtorId) }}</strong></span>
+              </div>
 
               <!-- Local -->
               <p class="evento-card__local">
@@ -374,7 +390,10 @@
           >
             <!-- Thumb menor na lista -->
             <div class="evento-lista-item__thumb">
-              <div class="evento-lista-item__thumb-placeholder">
+              <!-- Imagem Real do Evento -->
+              <img *ngIf="evento.imagens && evento.imagens.length > 0" [src]="evento.imagens[0]" alt="{{ evento.titulo }}" class="evento-card__img-real">
+              
+              <div class="evento-lista-item__thumb-placeholder" *ngIf="!evento.imagens || evento.imagens.length === 0">
                 <span class="material-icons">confirmation_number</span>
               </div>
               <!-- Badge de destaque na lista -->
@@ -385,7 +404,20 @@
 
             <!-- Informações principais -->
             <div class="evento-lista-item__info">
+              <div class="evento-lista-item__categoria-chip">
+                {{ getCategoriaNome(evento.categoria) }}
+              </div>
               <h3 class="evento-lista-item__titulo">{{ evento.titulo }}</h3>
+              
+              <!-- Produtor Info -->
+              <div class="evento-lista-item__produtor">
+                <div class="produtor-avatar">
+                  <img *ngIf="getProdutorFoto(evento.produtorId)" [src]="getProdutorFoto(evento.produtorId)" alt="Produtor" class="produtor-img">
+                  <span *ngIf="!getProdutorFoto(evento.produtorId)">{{ getProdutorNome(evento.produtorId).substring(0, 2) | uppercase }}</span>
+                </div>
+                <span class="produtor-nome">Por <strong>{{ getProdutorNome(evento.produtorId) }}</strong></span>
+              </div>
+
               <div class="evento-lista-item__detalhes">
                 <span class="evento-lista-item__detalhe">
                   <span class="material-icons">calendar_today</span>

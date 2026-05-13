@@ -999,3 +999,70 @@
     text-align: left;
   }
 }
+
+/* ================================================================
+   ESTILOS NOVOS: PRODUTOR E CATEGORIA NO CARD
+   ================================================================ */
+
+.evento-card__categoria-chip,
+.evento-lista-item__categoria-chip {
+  display: inline-block;
+  background-color: hsla(220, 80%, 35%, 0.1);
+  color: var(--cor-primaria-escura);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--raio-sm);
+  margin-bottom: var(--espaco-xs);
+  width: max-content;
+}
+
+.evento-card__produtor,
+.evento-lista-item__produtor {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-xs);
+  margin-bottom: var(--espaco-sm);
+}
+
+.produtor-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--cor-acento);
+  color: var(--cor-primaria-escura);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+.produtor-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.produtor-nome {
+  font-size: 0.8rem;
+  color: var(--cor-texto-secundario);
+}
+.produtor-nome strong {
+  color: var(--cor-texto-principal);
+}
+
+
+/* Imagem real dentro do thumb do card e da lista */
+.evento-card__img-real {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+

@@ -72,6 +72,9 @@ export class ListaEventosComponent implements OnInit {
   /** Banco de eventos simulados */
   todosEventos: Evento[] = [];
 
+  /** Banco de usuários para pegar info do produtor */
+  produtores: Usuario[] = [];
+
   /* ----------------------------------------------------------------
      Estado computado
      ---------------------------------------------------------------- */
@@ -121,6 +124,29 @@ export class ListaEventosComponent implements OnInit {
         this.todosEventos = [];
         this.aplicarFiltros();
         this.cdr.detectChanges();
+      }
+    });
+
+    this.eventosService.getUsuarios().subscribe({
+      next: (usuarios) => {
+        this.produtores = usuarios || [];
+        // Patch com o usuário logado do localStorage (foto pode estar mais atualizada)
+        if (isPlatformBrowser(this.platformId)) {
+          const stored = localStorage.getItem('usuarioLogado');
+          if (stored) {
+            try {
+              const userLocal: Usuario = JSON.parse(stored);
+              const idx = this.produtores.findIndex(p => String(p.id) === String(userLocal.id));
+              if (idx !== -1) {
+                this.produtores[idx] = { ...this.produtores[idx], ...userLocal };
+              }
+            } catch (e) {}
+          }
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar usuários:', err);
       }
     });
   }
@@ -257,5 +283,23 @@ export class ListaEventosComponent implements OnInit {
   nomeCurto(nome: string): string {
     if (!nome) return '';
     return nome.split(' ')[0];
+  }
+
+  /** Métodos para buscar info do produtor e categoria no card */
+  getProdutorNome(produtorId?: number | string): string {
+    if (!produtorId) return 'Produtor Desconhecido';
+    const prod = this.produtores.find(p => String(p.id) === String(produtorId));
+    return prod ? (prod.nomeEmpresa || prod.nome) : 'Produtor Desconhecido';
+  }
+
+  getProdutorFoto(produtorId?: number | string): string | undefined {
+    if (!produtorId) return undefined;
+    const prod = this.produtores.find(p => String(p.id) === String(produtorId));
+    return prod?.foto;
+  }
+
+  getCategoriaNome(categoriaId: string): string {
+    const cat = this.categorias.find(c => c.id === categoriaId);
+    return cat ? cat.nome : 'Categoria Geral';
   }
 }
