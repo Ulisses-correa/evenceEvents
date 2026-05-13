@@ -1,0 +1,261 @@
+<app-header></app-header>
+
+<div class="profile-container">
+  <!-- Header do Perfil -->
+  <header class="profile-header">
+    <div class="profile-header__content">
+      <div class="profile-avatar">
+        {{ iniciais }}
+        <div class="profile-badge" *ngIf="usuario?.isAdmin" title="Administrador">
+          <span class="material-icons">verified_user</span>
+        </div>
+      </div>
+      <div class="profile-title">
+        <h1>{{ labelConta }}</h1>
+        <p>{{ usuario?.nomeEmpresa || usuario?.nome }}</p>
+      </div>
+    </div>
+
+    <button class="btn-back" (click)="voltar()">
+      <span class="material-icons">arrow_back</span>
+      Voltar
+    </button>
+  </header>
+
+  <!-- Sistema de Abas -->
+  <nav class="profile-tabs" style="display: flex !important; visibility: visible !important; opacity: 1 !important;">
+    <button class="tab-btn" [class.tab-btn--active]="abaAtiva === 'perfil'" (click)="trocarAba('perfil')">
+      <span class="material-icons">account_circle</span>
+      Dados do Perfil
+    </button>
+
+    <button class="tab-btn" [class.tab-btn--active]="abaAtiva === 'ingressos'" (click)="trocarAba('ingressos')">
+      <span class="material-icons">confirmation_number</span>
+      Meus Ingressos
+    </button>
+
+    <button class="tab-btn" *ngIf="usuario.isProdutor" [class.tab-btn--active]="abaAtiva === 'eventos'"
+      (click)="trocarAba('eventos')">
+      <span class="material-icons">event</span>
+      Meus Eventos
+    </button>
+  </nav>
+
+  <!-- Conteúdo Principal -->
+  <main class="profile-main">
+
+    <!-- ABA: PERFIL -->
+    <div class="view-perfil" *ngIf="abaAtiva === 'perfil'">
+      <div class="profile-card">
+        <div class="profile-card__header">
+          <div class="header-info">
+            <span class="material-icons">manage_accounts</span>
+            <h2>Informações do Cadastro</h2>
+          </div>
+
+          <div class="header-badges">
+            <button class="btn-edit" (click)="toggleEdit()" [class.btn-edit--active]="editMode">
+              <span class="material-icons">{{ editMode ? 'close' : 'edit' }}</span>
+              {{ editMode ? 'Cancelar' : 'Alterar' }}
+            </button>
+
+            <!-- Selo de Produtor -->
+            <div class="producer-pill" [class.producer-pill--active]="usuario.isProdutor">
+              <span class="material-icons">{{ usuario.isProdutor ? 'verified' : 'person' }}</span>
+              {{ usuario.isProdutor ? 'Produtor' : 'Usuário' }}
+            </div>
+
+            <!-- Selo de Tipo de Pessoa (Ícone com Hover) -->
+            <div class="account-type-icon-pill"
+              [title]="usuario.tipoPessoa === 'juridica' ? 'Pessoa Jurídica' : 'Pessoa Física'">
+              <span class="material-icons">
+                {{ usuario.tipoPessoa === 'juridica' ? 'business' : 'person' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-grid">
+          <!-- Nome / Razão Social -->
+          <div class="form-group" style="grid-column: span 2;">
+            <label>{{ usuario.tipoPessoa === 'juridica' ? 'Nome da Empresa / Razão Social' : 'Nome Completo' }}</label>
+            <div class="input-wrapper" [class.input-wrapper--edit]="editMode">
+              <span class="material-icons">{{ usuario.tipoPessoa === 'juridica' ? 'business' : 'person' }}</span>
+              <input type="text" [(ngModel)]="usuario.nomeEmpresa" *ngIf="usuario.tipoPessoa === 'juridica'"
+                [disabled]="!editMode">
+              <input type="text" [(ngModel)]="usuario.nome" *ngIf="usuario.tipoPessoa === 'fisica'"
+                [disabled]="!editMode">
+            </div>
+          </div>
+
+          <!-- E-mail -->
+          <div class="form-group">
+            <label>E-mail (Login)</label>
+            <div class="input-wrapper input-wrapper--readonly">
+              <span class="material-icons">email</span>
+              <input type="text" [value]="usuario.email" disabled class="input-disabled">
+            </div>
+          </div>
+
+          <!-- Telefone -->
+          <div class="form-group">
+            <label>Telefone / WhatsApp</label>
+            <div class="input-wrapper" [class.input-wrapper--edit]="editMode">
+              <span class="material-icons">phone</span>
+              <input type="text" [(ngModel)]="usuario.celular" [disabled]="!editMode" placeholder="(00) 00000-0000">
+            </div>
+          </div>
+
+          <!-- Documento (CPF/CNPJ) -->
+          <div class="form-group">
+            <label>{{ usuario.tipoPessoa === 'juridica' ? 'CNPJ' : 'CPF' }}</label>
+            <div class="input-wrapper" [class.input-wrapper--edit]="editMode">
+              <span class="material-icons">badge</span>
+              <input type="text" [(ngModel)]="usuario.cnpj" *ngIf="usuario.tipoPessoa === 'juridica'"
+                [disabled]="!editMode">
+              <input type="text" [(ngModel)]="usuario.cpf" *ngIf="usuario.tipoPessoa === 'fisica'"
+                [disabled]="!editMode">
+            </div>
+          </div>
+
+          <!-- Data de Nascimento / Responsável -->
+          <div class="form-group">
+            <label>{{ usuario.tipoPessoa === 'juridica' ? 'Nome do Responsável' : 'Data de Nascimento' }}</label>
+            <div class="input-wrapper" [class.input-wrapper--edit]="editMode">
+              <span class="material-icons">{{ usuario.tipoPessoa === 'juridica' ? 'person' : 'event' }}</span>
+              <input type="text" [(ngModel)]="usuario.nome" *ngIf="usuario.tipoPessoa === 'juridica'"
+                [disabled]="!editMode">
+            <label>{{ usuario?.tipoPessoa === 'juridica' ? 'Nome do Responsável' : 'Data de Nascimento' }}</label>
+            <div class="input-wrapper" [class.input-wrapper--edit]="editMode">
+              <span class="material-icons">{{ usuario?.tipoPessoa === 'juridica' ? 'person' : 'event' }}</span>
+              <input type="text" [(ngModel)]="usuario.nome" *ngIf="usuario?.tipoPessoa === 'juridica'"
+                [disabled]="!editMode">
+              <input type="date" [(ngModel)]="usuario.dataNascimento" *ngIf="usuario?.tipoPessoa === 'fisica'"
+                [disabled]="!editMode">
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-content" [ngSwitch]="abaAtiva" *ngIf="usuario">
+          <button class="btn-save" (click)="salvarPerfil()" [disabled]="salvando">
+            <span class="material-icons" *ngIf="!salvando">save</span>
+            <div class="loader-sm" *ngIf="salvando"></div>
+            {{ salvando ? 'Salvando...' : 'Salvar Alterações' }}
+          </button>
+        </div>
+
+        <!-- Feedbacks -->
+        <div class="profile-alerts">
+          <div class="alert success" *ngIf="sucessoMensagem">
+            <span class="material-icons">check_circle</span>
+            {{ sucessoMensagem }}
+          </div>
+          <div class="alert error" *ngIf="erroGeral">
+            <span class="material-icons">error</span>
+            {{ erroGeral }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Segurança e Acesso -->
+      <div class="profile-card profile-card--security">
+        <div class="profile-card__header">
+          <div class="header-info">
+            <span class="material-icons">security</span>
+            <h2>Segurança e Acesso</h2>
+          </div>
+        </div>
+        <div class="security-content">
+          <p>Mantenha sua conta protegida. Recomendamos trocar sua senha a cada 90 dias.</p>
+          <button class="btn-outline">
+            <span class="material-icons">lock_reset</span>
+            Alterar Senha de Acesso
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA: INGRESSOS -->
+    <div class="view-ingressos" *ngIf="abaAtiva === 'ingressos'">
+      <div class="view-header">
+        <span class="material-icons">confirmation_number</span>
+        <h2>Meus Ingressos</h2>
+      </div>
+
+      <div class="tickets-grid" *ngIf="meusIngressos.length > 0; else noTickets">
+        <div class="ticket-card" *ngFor="let tkt of meusIngressos">
+          <div class="ticket-content">
+            <div class="ticket-status-badge">{{ tkt.status }}</div>
+            <h3 class="ticket-title">{{ tkt.eventoNome }}</h3>
+            <div class="ticket-meta">
+              <span><span class="material-icons">event</span> {{ tkt.data }}</span>
+              <span><span class="material-icons">location_on</span> {{ tkt.local }}</span>
+            </div>
+            <div class="ticket-footer">
+              <span class="ticket-id">Ref: {{ tkt.id }}</span>
+              <button class="btn-view-ticket">
+                <span class="material-icons">qr_code</span>
+                Ver Ingresso
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noTickets>
+        <div class="empty-state">
+          <span class="material-icons">local_activity</span>
+          <h3>Nenhum ingresso encontrado</h3>
+          <p>Você ainda não garantiu sua presença em nenhum evento.</p>
+          <button class="btn-save" routerLink="/eventos">Explorar Eventos</button>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- ABA: EVENTOS (PRODUTOR) -->
+    <div class="view-eventos" *ngIf="abaAtiva === 'eventos'">
+      <div class="view-header">
+        <div class="view-header__info">
+          <span class="material-icons">campaign</span>
+          <h2>Gestão de Eventos</h2>
+        </div>
+        <button class="btn-save btn-save--sm" routerLink="/new-event">
+          <span class="material-icons">add</span> Criar Novo Evento
+        </button>
+      </div>
+
+      <div class="events-list" *ngIf="meusEventos.length > 0; else noEvents">
+        <div class="event-row" *ngFor="let ev of meusEventos">
+          <div class="event-row__info">
+            <h4>{{ ev.titulo }}</h4>
+            <p>{{ ev.data }} • {{ ev.local }}</p>
+          </div>
+          <div class="event-row__stats">
+            <div class="stat-item">
+              <span class="stat-value">{{ ev.vendidos }}</span>
+              <span class="stat-label">Vendidos</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-value">{{ ((ev.vendidos / ev.totalIngressos) * 100).toFixed(0) }}%</span>
+              <span class="stat-label">Ocupação</span>
+            </div>
+          </div>
+          <div class="event-row__actions">
+            <button class="btn-icon-alt" title="Editar"><span class="material-icons">edit</span></button>
+            <button class="btn-icon-alt" title="Dashboard"><span class="material-icons">bar_chart</span></button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noEvents>
+        <div class="empty-state">
+          <span class="material-icons">event_available</span>
+          <h3>Você ainda não produz eventos</h3>
+          <p>Comece a organizar seus próprios eventos na Evence hoje mesmo.</p>
+          <button class="btn-save" routerLink="/new-event">Publicar Primeiro Evento</button>
+        </div>
+      </ng-template>
+    </div>
+  </main>
+</div>

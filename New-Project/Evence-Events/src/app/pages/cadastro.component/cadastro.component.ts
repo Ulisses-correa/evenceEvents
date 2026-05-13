@@ -97,8 +97,8 @@ export class CadastroComponent implements OnInit {
         email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
         cpf: ['', [Validators.required, cpfValidator()]],
         cnpj: [''],
-        dataNascimento: ['', Validators.required],
-        celular: ['', [Validators.required, Validators.minLength(15)]],
+        dataNascimento: [''],
+        celular: ['', [Validators.minLength(15)]],
         senha: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(50)]],
         confirmarSenha: ['', Validators.required],
         aceitaTermos: [false, Validators.requiredTrue],
@@ -114,15 +114,18 @@ export class CadastroComponent implements OnInit {
       const cnpjCtrl = this.cadastroForm.get('cnpj');
       const empresaCtrl = this.cadastroForm.get('nomeEmpresa');
       const dataNascCtrl = this.cadastroForm.get('dataNascimento');
+      const nomeCtrl = this.cadastroForm.get('nome');
 
       if (tipo === 'fisica') {
         cpfCtrl?.setValidators([Validators.required, cpfValidator()]);
-        dataNascCtrl?.setValidators([Validators.required]);
+        nomeCtrl?.setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(80)]);
+        dataNascCtrl?.clearValidators();
         cnpjCtrl?.clearValidators();
         empresaCtrl?.clearValidators();
       } else {
         cnpjCtrl?.setValidators([Validators.required, cnpjValidator()]);
         empresaCtrl?.setValidators([Validators.required, Validators.minLength(3)]);
+        nomeCtrl?.clearValidators();
         cpfCtrl?.clearValidators();
         dataNascCtrl?.clearValidators();
       }
@@ -130,6 +133,7 @@ export class CadastroComponent implements OnInit {
       cnpjCtrl?.updateValueAndValidity();
       empresaCtrl?.updateValueAndValidity();
       dataNascCtrl?.updateValueAndValidity();
+      nomeCtrl?.updateValueAndValidity();
     });
   }
 
@@ -251,14 +255,14 @@ export class CadastroComponent implements OnInit {
 
     const formValues = this.cadastroForm.value;
     const usuario: Usuario = {
-      nome: formValues.nome,
+      nome: formValues.nome || 'Usuário', // Default fallback se estiver vazio (jurídica)
       email: formValues.email,
       cpf: formValues.tipoPessoa === 'fisica' ? formValues.cpf : undefined,
       cnpj: formValues.tipoPessoa === 'juridica' ? formValues.cnpj : undefined,
       nomeEmpresa: formValues.tipoPessoa === 'juridica' ? formValues.nomeEmpresa : undefined,
       tipoPessoa: formValues.tipoPessoa,
-      dataNascimento: formValues.tipoPessoa === 'fisica' ? formValues.dataNascimento : 'N/A',
-      celular: formValues.celular,
+      dataNascimento: formValues.tipoPessoa === 'fisica' && formValues.dataNascimento ? formValues.dataNascimento : '',
+      celular: formValues.celular || '',
       senha: formValues.senha,
       aceitaTermos: formValues.aceitaTermos,
       aceitaNewsletter: formValues.aceitaNewsletter,

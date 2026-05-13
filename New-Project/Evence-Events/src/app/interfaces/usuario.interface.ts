@@ -13,4 +13,6 @@ export interface Usuario {
   aceitaNewsletter?: boolean;
   isProdutor?: boolean;
   isAdmin?: boolean;
+  verificado?: boolean;
+  estaSuspenso?: boolean;
 }

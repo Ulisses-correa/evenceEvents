@@ -19,6 +19,7 @@ export class SolicitacaoDetalhesComponent implements OnInit {
   carregando = true;
   erro = false;
   processando = false;
+  totalEventosProdutor = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,8 +46,24 @@ export class SolicitacaoDetalhesComponent implements OnInit {
           this.eventosService.getUsuarioById(this.solicitacao.produtorId).subscribe({
             next: (u) => {
               this.produtor = u;
-              this.carregando = false;
-              this.cdr.detectChanges();
+              
+              // Buscar contagem real de eventos do produtor
+              if (this.produtor && this.produtor.id) {
+                this.eventosService.getEventosByProdutor(this.produtor.id).subscribe({
+                  next: (eventos) => {
+                    this.totalEventosProdutor = eventos.length;
+                    this.carregando = false;
+                    this.cdr.detectChanges();
+                  },
+                  error: () => {
+                    this.carregando = false;
+                    this.cdr.detectChanges();
+                  }
+                });
+              } else {
+                this.carregando = false;
+                this.cdr.detectChanges();
+              }
             },
             error: () => {
               this.carregando = false;

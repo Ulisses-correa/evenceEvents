@@ -20,7 +20,7 @@ export class AdminPageComponent implements OnInit {
   carregando = true;
   erroGeral = '';
   sucessoMensagem = '';
-  abaAtiva: 'dashboard' | 'eventos' | 'admins' | 'aprovacoes' = 'dashboard';
+  abaAtiva: 'dashboard' | 'eventos' | 'admins' | 'aprovacoes' | 'produtores' = 'dashboard';
 
   // Estatísticas
   stats = {
@@ -60,13 +60,24 @@ export class AdminPageComponent implements OnInit {
 
   // Modal de criação de admin
   modalAdminAberto = false;
+  tipoCadastroAdmin: 'novo' | 'existente' = 'novo';
+  usuariosNaoAdmins: Usuario[] = [];
+  idsSelecionadosParaAdmin: (string | number)[] = [];
+  buscaExistente = '';
+
+  // Filtros da aba Usuários/Produtores
+  filtroTipoUsuario: 'todos' | 'produtor' | 'usuario' = 'todos';
+  filtroTipoPessoa: 'todos' | 'fisica' | 'juridica' = 'todos';
   criarAdminForm!: FormGroup;
   criandoAdmin = false;
 
-  // Confirmação de exclusão de admin
+  // Suspensão e Exclusão
   confirmacaoAdminAberta = false;
+  confirmacaoSuspensaoAberta = false;
   adminParaExcluir: Usuario | null = null;
+  usuarioParaSuspender: Usuario | null = null;
   excluindoAdmin = false;
+  suspendendoUsuario = false;
 
   constructor(
     private eventosService: EventosService,
@@ -110,13 +121,16 @@ export class AdminPageComponent implements OnInit {
       const success = params.get('success');
       const tab = params.get('tab');
 
+      console.log('AdminPage: Aba detectada na URL:', tab);
+
       if (success) {
         this.sucessoMensagem = success;
         setTimeout(() => this.sucessoMensagem = '', 5000);
       }
 
-      if (tab && (tab === 'aprovacoes' || tab === 'eventos' || tab === 'admins' || tab === 'dashboard')) {
+      if (tab && ['aprovacoes', 'eventos', 'admins', 'dashboard', 'produtores'].includes(tab)) {
         this.abaAtiva = tab as any;
+        this.aplicarFiltrosUsuarios();
       }
     });
   }
@@ -166,6 +180,8 @@ export class AdminPageComponent implements OnInit {
     this.eventosService.getUsuarios().subscribe({
       next: (usuarios) => {
         this.usuarios = usuarios || [];
+        // Apenas pessoas físicas que não são admins
+        this.usuariosNaoAdmins = this.usuarios.filter(u => !u.isAdmin && u.tipoPessoa === 'fisica');
         this.aplicarFiltrosUsuarios();
         this.calcularStats();
         this.cdr.detectChanges();
@@ -187,6 +203,116 @@ export class AdminPageComponent implements OnInit {
         this.carregando = false;
       }
     });
+  }
+
+  // --- MODAL ADMIN ---
+  
+  abrirModalCriarAdmin(): void {
+    this.modalAdminAberto = true;
+    this.tipoCadastroAdmin = 'novo';
+    this.idsSelecionadosParaAdmin = [];
+    this.buscaExistente = '';
+    this.criarAdminForm.reset();
+  }
+
+  fecharModalCriarAdmin(): void {
+    this.modalAdminAberto = false;
+  }
+
+  setTipoCadastro(tipo: 'novo' | 'existente'): void {
+    this.tipoCadastroAdmin = tipo;
+  }
+
+  toggleSelecaoUsuario(id: string | number | undefined): void {
+    if (id === undefined) return;
+    const index = this.idsSelecionadosParaAdmin.indexOf(id);
+    if (index === -1) {
+      this.idsSelecionadosParaAdmin.push(id);
+    } else {
+      this.idsSelecionadosParaAdmin.splice(index, 1);
+    }
+  }
+
+  isUsuarioSelecionado(id: string | number | undefined): boolean {
+    if (id === undefined) return false;
+    return this.idsSelecionadosParaAdmin.includes(id);
+  }
+
+  criarNovoAdmin(): void {
+    if (this.criarAdminForm.invalid || this.criandoAdmin) return;
+
+    this.criandoAdmin = true;
+    const novoAdmin: Usuario = {
+      ...this.criarAdminForm.value,
+      isAdmin: true,
+      isProdutor: false,
+      tipoPessoa: 'fisica'
+    };
+
+    this.eventosService.cadastro(novoAdmin).subscribe({
+      next: () => {
+        this.sucessoMensagem = 'Novo administrador criado com sucesso!';
+        this.fecharModalCriarAdmin();
+        this.carregarDados();
+        setTimeout(() => this.sucessoMensagem = '', 3000);
+        this.criandoAdmin = false;
+      },
+      error: () => {
+        this.erroGeral = 'Erro ao criar administrador';
+        this.criandoAdmin = false;
+      }
+    });
+  }
+
+  promoverParaAdmin(): void {
+    if (this.idsSelecionadosParaAdmin.length === 0 || this.criandoAdmin) return;
+    
+    this.criandoAdmin = true;
+    let processados = 0;
+    const total = this.idsSelecionadosParaAdmin.length;
+
+    this.idsSelecionadosParaAdmin.forEach(id => {
+      const user = this.usuarios.find(u => u.id === id);
+      if (user) {
+        const userAtualizado = { ...user, isAdmin: true };
+        this.eventosService.atualizarUsuario(user.id!, userAtualizado).subscribe({
+          next: () => {
+            processados++;
+            if (processados === total) {
+              this.sucessoMensagem = `${total} usuário(s) promovido(s) com sucesso!`;
+              this.finalizarPromocao();
+            }
+          },
+          error: () => {
+            processados++;
+            this.erroGeral = 'Erro ao promover alguns usuários';
+            if (processados === total) this.finalizarPromocao();
+          }
+        });
+      } else {
+        processados++;
+        if (processados === total) this.finalizarPromocao();
+      }
+    });
+  }
+
+  private finalizarPromocao(): void {
+    this.fecharModalCriarAdmin();
+    this.carregarDados();
+    setTimeout(() => {
+      this.sucessoMensagem = '';
+      this.erroGeral = '';
+    }, 3000);
+    this.criandoAdmin = false;
+  }
+
+  get usuariosFiltradosParaPromo(): Usuario[] {
+    if (!this.buscaExistente.trim()) return this.usuariosNaoAdmins;
+    const termo = this.buscaExistente.toLowerCase();
+    return this.usuariosNaoAdmins.filter(u => 
+      u.nome.toLowerCase().includes(termo) || 
+      u.email.toLowerCase().includes(termo)
+    );
   }
 
   calcularStats(): void {
@@ -235,8 +361,14 @@ export class AdminPageComponent implements OnInit {
     });
   }
 
-  trocarAba(aba: 'dashboard' | 'eventos' | 'admins' | 'aprovacoes'): void {
+  trocarAba(aba: 'dashboard' | 'eventos' | 'admins' | 'aprovacoes' | 'produtores'): void {
     this.abaAtiva = aba;
+    // Atualizar a URL para que o F5 mantenha a aba correta
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: aba },
+      queryParamsHandling: 'merge'
+    });
   }
 
   // --- EVENTOS ---
@@ -399,15 +531,37 @@ export class AdminPageComponent implements OnInit {
     });
   }
 
-  // --- USUÁRIOS/ADMINS ---
+  // --- USUÁRIOS/PRODUTORES ---
 
   aplicarFiltrosUsuarios(): void {
-    let resultado = this.usuarios.filter(u => u.isAdmin);
+    // Filtrar por tipo dependendo da aba ativa
+    let resultado = [];
+    if (this.abaAtiva === 'admins') {
+      resultado = this.usuarios.filter(u => u.isAdmin);
+    } else {
+      // Aba Usuários/Produtores: Mostra todos que NÃO são administradores
+      resultado = this.usuarios.filter(u => !u.isAdmin);
+
+      // Filtro por Tipo de Usuário (Produtor ou Usuário Comum)
+      if (this.filtroTipoUsuario === 'produtor') {
+        resultado = resultado.filter(u => u.isProdutor);
+      } else if (this.filtroTipoUsuario === 'usuario') {
+        resultado = resultado.filter(u => !u.isProdutor);
+      }
+
+      // Filtro por Tipo de Pessoa (Física ou Jurídica)
+      if (this.filtroTipoPessoa === 'fisica') {
+        resultado = resultado.filter(u => u.tipoPessoa === 'fisica');
+      } else if (this.filtroTipoPessoa === 'juridica') {
+        resultado = resultado.filter(u => u.tipoPessoa === 'juridica');
+      }
+    }
 
     if (this.buscaUsuario.trim()) {
       const termo = this.buscaUsuario.toLowerCase().trim();
       resultado = resultado.filter(u =>
         u.nome.toLowerCase().includes(termo) ||
+        (u.nomeEmpresa && u.nomeEmpresa.toLowerCase().includes(termo)) ||
         u.email.toLowerCase().includes(termo)
       );
     }
@@ -415,55 +569,28 @@ export class AdminPageComponent implements OnInit {
     this.usuariosFiltrados = resultado;
   }
 
-  onBuscaUsuarioChange(): void {
-    this.aplicarFiltrosUsuarios();
-  }
+  alternarVerificacao(usuario: Usuario): void {
+    if (!usuario.id) return;
+    
+    const novoStatus = !usuario.verificado;
+    const usuarioAtualizado = { ...usuario, verificado: novoStatus };
 
-  abrirModalCriarAdmin(): void {
-    this.criarAdminForm.reset();
-    this.modalAdminAberto = true;
-  }
-
-  fecharModalAdmin(): void {
-    this.modalAdminAberto = false;
-    this.criarAdminForm.reset();
-  }
-
-  criarNovoAdmin(): void {
-    if (this.criarAdminForm.invalid) {
-      this.criarAdminForm.markAllAsTouched();
-      return;
-    }
-
-    this.criandoAdmin = true;
-    this.erroGeral = '';
-    this.sucessoMensagem = '';
-
-    const novoAdmin: Usuario = {
-      ...this.criarAdminForm.value,
-      isAdmin: true,
-      aceitaTermos: true,
-      aceitaNewsletter: false,
-      isProdutor: false
-    };
-
-    this.eventosService.cadastro(novoAdmin).subscribe({
+    this.eventosService.atualizarUsuario(usuario.id, usuarioAtualizado).subscribe({
       next: () => {
-        this.criandoAdmin = false;
-        this.sucessoMensagem = 'Administrador criado com sucesso!';
-        this.fecharModalAdmin();
-        setTimeout(() => {
-          this.carregarDados();
-          this.sucessoMensagem = '';
-        }, 1500);
+        usuario.verificado = novoStatus;
+        this.sucessoMensagem = `Status de verificação de "${usuario.nomeEmpresa || usuario.nome}" atualizado!`;
+        setTimeout(() => this.sucessoMensagem = '', 3000);
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Erro ao criar administrador:', err);
-        this.erroGeral = 'Erro ao criar o administrador';
-        this.criandoAdmin = false;
-        this.cdr.detectChanges();
+        console.error('Erro ao atualizar verificação:', err);
+        this.erroGeral = 'Erro ao atualizar verificação';
       }
     });
+  }
+
+  onBuscaUsuarioChange(): void {
+    this.aplicarFiltrosUsuarios();
   }
 
   abrirConfirmacaoExclusaoAdmin(admin: Usuario): void {
@@ -479,9 +606,9 @@ export class AdminPageComponent implements OnInit {
   confirmarExclusaoAdmin(): void {
     if (!this.adminParaExcluir || !this.adminParaExcluir.id) return;
 
-    // Não permitir deletar a si mesmo
+    // Não permitir remover a si mesmo
     if (this.usuarioLogado && this.usuarioLogado.id === this.adminParaExcluir.id) {
-      this.erroGeral = 'Você não pode deletar sua própria conta!';
+      this.erroGeral = 'Você não pode remover seu próprio acesso administrativo!';
       this.cdr.detectChanges();
       return;
     }
@@ -490,10 +617,13 @@ export class AdminPageComponent implements OnInit {
     this.erroGeral = '';
     this.sucessoMensagem = '';
 
-    this.eventosService.deletarUsuario(this.adminParaExcluir.id).subscribe({
+    // Em vez de deletar, apenas removemos o cargo de admin
+    const usuarioAtualizado = { ...this.adminParaExcluir, isAdmin: false };
+
+    this.eventosService.atualizarUsuario(this.adminParaExcluir.id, usuarioAtualizado).subscribe({
       next: () => {
         this.excluindoAdmin = false;
-        this.sucessoMensagem = 'Administrador deletado com sucesso!';
+        this.sucessoMensagem = 'Acesso administrativo removido com sucesso!';
         this.fecharConfirmacaoAdmin();
         setTimeout(() => {
           this.carregarDados();
@@ -501,9 +631,45 @@ export class AdminPageComponent implements OnInit {
         }, 1500);
       },
       error: (err) => {
-        console.error('Erro ao deletar administrador:', err);
-        this.erroGeral = 'Erro ao deletar o administrador';
+        console.error('Erro ao remover acesso:', err);
+        this.erroGeral = 'Erro ao remover o acesso administrativo';
         this.excluindoAdmin = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  abrirConfirmacaoSuspensao(usuario: Usuario): void {
+    this.usuarioParaSuspender = usuario;
+    this.confirmacaoSuspensaoAberta = true;
+  }
+
+  fecharConfirmacaoSuspensao(): void {
+    this.confirmacaoSuspensaoAberta = false;
+    this.usuarioParaSuspender = null;
+  }
+
+  confirmarSuspensaoUsuario(): void {
+    if (!this.usuarioParaSuspender || !this.usuarioParaSuspender.id) return;
+
+    this.suspendendoUsuario = true;
+    const novoStatus = !this.usuarioParaSuspender.estaSuspenso;
+    const usuarioAtualizado = { ...this.usuarioParaSuspender, estaSuspenso: novoStatus };
+
+    this.eventosService.atualizarUsuario(this.usuarioParaSuspender.id, usuarioAtualizado).subscribe({
+      next: () => {
+        this.suspendendoUsuario = false;
+        this.sucessoMensagem = `Usuário ${novoStatus ? 'suspenso' : 'reativado'} com sucesso!`;
+        this.fecharConfirmacaoSuspensao();
+        setTimeout(() => {
+          this.carregarDados();
+          this.sucessoMensagem = '';
+        }, 1500);
+      },
+      error: (err) => {
+        console.error('Erro ao alternar suspensão:', err);
+        this.erroGeral = 'Erro ao processar suspensão';
+        this.suspendendoUsuario = false;
         this.cdr.detectChanges();
       }
     });

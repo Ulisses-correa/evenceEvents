@@ -2,6 +2,29 @@
 
 <!-- Conteúdo -->
 <main class="detalhes-main">
+  <!-- Banner de Administração (Só aparece em modoAdmin) -->
+  <div class="admin-banner" *ngIf="modoAdmin">
+    <div class="admin-banner__container">
+      <div class="admin-banner__info">
+        <span class="material-icons">visibility</span>
+        <div>
+          <strong>Modo de Curadoria</strong>
+          <p>Analisando solicitação de publicação.</p>
+        </div>
+      </div>
+      <div class="admin-banner__actions">
+        <button class="btn-banner btn-banner--reject" (click)="reprovar()" [disabled]="processando">
+          <span class="material-icons">close</span>
+          Reprovar
+        </button>
+        <button class="btn-banner btn-banner--approve" (click)="aprovar()" [disabled]="processando">
+          <span class="material-icons">check</span>
+          Aprovar Publicação
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Loading -->
   <div class="loading" *ngIf="carregando">
     <div class="spinner"></div>
@@ -60,7 +83,7 @@
                 {{ evento.descricaoLonga }}
               </p>
               <p class="info-secao__texto" *ngIf="!evento.descricaoLonga">
-                Prepare-se para uma experiência única! O {{ evento.titulo }} traz o melhor do entretenimento para {{ evento.cidade }}. Garanta seu lugar e não fique de fora deste grande acontecimento.
+                Prepare-se para uma experiência única! O {{ evento.titulo }} traz o melhor do entertainment para {{ evento.cidade }}. Garanta seu lugar e não fique de fora deste grande acontecimento.
               </p>
             </section>
 
@@ -96,13 +119,14 @@
 
           <!-- Lado Direito: Card de Compra (Sticky) -->
           <aside class="detalhes-sidebar">
-            <div class="checkout-card">
+            <div class="checkout-card" [class.checkout-card--preview]="modoAdmin">
               <div class="checkout-card__cabecalho">
-                <span class="checkout-card__label">Ingressos a partir de</span>
+                <span class="checkout-card__label">{{ modoAdmin ? 'Preço Sugerido' : 'Ingressos a partir de' }}</span>
                 <span class="checkout-card__preco">{{ formatarPreco(evento.precoMinimo) }}</span>
               </div>
 
-              <div class="checkout-card__corpo" *ngIf="!evento.esgotado">
+              <!-- Modo Público: Fluxo de Compra -->
+              <div class="checkout-card__corpo" *ngIf="!evento.esgotado && !modoAdmin">
                 <div class="seletor-quantidade">
                   <span class="seletor-quantidade__label">Quantidade de ingressos</span>
                   <div class="seletor-quantidade__controles">
@@ -127,7 +151,13 @@
                 </button>
               </div>
 
-              <div class="checkout-card__esgotado" *ngIf="evento.esgotado">
+              <!-- Modo Admin: Aviso de Prévia -->
+              <div class="preview-notice" *ngIf="modoAdmin">
+                <span class="material-icons">info</span>
+                <p>Vendas bloqueadas em modo de curadoria.</p>
+              </div>
+
+              <div class="checkout-card__esgotado" *ngIf="evento.esgotado && !modoAdmin">
                 <span class="material-icons">error_outline</span>
                 <p>Este evento está com ingressos esgotados.</p>
                 <button class="btn-voltar" routerLink="/eventos">Ver outros eventos</button>
@@ -143,30 +173,23 @@
                 <div class="prod-info">
                   <span class="prod-label">Organizado por</span>
                   <h3 class="prod-nome">{{ produtor.nomeEmpresa || produtor.nome }}</h3>
-                  <div class="prod-tipo">
-                    <span class="material-icons">{{ produtor.tipoPessoa === 'juridica' ? 'verified' : 'person_pin' }}</span>
-                    {{ produtor.tipoPessoa === 'juridica' ? 'Empresa Verificada' : 'Produtor Verificado' }}
+                  <div class="prod-tipo" *ngIf="produtor.verificado">
+                    <span class="material-icons">verified</span>
+                    {{ produtor.tipoPessoa === 'juridica' ? 'Empresa Verificada pela Evence' : 'Produtor Verificado pela Evence' }}
+                  </div>
+                  <div class="prod-tipo" *ngIf="!produtor.verificado" style="color: var(--cor-texto-terciario);">
+                    <span class="material-icons">person_outline</span>
+                    {{ produtor.tipoPessoa === 'juridica' ? 'Empresa' : 'Produtor' }}
                   </div>
                 </div>
               </div>
               <div class="produtor-card__body">
-                <p class="prod-desc" *ngIf="produtor.tipoPessoa === 'juridica'">
-                  A <strong>{{ produtor.nomeEmpresa }}</strong> é uma organização parceira da Evence Events, focada em trazer as melhores experiências para o público.
-                </p>
                 <div class="prod-stats">
                   <div class="stat">
-                    <span class="stat-num">4.9</span>
-                    <span class="stat-lbl">Avaliação</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-num">+50</span>
-                    <span class="stat-lbl">Eventos</span>
+                    <span class="stat-num">{{ totalEventosProdutor }}</span>
+                    <span class="stat-lbl">Eventos publicados</span>
                   </div>
                 </div>
-                <button class="btn-contato">
-                  <span class="material-icons">mail_outline</span>
-                  Entrar em contato
-                </button>
               </div>
             </div>
           </aside>

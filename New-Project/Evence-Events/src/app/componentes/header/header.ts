@@ -63,4 +63,19 @@ export class HeaderComponent implements OnInit {
     if (!nome) return '';
     return nome.split(' ')[0];
   }
+
+  isPerfilIncompleto(): boolean {
+    if (!this.usuarioLogado) return false;
+    
+    const u = this.usuarioLogado;
+    if (!u.celular || u.celular === '') return true;
+    
+    if (u.tipoPessoa === 'fisica') {
+      if (!u.dataNascimento || u.dataNascimento === 'N/A' || u.dataNascimento === '') return true;
+    } else {
+      if (!u.nome || u.nome === 'Usuário' || u.nome === '') return true;
+    }
+    
+    return false;
+  }
 }

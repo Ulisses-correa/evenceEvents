@@ -21,6 +21,10 @@ export class EventosService {
     return this.http.get<Evento>(`${this.apiUrl}/eventos/${id}`);
   }
 
+  getEventosByProdutor(produtorId: string | number): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.apiUrl}/eventos?produtorId=${produtorId}`);
+  }
+
   getCategorias(): Observable<Categoria[]> {
     return this.http.get<Categoria[]>(`${this.apiUrl}/categorias`);
   }

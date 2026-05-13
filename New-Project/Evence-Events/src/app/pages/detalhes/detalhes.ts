@@ -19,6 +19,9 @@ export class DetalhesComponent implements OnInit {
   produtor: Usuario | null = null;
   carregando = true;
   erro = false;
+  totalEventosProdutor = 0;
+  modoAdmin = false;
+  processando = false;
 
   quantidade = 1;
 
@@ -31,16 +34,45 @@ export class DetalhesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      this.modoAdmin = data['modoAdmin'] === true;
+    });
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-      const isPreview = this.route.snapshot.queryParamMap.get('preview') === 'true';
       
       if (id) {
-        this.carregarEvento(id, isPreview);
+        this.carregarEvento(id, this.modoAdmin);
       } else {
         this.erro = true;
         this.carregando = false;
       }
+    });
+  }
+
+  aprovar(): void {
+    if (!this.evento || this.processando) return;
+    this.processando = true;
+    
+    this.eventosService.criarEvento(this.evento).subscribe({
+      next: () => {
+        this.eventosService.deletarSolicitacao(this.evento!.id).subscribe({
+          next: () => this.router.navigate(['/admin'], { queryParams: { tab: 'aprovacoes', success: 'Evento aprovado com sucesso!' } }),
+          error: () => this.processando = false
+        });
+      },
+      error: () => this.processando = false
+    });
+  }
+
+  reprovar(): void {
+    if (!this.evento || this.processando) return;
+    if (!confirm('Tem certeza que deseja reprovar e excluir esta solicitação?')) return;
+    
+    this.processando = true;
+    this.eventosService.deletarSolicitacao(this.evento.id).subscribe({
+      next: () => this.router.navigate(['/admin'], { queryParams: { tab: 'aprovacoes', success: 'Solicitação removida.' } }),
+      error: () => this.processando = false
     });
   }
 
@@ -59,8 +91,24 @@ export class DetalhesComponent implements OnInit {
           this.eventosService.getUsuarioById(this.evento.produtorId).subscribe({
             next: (produtor) => {
               this.produtor = produtor;
-              this.carregando = false;
-              this.cdr.detectChanges();
+              
+              // Buscar contagem real de eventos do produtor
+              if (this.produtor && this.produtor.id) {
+                this.eventosService.getEventosByProdutor(this.produtor.id).subscribe({
+                  next: (eventos) => {
+                    this.totalEventosProdutor = eventos.length;
+                    this.carregando = false;
+                    this.cdr.detectChanges();
+                  },
+                  error: () => {
+                    this.carregando = false;
+                    this.cdr.detectChanges();
+                  }
+                });
+              } else {
+                this.carregando = false;
+                this.cdr.detectChanges();
+              }
             },
             error: () => {
               this.carregando = false;

@@ -9,7 +9,7 @@ import { ExtraInfosComponent } from './pages/extra-infos.component/extra-infos.c
 import { CriarEventoComponent } from './pages/criar-evento.component/criar-evento.component';
 import { DetalhesComponent } from './pages/detalhes/detalhes';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
-import { SolicitacaoDetalhesComponent } from './pages/admin-page/solicitacao-detalhes/solicitacao-detalhes.component';
+import { ProfilePageComponent } from './pages/profile-page/profile-page';
 
 export const routes: Routes = [
     { path:'', component:LandingPageComponent },
@@ -21,6 +21,7 @@ export const routes: Routes = [
     { path: 'extra-infos', component: ExtraInfosComponent },
     { path: 'new-event', component: CriarEventoComponent},
     { path: 'admin', component: AdminPageComponent },
-    { path: 'admin/aprovacoes/:id', component: SolicitacaoDetalhesComponent },
+    { path: 'perfil', component: ProfilePageComponent },
+    { path: 'admin/aprovacoes/:id', component: DetalhesComponent, data: { modoAdmin: true } },
     { path: 'eventos/:id', component: DetalhesComponent },
 ]
