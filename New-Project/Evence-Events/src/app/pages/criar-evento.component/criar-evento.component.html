@@ -173,41 +173,35 @@
             </div>
 
             <!-- Imagem de Capa -->
-            <div class="campo">
+                    <div class="campo">
               <label class="campo__label">Imagem de capa</label>
-
-              <div class="upload-area" [class.upload-area--ativo]="imagemPreview" (click)="abrirSeletor(inputImagem)"
-                (dragover)="onDragOver($event)" (drop)="onImagemDrop($event)">
-                <input #inputImagem type="file" accept="image/*" class="upload-area__input"
-                  (change)="onImagemSelecionada($event)" hidden />
-
-                <!-- Estado sem imagem -->
+              <div
+                class="upload-area"
+                [class.upload-area--ativo]="imagemPreview"
+                (click)="inputImagem.click()"
+                (dragover)="$event.preventDefault()"
+                (drop)="onImagemDrop($event)"
+              >
+                <input
+                  #inputImagem
+                  type="file"
+                  accept="image/*"
+                  class="upload-area__input"
+                  (change)="onImagemSelecionada($event)"
+                />
                 <ng-container *ngIf="!imagemPreview">
-                  <span class="material-icons upload-area__icone">
-                    add_photo_alternate
-                  </span>
-
-                  <p class="upload-area__texto">
-                    Arraste uma imagem ou
-                    <span class="upload-area__link">clique aqui</span>
-                  </p>
-
-                  <p class="upload-area__dica">
-                    PNG, JPG ou WEBP — máx. 5 MB
-                  </p>
+                  <span class="material-icons upload-area__icone">add_photo_alternate</span>
+                  <p class="upload-area__texto">Arraste uma imagem ou <span class="upload-area__link">clique aqui</span></p>
+                  <p class="upload-area__dica">PNG, JPG ou WEBP — máx. 5 MB</p>
                 </ng-container>
-
-                <!-- Estado com preview -->
                 <ng-container *ngIf="imagemPreview">
                   <img [src]="imagemPreview" alt="Prévia da capa" class="upload-area__preview" />
-
                   <button type="button" class="upload-area__remover" (click)="removerImagem($event)">
                     <span class="material-icons">delete</span>
                   </button>
                 </ng-container>
               </div>
             </div>
-          </div>
           <!-- /etapa 1 -->
 
           <!-- ===== ETAPA 2: DATA, HORA E LOCAL ===== -->
