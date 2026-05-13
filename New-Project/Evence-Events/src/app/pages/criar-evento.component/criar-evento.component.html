@@ -81,7 +81,8 @@
           <span class="material-icons sucesso-card__icone">celebration</span>
         </div>
         <h2 class="sucesso-card__titulo">Evento publicado!</h2>
-        <p class="sucesso-card__texto">Seu evento já está disponível na plataforma. Acesse seu painel para gerenciá-lo.</p>
+        <p class="sucesso-card__texto">Seu evento já está disponível na plataforma. Acesse seu painel para gerenciá-lo.
+        </p>
         <a href="#" class="sucesso-card__btn">
           <span class="material-icons">dashboard</span>
           Ir para o painel
@@ -97,13 +98,9 @@
           <p class="form-cabecalho__subtitulo">Preencha as informações do seu evento</p>
 
           <div class="stepper">
-            <div
-              class="stepper__etapa"
-              *ngFor="let etapa of etapas; let i = index"
-              [class.stepper__etapa--ativa]="etapaAtual === i"
-              [class.stepper__etapa--concluida]="etapaAtual > i"
-              (click)="etapaAtual > i ? irParaEtapa(i) : null"
-            >
+            <div class="stepper__etapa" *ngFor="let etapa of etapas; let i = index"
+              [class.stepper__etapa--ativa]="etapaAtual === i" [class.stepper__etapa--concluida]="etapaAtual > i"
+              (click)="etapaAtual > i ? irParaEtapa(i) : null">
               <div class="stepper__circulo">
                 <span class="material-icons stepper__check" *ngIf="etapaAtual > i">check</span>
                 <span *ngIf="etapaAtual <= i">{{ i + 1 }}</span>
@@ -125,15 +122,10 @@
               <label class="campo__label" for="nome">Nome do evento <span class="campo__obrigatorio">*</span></label>
               <div class="campo__wrapper">
                 <span class="material-icons campo__icone campo__icone--esquerda">event</span>
-                <input
-                  class="campo__input"
-                  type="text"
-                  id="nome"
-                  formControlName="nome"
-                  placeholder="Ex: Festival de Verão 2026"
-                  maxlength="100"
-                />
-                <span class="material-icons campo__icone campo__icone--direita campo__icone--status" *ngIf="eventoForm.get('nome')?.touched">
+                <input class="campo__input" type="text" id="nome" formControlName="nome"
+                  placeholder="Ex: Festival de Verão 2026" maxlength="100" />
+                <span class="material-icons campo__icone campo__icone--direita campo__icone--status"
+                  *ngIf="eventoForm.get('nome')?.touched">
                   {{ campoValido('nome') ? 'check_circle' : 'cancel' }}
                 </span>
               </div>
@@ -145,7 +137,8 @@
             </div>
 
             <!-- Categoria -->
-            <div class="campo" [class.campo--erro]="campoInvalido('categoria')" [class.campo--valido]="campoValido('categoria')">
+            <div class="campo" [class.campo--erro]="campoInvalido('categoria')"
+              [class.campo--valido]="campoValido('categoria')">
               <label class="campo__label" for="categoria">Categoria <span class="campo__obrigatorio">*</span></label>
               <div class="campo__wrapper campo__wrapper--select">
                 <span class="material-icons campo__icone campo__icone--esquerda">category</span>
@@ -162,18 +155,13 @@
             </div>
 
             <!-- Descrição -->
-            <div class="campo" [class.campo--erro]="campoInvalido('descricao')" [class.campo--valido]="campoValido('descricao')">
+            <div class="campo" [class.campo--erro]="campoInvalido('descricao')"
+              [class.campo--valido]="campoValido('descricao')">
               <label class="campo__label" for="descricao">Descrição <span class="campo__obrigatorio">*</span></label>
               <div class="campo__wrapper campo__wrapper--textarea">
                 <span class="material-icons campo__icone campo__icone--esquerda campo__icone--top">description</span>
-                <textarea
-                  class="campo__input campo__textarea"
-                  id="descricao"
-                  formControlName="descricao"
-                  placeholder="Conte sobre o seu evento, atrações, programação..."
-                  rows="4"
-                  maxlength="500"
-                ></textarea>
+                <textarea class="campo__input campo__textarea" id="descricao" formControlName="descricao"
+                  placeholder="Conte sobre o seu evento, atrações, programação..." rows="4" maxlength="500"></textarea>
               </div>
               <div class="campo__rodape-info">
                 <p class="campo__mensagem-erro" *ngIf="campoInvalido('descricao')" role="alert">
@@ -187,34 +175,38 @@
             <!-- Imagem de Capa -->
             <div class="campo">
               <label class="campo__label">Imagem de capa</label>
-              <div
-                class="upload-area"
-                [class.upload-area--ativo]="imagemPreview"
-                (click)="inputImagem.click()"
-                (dragover)="$event.preventDefault()"
-                (drop)="onImagemDrop($event)"
-              >
-                <input
-                  #inputImagem
-                  type="file"
-                  accept="image/*"
-                  class="upload-area__input"
-                  (change)="onImagemSelecionada($event)"
-                />
+
+              <div class="upload-area" [class.upload-area--ativo]="imagemPreview" (click)="abrirSeletor(inputImagem)"
+                (dragover)="onDragOver($event)" (drop)="onImagemDrop($event)">
+                <input #inputImagem type="file" accept="image/*" class="upload-area__input"
+                  (change)="onImagemSelecionada($event)" hidden />
+
+                <!-- Estado sem imagem -->
                 <ng-container *ngIf="!imagemPreview">
-                  <span class="material-icons upload-area__icone">add_photo_alternate</span>
-                  <p class="upload-area__texto">Arraste uma imagem ou <span class="upload-area__link">clique aqui</span></p>
-                  <p class="upload-area__dica">PNG, JPG ou WEBP — máx. 5 MB</p>
+                  <span class="material-icons upload-area__icone">
+                    add_photo_alternate
+                  </span>
+
+                  <p class="upload-area__texto">
+                    Arraste uma imagem ou
+                    <span class="upload-area__link">clique aqui</span>
+                  </p>
+
+                  <p class="upload-area__dica">
+                    PNG, JPG ou WEBP — máx. 5 MB
+                  </p>
                 </ng-container>
+
+                <!-- Estado com preview -->
                 <ng-container *ngIf="imagemPreview">
                   <img [src]="imagemPreview" alt="Prévia da capa" class="upload-area__preview" />
+
                   <button type="button" class="upload-area__remover" (click)="removerImagem($event)">
                     <span class="material-icons">delete</span>
                   </button>
                 </ng-container>
               </div>
             </div>
-
           </div>
           <!-- /etapa 1 -->
 
@@ -224,8 +216,10 @@
             <!-- Grade Data/Hora -->
             <div class="campo-grade">
 
-              <div class="campo" [class.campo--erro]="campoInvalido('dataInicio')" [class.campo--valido]="campoValido('dataInicio')">
-                <label class="campo__label" for="dataInicio">Data de início <span class="campo__obrigatorio">*</span></label>
+              <div class="campo" [class.campo--erro]="campoInvalido('dataInicio')"
+                [class.campo--valido]="campoValido('dataInicio')">
+                <label class="campo__label" for="dataInicio">Data de início <span
+                    class="campo__obrigatorio">*</span></label>
                 <div class="campo__wrapper">
                   <span class="material-icons campo__icone campo__icone--esquerda">calendar_today</span>
                   <input class="campo__input" type="date" id="dataInicio" formControlName="dataInicio" />
@@ -236,8 +230,10 @@
                 </p>
               </div>
 
-              <div class="campo" [class.campo--erro]="campoInvalido('horaInicio')" [class.campo--valido]="campoValido('horaInicio')">
-                <label class="campo__label" for="horaInicio">Hora de início <span class="campo__obrigatorio">*</span></label>
+              <div class="campo" [class.campo--erro]="campoInvalido('horaInicio')"
+                [class.campo--valido]="campoValido('horaInicio')">
+                <label class="campo__label" for="horaInicio">Hora de início <span
+                    class="campo__obrigatorio">*</span></label>
                 <div class="campo__wrapper">
                   <span class="material-icons campo__icone campo__icone--esquerda">schedule</span>
                   <input class="campo__input" type="time" id="horaInicio" formControlName="horaInicio" />
@@ -270,17 +266,10 @@
             <div class="campo">
               <label class="campo__label">Tipo de local <span class="campo__obrigatorio">*</span></label>
               <div class="tipo-local-opcoes">
-                <label
-                  class="tipo-local-opcao"
-                  *ngFor="let tipo of tiposLocal"
-                  [class.tipo-local-opcao--ativa]="eventoForm.get('tipoLocal')?.value === tipo.valor"
-                >
-                  <input
-                    type="radio"
-                    class="tipo-local-opcao__input"
-                    formControlName="tipoLocal"
-                    [value]="tipo.valor"
-                  />
+                <label class="tipo-local-opcao" *ngFor="let tipo of tiposLocal"
+                  [class.tipo-local-opcao--ativa]="eventoForm.get('tipoLocal')?.value === tipo.valor">
+                  <input type="radio" class="tipo-local-opcao__input" formControlName="tipoLocal"
+                    [value]="tipo.valor" />
                   <span class="material-icons tipo-local-opcao__icone">{{ tipo.icone }}</span>
                   <span class="tipo-local-opcao__label">{{ tipo.nome }}</span>
                 </label>
@@ -289,21 +278,26 @@
 
             <!-- Local Online -->
             <div class="campo" *ngIf="eventoForm.get('tipoLocal')?.value === 'online'">
-              <label class="campo__label" for="linkOnline">Link do evento online <span class="campo__obrigatorio">*</span></label>
+              <label class="campo__label" for="linkOnline">Link do evento online <span
+                  class="campo__obrigatorio">*</span></label>
               <div class="campo__wrapper">
                 <span class="material-icons campo__icone campo__icone--esquerda">link</span>
-                <input class="campo__input" type="url" id="linkOnline" formControlName="linkOnline" placeholder="https://meet.google.com/..." />
+                <input class="campo__input" type="url" id="linkOnline" formControlName="linkOnline"
+                  placeholder="https://meet.google.com/..." />
               </div>
             </div>
 
             <!-- Local Presencial -->
             <ng-container *ngIf="eventoForm.get('tipoLocal')?.value !== 'online'">
 
-              <div class="campo" [class.campo--erro]="campoInvalido('nomeLocal')" [class.campo--valido]="campoValido('nomeLocal')">
-                <label class="campo__label" for="nomeLocal">Nome do local <span class="campo__obrigatorio">*</span></label>
+              <div class="campo" [class.campo--erro]="campoInvalido('nomeLocal')"
+                [class.campo--valido]="campoValido('nomeLocal')">
+                <label class="campo__label" for="nomeLocal">Nome do local <span
+                    class="campo__obrigatorio">*</span></label>
                 <div class="campo__wrapper">
                   <span class="material-icons campo__icone campo__icone--esquerda">place</span>
-                  <input class="campo__input" type="text" id="nomeLocal" formControlName="nomeLocal" placeholder="Ex: Allianz Parque" />
+                  <input class="campo__input" type="text" id="nomeLocal" formControlName="nomeLocal"
+                    placeholder="Ex: Allianz Parque" />
                 </div>
                 <p class="campo__mensagem-erro" *ngIf="campoInvalido('nomeLocal')" role="alert">
                   <span class="material-icons campo__mensagem-icone">info</span>
@@ -312,11 +306,13 @@
               </div>
 
               <div class="campo-grade">
-                <div class="campo campo--largo" [class.campo--erro]="campoInvalido('endereco')" [class.campo--valido]="campoValido('endereco')">
+                <div class="campo campo--largo" [class.campo--erro]="campoInvalido('endereco')"
+                  [class.campo--valido]="campoValido('endereco')">
                   <label class="campo__label" for="endereco">Endereço <span class="campo__obrigatorio">*</span></label>
                   <div class="campo__wrapper">
                     <span class="material-icons campo__icone campo__icone--esquerda">location_on</span>
-                    <input class="campo__input" type="text" id="endereco" formControlName="endereco" placeholder="Rua, número, bairro" />
+                    <input class="campo__input" type="text" id="endereco" formControlName="endereco"
+                      placeholder="Rua, número, bairro" />
                   </div>
                   <p class="campo__mensagem-erro" *ngIf="campoInvalido('endereco')" role="alert">
                     <span class="material-icons campo__mensagem-icone">info</span>
@@ -328,7 +324,8 @@
                   <label class="campo__label" for="cidade">Cidade <span class="campo__obrigatorio">*</span></label>
                   <div class="campo__wrapper">
                     <span class="material-icons campo__icone campo__icone--esquerda">location_city</span>
-                    <input class="campo__input" type="text" id="cidade" formControlName="cidade" placeholder="São Paulo" />
+                    <input class="campo__input" type="text" id="cidade" formControlName="cidade"
+                      placeholder="São Paulo" />
                   </div>
                 </div>
 
@@ -340,7 +337,8 @@
                       <option value="" disabled>UF</option>
                       <option *ngFor="let uf of estados" [value]="uf">{{ uf }}</option>
                     </select>
-                    <span class="material-icons campo__icone campo__icone--direita campo__select-arrow">expand_more</span>
+                    <span
+                      class="material-icons campo__icone campo__icone--direita campo__select-arrow">expand_more</span>
                   </div>
                 </div>
               </div>
@@ -357,12 +355,10 @@
             <div class="campo">
               <label class="campo__label">Tipo de ingresso <span class="campo__obrigatorio">*</span></label>
               <div class="tipo-local-opcoes">
-                <label
-                  class="tipo-local-opcao"
-                  *ngFor="let tipo of tiposIngresso"
-                  [class.tipo-local-opcao--ativa]="eventoForm.get('tipoIngresso')?.value === tipo.valor"
-                >
-                  <input type="radio" class="tipo-local-opcao__input" formControlName="tipoIngresso" [value]="tipo.valor" />
+                <label class="tipo-local-opcao" *ngFor="let tipo of tiposIngresso"
+                  [class.tipo-local-opcao--ativa]="eventoForm.get('tipoIngresso')?.value === tipo.valor">
+                  <input type="radio" class="tipo-local-opcao__input" formControlName="tipoIngresso"
+                    [value]="tipo.valor" />
                   <span class="material-icons tipo-local-opcao__icone">{{ tipo.icone }}</span>
                   <span class="tipo-local-opcao__label">{{ tipo.nome }}</span>
                 </label>
@@ -391,21 +387,25 @@
                     <label class="campo__label" [for]="'lote-nome-' + i">Nome do lote</label>
                     <div class="campo__wrapper">
                       <span class="material-icons campo__icone campo__icone--esquerda">label</span>
-                      <input class="campo__input" type="text" [id]="'lote-nome-' + i" [(ngModel)]="lote.nome" [ngModelOptions]="{standalone: true}" placeholder="Ex: 1º Lote, Pista, VIP..." />
+                      <input class="campo__input" type="text" [id]="'lote-nome-' + i" [(ngModel)]="lote.nome"
+                        [ngModelOptions]="{standalone: true}" placeholder="Ex: 1º Lote, Pista, VIP..." />
                     </div>
                   </div>
                   <div class="campo">
                     <label class="campo__label" [for]="'lote-preco-' + i">Preço (R$)</label>
                     <div class="campo__wrapper">
                       <span class="campo__icone campo__icone--esquerda campo__icone--texto">R$</span>
-                      <input class="campo__input campo__input--preco" type="number" [id]="'lote-preco-' + i" [(ngModel)]="lote.preco" [ngModelOptions]="{standalone: true}" placeholder="0,00" min="0" step="0.01" />
+                      <input class="campo__input campo__input--preco" type="number" [id]="'lote-preco-' + i"
+                        [(ngModel)]="lote.preco" [ngModelOptions]="{standalone: true}" placeholder="0,00" min="0"
+                        step="0.01" />
                     </div>
                   </div>
                   <div class="campo">
                     <label class="campo__label" [for]="'lote-qtd-' + i">Quantidade</label>
                     <div class="campo__wrapper">
                       <span class="material-icons campo__icone campo__icone--esquerda">confirmation_number</span>
-                      <input class="campo__input" type="number" [id]="'lote-qtd-' + i" [(ngModel)]="lote.quantidade" [ngModelOptions]="{standalone: true}" placeholder="100" min="1" />
+                      <input class="campo__input" type="number" [id]="'lote-qtd-' + i" [(ngModel)]="lote.quantidade"
+                        [ngModelOptions]="{standalone: true}" placeholder="100" min="1" />
                     </div>
                   </div>
                 </div>
@@ -417,13 +417,16 @@
               <label class="campo__label" for="capacidade">Capacidade total do evento</label>
               <div class="campo__wrapper">
                 <span class="material-icons campo__icone campo__icone--esquerda">groups</span>
-                <input class="campo__input" type="number" id="capacidade" formControlName="capacidade" placeholder="Ex: 500" min="1" />
+                <input class="campo__input" type="number" id="capacidade" formControlName="capacidade"
+                  placeholder="Ex: 500" min="1" />
               </div>
             </div>
 
             <!-- Política de reembolso -->
-            <div class="campo" [class.campo--erro]="campoInvalido('politicaReembolso')" [class.campo--valido]="campoValido('politicaReembolso')">
-              <label class="campo__label" for="politicaReembolso">Política de reembolso <span class="campo__obrigatorio">*</span></label>
+            <div class="campo" [class.campo--erro]="campoInvalido('politicaReembolso')"
+              [class.campo--valido]="campoValido('politicaReembolso')">
+              <label class="campo__label" for="politicaReembolso">Política de reembolso <span
+                  class="campo__obrigatorio">*</span></label>
               <div class="campo__wrapper campo__wrapper--select">
                 <span class="material-icons campo__icone campo__icone--esquerda">policy</span>
                 <select class="campo__input campo__select" id="politicaReembolso" formControlName="politicaReembolso">
@@ -464,7 +467,8 @@
                 </div>
                 <div class="revisao__linha">
                   <span class="revisao__chave">Descrição</span>
-                  <span class="revisao__valor revisao__valor--descricao">{{ eventoForm.get('descricao')?.value || '—' }}</span>
+                  <span class="revisao__valor revisao__valor--descricao">{{ eventoForm.get('descricao')?.value || '—'
+                    }}</span>
                 </div>
               </div>
 
@@ -475,15 +479,18 @@
                 </div>
                 <div class="revisao__linha">
                   <span class="revisao__chave">Início</span>
-                  <span class="revisao__valor">{{ eventoForm.get('dataInicio')?.value | date:'dd/MM/yyyy' }} às {{ eventoForm.get('horaInicio')?.value }}</span>
+                  <span class="revisao__valor">{{ eventoForm.get('dataInicio')?.value | date:'dd/MM/yyyy' }} às {{
+                    eventoForm.get('horaInicio')?.value }}</span>
                 </div>
                 <div class="revisao__linha" *ngIf="eventoForm.get('dataFim')?.value">
                   <span class="revisao__chave">Término</span>
-                  <span class="revisao__valor">{{ eventoForm.get('dataFim')?.value | date:'dd/MM/yyyy' }} às {{ eventoForm.get('horaFim')?.value }}</span>
+                  <span class="revisao__valor">{{ eventoForm.get('dataFim')?.value | date:'dd/MM/yyyy' }} às {{
+                    eventoForm.get('horaFim')?.value }}</span>
                 </div>
                 <div class="revisao__linha" *ngIf="eventoForm.get('tipoLocal')?.value !== 'online'">
                   <span class="revisao__chave">Local</span>
-                  <span class="revisao__valor">{{ eventoForm.get('nomeLocal')?.value }}, {{ eventoForm.get('cidade')?.value }}/{{ eventoForm.get('estado')?.value }}</span>
+                  <span class="revisao__valor">{{ eventoForm.get('nomeLocal')?.value }}, {{
+                    eventoForm.get('cidade')?.value }}/{{ eventoForm.get('estado')?.value }}</span>
                 </div>
                 <div class="revisao__linha" *ngIf="eventoForm.get('tipoLocal')?.value === 'online'">
                   <span class="revisao__chave">Formato</span>
@@ -503,7 +510,8 @@
                 <ng-container *ngIf="eventoForm.get('tipoIngresso')?.value !== 'gratuito'">
                   <div class="revisao__linha" *ngFor="let lote of lotes; let i = index">
                     <span class="revisao__chave">{{ lote.nome || 'Lote ' + (i + 1) }}</span>
-                    <span class="revisao__valor">R$ {{ lote.preco | number:'1.2-2' }} · {{ lote.quantidade }} ingressos</span>
+                    <span class="revisao__valor">R$ {{ lote.preco | number:'1.2-2' }} · {{ lote.quantidade }}
+                      ingressos</span>
                   </div>
                 </ng-container>
               </div>
@@ -516,10 +524,12 @@
                     <span class="material-icons checkbox-label__check">check</span>
                   </span>
                   <span class="checkbox-label__texto">
-                    Li e aceito os <a href="#" class="campo__link">Termos de Uso</a> e a <a href="#" class="campo__link">Política de Privacidade</a> da Evence Events
+                    Li e aceito os <a href="#" class="campo__link">Termos de Uso</a> e a <a href="#"
+                      class="campo__link">Política de Privacidade</a> da Evence Events
                   </span>
                 </label>
-                <p class="campo__mensagem-erro" *ngIf="tentouPublicar && !eventoForm.get('aceitaTermos')?.value" role="alert">
+                <p class="campo__mensagem-erro" *ngIf="tentouPublicar && !eventoForm.get('aceitaTermos')?.value"
+                  role="alert">
                   <span class="material-icons campo__mensagem-icone">info</span>
                   Você precisa aceitar os termos para publicar.
                 </p>
@@ -537,34 +547,18 @@
 
           <!-- Navegação entre etapas -->
           <div class="form-navegacao">
-            <button
-              type="button"
-              class="btn-secundario"
-              *ngIf="etapaAtual > 0"
-              (click)="etapaAnterior()"
-            >
+            <button type="button" class="btn-secundario" *ngIf="etapaAtual > 0" (click)="etapaAnterior()">
               <span class="material-icons">arrow_back</span>
               Voltar
             </button>
 
-            <button
-              type="button"
-              class="btn-primario"
-              *ngIf="etapaAtual < etapas.length - 1"
-              (click)="proximaEtapa()"
-            >
+            <button type="button" class="btn-primario" *ngIf="etapaAtual < etapas.length - 1" (click)="proximaEtapa()">
               Próximo
               <span class="material-icons">arrow_forward</span>
             </button>
 
-            <button
-              type="submit"
-              class="btn-submit"
-              *ngIf="etapaAtual === etapas.length - 1"
-              [class.btn-submit--carregando]="carregando"
-              [disabled]="carregando"
-              [attr.aria-busy]="carregando"
-            >
+            <button type="submit" class="btn-submit" *ngIf="etapaAtual === etapas.length - 1"
+              [class.btn-submit--carregando]="carregando" [disabled]="carregando" [attr.aria-busy]="carregando">
               <span class="btn-submit__conteudo" *ngIf="!carregando">
                 <span class="material-icons btn-submit__icone">rocket_launch</span>
                 Publicar evento
