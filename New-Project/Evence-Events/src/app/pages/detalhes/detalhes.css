@@ -57,6 +57,31 @@
 }
 
 /* Efeito de partículas/background */
+.detalhes-hero__slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.slider-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+
+.slider-item.active {
+  opacity: 1;
+}
+
 .detalhes-hero::before {
   content: '';
   position: absolute;
@@ -66,10 +91,42 @@
   z-index: 1;
 }
 
+.detalhes-hero__dots {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.dot.active {
+  background: white;
+  width: 35px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
 .detalhes-hero__overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(to top, hsla(220, 30%, 10%, 0.8) 0%, transparent 100%);
+  background: linear-gradient(to top, hsla(220, 30%, 10%, 0.95) 0%, hsla(220, 30%, 10%, 0.6) 50%, hsla(220, 30%, 10%, 0.4) 100%);
   z-index: 2;
 }
 
@@ -734,5 +791,228 @@
   .btn-banner {
     flex: 1;
     justify-content: center;
+  }
+}
+
+/* ----------------------------------------------------------------
+   11. GALERIA DE FOTOS
+   ---------------------------------------------------------------- */
+.galeria-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--espaco-md);
+  margin-top: var(--espaco-sm);
+}
+
+.galeria-item {
+  width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: var(--raio-md);
+  overflow: hidden;
+  box-shadow: var(--sombra-card);
+  transition: all var(--transicao-suave);
+  cursor: pointer;
+  position: relative;
+}
+
+.galeria-item:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--sombra-premium);
+}
+
+.galeria-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.galeria-item__overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+
+.galeria-item:hover .galeria-item__overlay {
+  opacity: 1;
+}
+
+.galeria-item__overlay .material-icons {
+  color: white;
+  font-size: 2rem;
+  transform: scale(0.5);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.galeria-item:hover .galeria-item__overlay .material-icons {
+  transform: scale(1);
+}
+
+/* ----------------------------------------------------------------
+   12. LIGHTBOX (TELA CHEIA)
+   ---------------------------------------------------------------- */
+.lightbox {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  padding: 20px;
+}
+
+.lightbox.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox__close {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  z-index: 10001;
+}
+
+.lightbox__close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.lightbox__container {
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10000;
+}
+
+.lightbox.active .lightbox__container {
+  animation: lightbox-zoom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes lightbox-zoom {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 0 50px rgba(0,0,0,0.8);
+  cursor: zoom-in;
+  transition: transform 0.3s ease-out;
+}
+
+.lightbox img.zoomed {
+  transform: scale(2.5);
+  cursor: zoom-out;
+}
+
+.lightbox__hint {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 10002;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fade-in 0.5s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translate(-50%, -10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (max-width: 768px) {
+  .lightbox__close {
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Navegação Lightbox */
+.lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10001;
+}
+
+.lightbox__nav:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox__nav--prev {
+  left: 40px;
+}
+
+.lightbox__nav--next {
+  right: 40px;
+}
+
+.lightbox__nav .material-icons {
+  font-size: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .lightbox__nav {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .lightbox__nav--prev { left: 10px; }
+  .lightbox__nav--next { right: 10px; }
+  
+  .lightbox__nav .material-icons {
+    font-size: 1.8rem;
   }
 }

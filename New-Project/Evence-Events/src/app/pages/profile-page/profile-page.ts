@@ -2,6 +2,7 @@ import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser, Location } from '@angular/common';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { Usuario } from '../../interfaces/usuario.interface';
 import { EventosService } from '../../services/services';
 import { HeaderComponent } from '../../componentes/header/header';
@@ -59,29 +60,48 @@ export class ProfilePageComponent implements OnInit {
   }
 
   carregarUsuario(): void {
-    try {
-      const stored = localStorage.getItem('usuarioLogado');
-      if (stored) {
-        this.usuarioOriginal = JSON.parse(stored);
-        this.usuario = JSON.parse(stored);
-      } else {
-        this.router.navigate(['/login']);
+    const userStr = localStorage.getItem('usuarioLogado');
+    if (userStr) {
+      try {
+        const userData = JSON.parse(userStr);
+        this.usuarioOriginal = JSON.parse(JSON.stringify(userData));
+        this.usuario = JSON.parse(JSON.stringify(userData));
+        
+        if (this.usuario?.isProdutor && this.usuario?.id !== undefined && this.usuario?.id !== null) {
+          this.carregarEventosProdutor(this.usuario.id);
+        }
+      } catch (e) {
+        console.error('Erro ao fazer parse do usuário:', e);
       }
-    } catch (e) {
-      console.error('Erro ao carregar usuário:', e);
-      this.router.navigate(['/login']);
     }
+  }
+
+  private carregarEventosProdutor(produtorId: string | number): void {
+    forkJoin({
+      aprovados: this.eventosService.getEventosByProdutor(produtorId),
+      pendentes: this.eventosService.getSolicitacoesByProdutor(produtorId)
+    }).subscribe({
+      next: ({ aprovados, pendentes }) => {
+        // Garantir que os aprovados venham com status aprovado
+        const listaAprovados = aprovados.map(e => ({ 
+          ...e, 
+          _status: 'aprovado' as const 
+        }));
+        
+        // Garantir que as solicitações venham com status em análise
+        const listaPendentes = pendentes.map(e => ({ 
+          ...e, 
+          _status: 'em_analise' as const 
+        }));
+
+        this.meusEventos = [...listaAprovados, ...listaPendentes];
+      },
+      error: (err) => console.error('Erro ao carregar eventos do produtor', err)
+    });
   }
 
   carregarDadosAbas(): void {
     if (!this.usuario) return;
-
-    // Carrega eventos se for produtor
-    this.eventosService.getEventos().subscribe({
-      next: (eventos) => {
-        this.meusEventos = eventos.filter(e => e.produtorId === this.usuario?.id);
-      }
-    });
 
     // Mock de ingressos para demonstração
     this.meusIngressos = [

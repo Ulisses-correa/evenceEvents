@@ -80,7 +80,7 @@
         <div class="sucesso-card__icone-wrap">
           <span class="material-icons sucesso-card__icone">verified</span>
         </div>
-        <h2 class="sucesso-card__titulo">Solicitação Enviada!</h2>
+        <h2 class="sucesso-card__titulo">{{ modoEdicao ? 'Alterações Enviadas!' : 'Solicitação Enviada!' }}</h2>
         <p class="sucesso-card__texto">Seu evento foi enviado para nossa equipe de curadoria. Assim que for aprovado, ele aparecerá na listagem pública.</p>
         <a routerLink="/" class="sucesso-card__btn">
           <span class="material-icons">home</span>
@@ -89,12 +89,12 @@
       </div>
 
       <!-- Formulário Multi-etapa -->
-      <div class="form-wrapper" *ngIf="!eventoPublicado">
+      <div class="form-wrapper" *ngIf="!eventoPublicado && !carregando">
 
         <!-- Cabeçalho + Stepper -->
         <div class="form-cabecalho">
-          <h2 class="form-cabecalho__titulo">Sugerir novo evento</h2>
-          <p class="form-cabecalho__subtitulo">Preencha as informações do seu evento</p>
+          <h2 class="form-cabecalho__titulo">{{ modoEdicao ? 'Editar Evento' : 'Sugerir novo evento' }}</h2>
+          <p class="form-cabecalho__subtitulo">{{ modoEdicao ? 'Atualize as informações do seu evento' : 'Preencha as informações do seu evento' }}</p>
 
           <div class="stepper">
             <div
@@ -184,13 +184,13 @@
               </div>
             </div>
 
-            <!-- Imagem de Capa -->
+            <!-- Imagens do Evento -->
             <div class="campo">
-              <label class="campo__label">Imagem de capa</label>
+              <label class="campo__label">Fotos do evento (Mín: 1, Máx: 10) <span class="campo__obrigatorio">*</span></label>
               <div
                 class="upload-area"
-                [class.upload-area--ativo]="imagemPreview"
-                (click)="inputImagem.click()"
+                [class.upload-area--ativo]="imagensBase64.length > 0"
+                (click)="imagensBase64.length < 10 ? inputImagem.click() : null"
                 (dragover)="$event.preventDefault()"
                 (drop)="onImagemDrop($event)"
               >
@@ -198,20 +198,28 @@
                   #inputImagem
                   type="file"
                   accept="image/*"
+                  multiple
                   class="upload-area__input"
                   (change)="onImagemSelecionada($event)"
+                  [disabled]="imagensBase64.length >= 10"
                 />
-                <ng-container *ngIf="!imagemPreview">
+                
+                <!-- Área de upload quando vazio ou ainda com espaço -->
+                <div class="upload-area__content" *ngIf="imagensBase64.length < 10">
                   <span class="material-icons upload-area__icone">add_photo_alternate</span>
-                  <p class="upload-area__texto">Arraste uma imagem ou <span class="upload-area__link">clique aqui</span></p>
-                  <p class="upload-area__dica">PNG, JPG ou WEBP — máx. 5 MB</p>
-                </ng-container>
-                <ng-container *ngIf="imagemPreview">
-                  <img [src]="imagemPreview" alt="Prévia da capa" class="upload-area__preview" />
-                  <button type="button" class="upload-area__remover" (click)="removerImagem($event)">
-                    <span class="material-icons">delete</span>
-                  </button>
-                </ng-container>
+                  <p class="upload-area__texto">Arraste imagens ou <span class="upload-area__link">clique aqui</span></p>
+                  <p class="upload-area__dica">PNG, JPG ou WEBP — máx. 2 MB ({{ imagensBase64.length }}/10)</p>
+                </div>
+                
+                <div class="upload-area__grid" *ngIf="imagensBase64.length > 0">
+                  <div class="upload-area__thumb" *ngFor="let img of imagensBase64; let idx = index" (click)="$event.stopPropagation()">
+                    <img [src]="img" alt="Capa" />
+                    <button type="button" class="btn-remover-thumb" (click)="removerImagem(idx, $event)" title="Remover imagem">
+                      <span class="material-icons">close</span>
+                    </button>
+                    <span class="upload-area__badge-capa" *ngIf="idx === 0">Capa</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -445,8 +453,11 @@
 
             <div class="revisao">
 
-              <div class="revisao__secao" *ngIf="imagemPreview">
-                <img [src]="imagemPreview" alt="Capa do evento" class="revisao__imagem" />
+              <div class="revisao__secao" *ngIf="imagensBase64.length > 0">
+                <img [src]="imagensBase64[0]" alt="Capa do evento" class="revisao__imagem" />
+                <div class="revisao__badge-galeria" *ngIf="imagensBase64.length > 1">
+                  + {{ imagensBase64.length - 1 }} fotos
+                </div>
               </div>
 
               <div class="revisao__secao">

@@ -15,6 +15,15 @@ export interface Evento {
   vendidos: number;
   descricaoLonga?: string;
   produtorId?: number | string;
+  imagens?: string[];
+  tipoLocal?: string;
+  linkOnline?: string;
+  dataFim?: string;
+  horaFim?: string;
+  tipoIngresso?: string;
+  politicaReembolso?: string;
+  lotes?: any[];
+  _status?: 'aprovado' | 'em_analise';
 }
 
 export interface Categoria {

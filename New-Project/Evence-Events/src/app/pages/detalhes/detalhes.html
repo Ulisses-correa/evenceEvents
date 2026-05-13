@@ -42,9 +42,20 @@
   <!-- Evento -->
   <div class="evento-wrapper" *ngIf="!carregando && !erro && evento">
     
-    <!-- Hero Section -->
+    <!-- Hero Section com Carrossel -->
     <section class="detalhes-hero">
+      <!-- Imagens do Slider -->
+      <div class="detalhes-hero__slider">
+        <div 
+          class="slider-item" 
+          *ngFor="let img of evento.imagens; let i = index"
+          [class.active]="i === imagemAtivaIndex"
+          [style.background-image]="'url(' + img + ')'">
+        </div>
+      </div>
+
       <div class="detalhes-hero__overlay"></div>
+      
       <div class="detalhes-hero__container">
         <div class="detalhes-hero__conteudo">
           <div class="detalhes-hero__badges">
@@ -67,6 +78,17 @@
             </span>
           </div>
         </div>
+      </div>
+
+      <!-- Indicadores (Dots) -->
+      <div class="detalhes-hero__dots" *ngIf="evento.imagens && evento.imagens.length > 1">
+        <button 
+          *ngFor="let img of evento.imagens; let i = index" 
+          class="dot" 
+          [class.active]="i === imagemAtivaIndex"
+          (click)="irParaImagem(i)"
+          [title]="'Ver imagem ' + (i + 1)">
+        </button>
       </div>
     </section>
 
@@ -111,6 +133,22 @@
                     <h3>Data e Horário</h3>
                     <p>{{ evento.data }}</p>
                     <p>Abertura dos portões: {{ evento.horario }}</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Galeria de Imagens -->
+            <section class="info-secao galeria-secao" *ngIf="evento.imagens && evento.imagens.length > 1">
+              <h2 class="info-secao__titulo">
+                <span class="material-icons">photo_library</span>
+                Galeria de Fotos
+              </h2>
+              <div class="galeria-grid">
+                <div class="galeria-item" *ngFor="let img of evento.imagens | slice:1" (click)="abrirModal(img)">
+                  <img [src]="img" alt="Foto do evento" loading="lazy" />
+                  <div class="galeria-item__overlay">
+                    <span class="material-icons">fullscreen</span>
                   </div>
                 </div>
               </div>
@@ -199,3 +237,31 @@
     </div>
   </div>
 </main>
+<div class="lightbox" [class.active]="imagemAberta" (click)="fecharModal()">
+  <button class="lightbox__close" (click)="fecharModal()">
+    <span class="material-icons">close</span>
+  </button>
+
+  <!-- Navegação entre fotos -->
+  <button class="lightbox__nav lightbox__nav--prev" (click)="voltarImagemModal($event)" *ngIf="(evento?.imagens?.length || 0) > 1" title="Foto Anterior">
+    <span class="material-icons">chevron_left</span>
+  </button>
+  <button class="lightbox__nav lightbox__nav--next" (click)="proximaImagemModal($event)" *ngIf="(evento?.imagens?.length || 0) > 1" title="Próxima Foto">
+    <span class="material-icons">chevron_right</span>
+  </button>
+  
+  <div class="lightbox__hint" *ngIf="!zoomAtivo">
+    <span class="material-icons">zoom_in</span> Clique na imagem para ampliar
+  </div>
+
+  <div class="lightbox__container" (click)="$event.stopPropagation()">
+    <img 
+      [src]="imagemAberta" 
+      alt="Foto em tela cheia" 
+      *ngIf="imagemAberta"
+      (click)="toggleZoom($event)"
+      (mousemove)="atualizarPosicaoZoom($event)"
+      [class.zoomed]="zoomAtivo"
+      [style.transform-origin]="posicaoZoom.x + '% ' + posicaoZoom.y + '%'">
+  </div>
+</div>

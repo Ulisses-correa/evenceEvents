@@ -581,11 +581,39 @@
 
 .event-row:last-child { border-bottom: none; }
 
+.event-row__header {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  margin-bottom: 8px;
+}
+
 .event-row__info h4 {
-  margin: 0 0 8px 0;
+  margin: 0;
   font-size: 1.15rem;
   font-weight: 800;
   color: var(--cor-texto-principal);
+}
+
+.status-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: var(--raio-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-badge--success {
+  background-color: hsla(140, 60%, 50%, 0.1);
+  color: hsla(140, 70%, 35%, 1);
+  border: 1px solid hsla(140, 60%, 50%, 0.2);
+}
+
+.status-badge--warning {
+  background-color: hsla(38, 85%, 52%, 0.1);
+  color: hsla(38, 90%, 40%, 1);
+  border: 1px solid hsla(38, 85%, 52%, 0.2);
 }
 
 .event-row__info p {

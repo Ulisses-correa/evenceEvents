@@ -605,8 +605,8 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .upload-area--ativo {
   border-style: solid;
   border-color: var(--cor-primaria);
-  padding: 0;
-  overflow: hidden;
+  padding: var(--espaco-md);
+  justify-content: flex-start;
 }
 
 .upload-area__input {
@@ -635,19 +635,42 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   color: var(--cor-texto-terciario);
 }
 
-.upload-area__preview {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  display: block;
+.upload-area__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
 }
 
-.upload-area__remover {
+.upload-area__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--espaco-sm);
+  width: 100%;
+  padding: var(--espaco-sm);
+}
+
+.upload-area__thumb {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--raio-sm);
+  overflow: hidden;
+  box-shadow: var(--sombra-card);
+  border: 1px solid var(--cor-borda);
+}
+
+.upload-area__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn-remover-thumb {
   position: absolute;
-  top: var(--espaco-sm);
-  right: var(--espaco-sm);
-  width: 32px;
-  height: 32px;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: hsla(4, 72%, 50%, 0.9);
   color: white;
@@ -657,9 +680,32 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   cursor: pointer;
   border: none;
   transition: background var(--transicao-rapida);
+  z-index: 2;
 }
-.upload-area__remover:hover { background: var(--cor-erro); }
-.upload-area__remover .material-icons { font-size: 1rem; }
+
+.btn-remover-thumb:hover {
+  background: var(--cor-erro);
+}
+
+.btn-remover-thumb .material-icons {
+  font-size: 14px;
+}
+
+.upload-area__badge-capa {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: hsla(220, 85%, 25%, 0.85);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 2px 0;
+  backdrop-filter: blur(4px);
+}
+
+/* Old upload-area__remover removed */
 
 /* ----------------------------------------------------------------
    11. TIPO LOCAL / INGRESSO — Opcoes radio estilizadas
@@ -813,6 +859,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 
 .revisao__secao {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--espaco-sm);
@@ -820,6 +867,20 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   border-radius: var(--raio-md);
   padding: var(--espaco-md);
   background: var(--cor-fundo);
+}
+
+.revisao__badge-galeria {
+  position: absolute;
+  bottom: var(--espaco-md);
+  right: var(--espaco-md);
+  background: hsla(220, 30%, 10%, 0.8);
+  color: white;
+  padding: 4px 12px;
+  border-radius: var(--raio-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
+  border: 1px solid hsla(0, 0%, 100%, 0.2);
 }
 
 .revisao__titulo-secao {

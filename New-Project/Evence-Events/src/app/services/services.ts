@@ -90,6 +90,14 @@ export class EventosService {
     return this.http.post<Evento>(`${this.apiUrl}/solicitacoes`, evento);
   }
 
+  getSolicitacoesByProdutor(produtorId: string | number): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.apiUrl}/solicitacoes?produtorId=${produtorId}`);
+  }
+
+  atualizarSolicitacao(id: string | number, evento: Evento): Observable<Evento> {
+    return this.http.put<Evento>(`${this.apiUrl}/solicitacoes/${id}`, evento);
+  }
+
   deletarSolicitacao(id: string | number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/solicitacoes/${id}`);
   }

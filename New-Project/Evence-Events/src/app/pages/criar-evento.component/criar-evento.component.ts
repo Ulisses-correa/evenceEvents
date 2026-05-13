@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -7,7 +7,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EventosService } from '../../services/services';
 import { Evento } from '../../interfaces/evento.interface';
 
@@ -45,9 +45,12 @@ export class CriarEventoComponent implements OnInit {
   etapaAtual = 0;
   etapas = ['Informações', 'Local & Data', 'Ingressos', 'Revisão'];
 
-  imagemPreview: string | null = null;
-
+  imagensBase64: string[] = [];
   lotes: Lote[] = [{ nome: '1º Lote', preco: 0, quantidade: 100 }];
+
+  modoEdicao = false;
+  eventoEditId: number | string | null = null;
+  produtorOriginalId: number | string | null = null;
 
   categorias: Categoria[] = [
     { valor: 'shows', nome: 'Shows e Música' },
@@ -82,7 +85,10 @@ export class CriarEventoComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private eventosService: EventosService
+    private eventosService: EventosService,
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -112,6 +118,59 @@ export class CriarEventoComponent implements OnInit {
 
       // Etapa 4
       aceitaTermos: [false],
+    });
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.modoEdicao = true;
+      this.eventoEditId = id;
+      this.carregarEventoParaEdicao(id);
+    }
+  }
+
+  private carregarEventoParaEdicao(id: string): void {
+    this.carregando = true;
+    this.eventosService.getSolicitacaoById(id).subscribe({
+      next: (evento) => {
+        this.eventoForm.patchValue({
+          nome: evento.titulo,
+          categoria: evento.categoria,
+          descricao: evento.descricaoLonga,
+          dataInicio: evento.dataISO,
+          horaInicio: evento.horario,
+          dataFim: evento.dataFim || '',
+          horaFim: evento.horaFim || '',
+          tipoLocal: evento.tipoLocal || (evento.local === 'Online' ? 'online' : 'presencial'),
+          nomeLocal: evento.local !== 'Online' ? evento.local : '',
+          endereco: '', // Not stored in Evento natively, mock it if needed
+          cidade: evento.cidade !== 'Remoto' ? evento.cidade : '',
+          estado: evento.estado !== '--' ? evento.estado : '',
+          linkOnline: evento.linkOnline || '',
+          tipoIngresso: evento.tipoIngresso || 'pago',
+          capacidade: evento.totalIngressos,
+          politicaReembolso: evento.politicaReembolso || '',
+          aceitaTermos: true // Assume terms accepted
+        });
+        
+        this.produtorOriginalId = evento.produtorId ?? null;
+
+        if (evento.imagens && evento.imagens.length > 0) {
+          this.imagensBase64 = [...evento.imagens];
+        }
+
+        if (evento.lotes && evento.lotes.length > 0) {
+          this.lotes = [...evento.lotes];
+        } else {
+          this.lotes = [{ nome: '1º Lote', preco: evento.precoMinimo || 0, quantidade: evento.totalIngressos || 100 }];
+        }
+
+        this.carregando = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.carregando = false;
+        this.erroGeral = 'Não foi possível carregar o evento para edição.';
+      }
     });
   }
 
@@ -184,32 +243,64 @@ export class CriarEventoComponent implements OnInit {
   // ----------------------------------------------------------------
   onImagemSelecionada(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) this.processarImagem(file);
+    if (input.files) {
+      this.processarImagens(Array.from(input.files));
+    }
+    // Limpa o input para permitir selecionar a mesma imagem novamente se apagada
+    input.value = '';
   }
 
   onImagemDrop(event: DragEvent): void {
     event.preventDefault();
-    const file = event.dataTransfer?.files[0];
-    if (file && file.type.startsWith('image/')) this.processarImagem(file);
-  }
-
-  private processarImagem(file: File): void {
-    if (file.size > 5 * 1024 * 1024) {
-      this.erroGeral = 'A imagem deve ter no máximo 5 MB.';
-      return;
+    if (event.dataTransfer?.files) {
+      this.processarImagens(Array.from(event.dataTransfer.files));
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagemPreview = reader.result as string;
-      this.erroGeral = '';
-    };
-    reader.readAsDataURL(file);
   }
 
-  removerImagem(event: Event): void {
+  private async processarImagens(files: File[]): Promise<void> {
+    const imagensValidas = files.filter(f => f.type.startsWith('image/'));
+    const novasImagens: string[] = [];
+
+    for (const file of imagensValidas) {
+      if (this.imagensBase64.length + novasImagens.length >= 10) {
+        this.erroGeral = 'Você pode adicionar no máximo 10 imagens.';
+        break;
+      }
+      
+      if (file.size > 2 * 1024 * 1024) {
+        this.erroGeral = `A imagem ${file.name} excede o limite de 2MB.`;
+        continue;
+      }
+
+      try {
+        const base64 = await this.fileToBase64(file);
+        novasImagens.push(base64);
+      } catch (err) {
+        console.error('Erro ao processar imagem:', err);
+      }
+    }
+
+    if (novasImagens.length > 0) {
+      this.imagensBase64 = [...this.imagensBase64, ...novasImagens];
+      this.erroGeral = '';
+      this.cdr.detectChanges();
+    }
+  }
+
+  private fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  removerImagem(index: number, event: Event): void {
     event.stopPropagation();
-    this.imagemPreview = null;
+    this.imagensBase64.splice(index, 1);
+    this.imagensBase64 = [...this.imagensBase64]; // Trigger change detection
+    this.cdr.detectChanges();
   }
 
   // ----------------------------------------------------------------
@@ -235,6 +326,12 @@ export class CriarEventoComponent implements OnInit {
 
     if (this.eventoForm.invalid || !this.eventoForm.get('aceitaTermos')?.value) {
       this.eventoForm.markAllAsTouched();
+      this.erroGeral = 'Por favor, preencha todos os campos obrigatórios e aceite os termos.';
+      return;
+    }
+
+    if (this.imagensBase64.length === 0) {
+      this.erroGeral = 'Você deve adicionar pelo menos 1 foto do evento.';
       return;
     }
 
@@ -264,20 +361,53 @@ export class CriarEventoComponent implements OnInit {
       totalIngressos: form.capacidade || 100,
       vendidos: 0,
       descricaoLonga: form.descricao,
-      produtorId: user?.id
+      produtorId: this.produtorOriginalId ?? user?.id,
+      imagens: this.imagensBase64,
+      tipoLocal: form.tipoLocal,
+      linkOnline: form.linkOnline,
+      dataFim: form.dataFim,
+      horaFim: form.horaFim,
+      tipoIngresso: form.tipoIngresso,
+      politicaReembolso: form.politicaReembolso,
+      lotes: [...this.lotes]
     };
 
-    this.eventosService.enviarSolicitacao(novaSolicitacao).subscribe({
-      next: () => {
-        this.carregando = false;
-        this.eventoPublicado = true;
-      },
-      error: (err) => {
-        console.error('Erro ao enviar solicitação:', err);
-        this.erroGeral = 'Ocorreu um erro ao enviar sua solicitação. Tente novamente.';
-        this.carregando = false;
+    if (this.modoEdicao && this.eventoEditId) {
+      // Manter o mesmo ID (preservando tipo string ou number)
+      if (typeof this.eventoEditId === 'string' && this.eventoEditId.startsWith('sol_')) {
+        (novaSolicitacao as any).id = this.eventoEditId;
+      } else if (!isNaN(Number(this.eventoEditId))) {
+        novaSolicitacao.id = Number(this.eventoEditId);
+      } else {
+        (novaSolicitacao as any).id = this.eventoEditId;
       }
-    });
+
+      this.eventosService.atualizarSolicitacao(this.eventoEditId, novaSolicitacao).subscribe({
+        next: () => {
+          this.carregando = false;
+          this.eventoPublicado = true;
+        },
+        error: (err) => {
+          console.error('Erro ao atualizar solicitação:', err);
+          this.erroGeral = 'Ocorreu um erro ao atualizar seu evento. Tente novamente.';
+          this.carregando = false;
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      this.eventosService.enviarSolicitacao(novaSolicitacao).subscribe({
+        next: () => {
+          this.carregando = false;
+          this.eventoPublicado = true;
+        },
+        error: (err) => {
+          console.error('Erro ao enviar solicitação:', err);
+          this.erroGeral = 'Ocorreu um erro ao enviar sua solicitação. Tente novamente.';
+          this.carregando = false;
+          this.cdr.detectChanges();
+        }
+      });
+    }
   }
 
   private formatarDataExibicao(data: string): string {

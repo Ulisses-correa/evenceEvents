@@ -34,7 +34,7 @@
       Meus Ingressos
     </button>
 
-    <button class="tab-btn" *ngIf="usuario.isProdutor" [class.tab-btn--active]="abaAtiva === 'eventos'"
+    <button class="tab-btn" *ngIf="usuario?.isProdutor" [class.tab-btn--active]="abaAtiva === 'eventos'"
       (click)="trocarAba('eventos')">
       <span class="material-icons">event</span>
       Meus Eventos
@@ -46,7 +46,7 @@
 
     <!-- ABA: PERFIL -->
     <div class="view-perfil" *ngIf="abaAtiva === 'perfil'">
-      <div class="profile-card">
+      <div class="profile-card" *ngIf="usuario">
         <div class="profile-card__header">
           <div class="header-info">
             <span class="material-icons">manage_accounts</span>
@@ -123,21 +123,14 @@
             <label>{{ usuario.tipoPessoa === 'juridica' ? 'Nome do Responsável' : 'Data de Nascimento' }}</label>
             <div class="input-wrapper" [class.input-wrapper--edit]="editMode">
               <span class="material-icons">{{ usuario.tipoPessoa === 'juridica' ? 'person' : 'event' }}</span>
-              <input type="text" [(ngModel)]="usuario.nome" *ngIf="usuario.tipoPessoa === 'juridica'"
-                [disabled]="!editMode">
-            <label>{{ usuario?.tipoPessoa === 'juridica' ? 'Nome do Responsável' : 'Data de Nascimento' }}</label>
-            <div class="input-wrapper" [class.input-wrapper--edit]="editMode">
-              <span class="material-icons">{{ usuario?.tipoPessoa === 'juridica' ? 'person' : 'event' }}</span>
-              <input type="text" [(ngModel)]="usuario.nome" *ngIf="usuario?.tipoPessoa === 'juridica'"
-                [disabled]="!editMode">
-              <input type="date" [(ngModel)]="usuario.dataNascimento" *ngIf="usuario?.tipoPessoa === 'fisica'"
-                [disabled]="!editMode">
+              <input type="text" [(ngModel)]="usuario.nome" *ngIf="usuario.tipoPessoa === 'juridica'" [disabled]="!editMode">
+              <input type="date" [(ngModel)]="usuario.dataNascimento" *ngIf="usuario.tipoPessoa === 'fisica'" [disabled]="!editMode">
             </div>
           </div>
         </div>
 
-        <div class="profile-content" [ngSwitch]="abaAtiva" *ngIf="usuario">
-          <button class="btn-save" (click)="salvarPerfil()" [disabled]="salvando">
+        <div class="profile-actions">
+          <button class="btn-save" (click)="salvarPerfil()" [disabled]="salvando" *ngIf="editMode">
             <span class="material-icons" *ngIf="!salvando">save</span>
             <div class="loader-sm" *ngIf="salvando"></div>
             {{ salvando ? 'Salvando...' : 'Salvar Alterações' }}
@@ -227,7 +220,12 @@
       <div class="events-list" *ngIf="meusEventos.length > 0; else noEvents">
         <div class="event-row" *ngFor="let ev of meusEventos">
           <div class="event-row__info">
-            <h4>{{ ev.titulo }}</h4>
+            <div class="event-row__header">
+              <h4>{{ ev.titulo }}</h4>
+              <span class="status-badge" [ngClass]="ev._status === 'aprovado' ? 'status-badge--success' : 'status-badge--warning'">
+                {{ ev._status === 'aprovado' ? 'Aprovado' : 'Em Análise' }}
+              </span>
+            </div>
             <p>{{ ev.data }} • {{ ev.local }}</p>
           </div>
           <div class="event-row__stats">
@@ -237,12 +235,14 @@
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
-              <span class="stat-value">{{ ((ev.vendidos / ev.totalIngressos) * 100).toFixed(0) }}%</span>
+              <span class="stat-value">{{ ((ev.vendidos / (ev.totalIngressos || 1)) * 100).toFixed(0) }}%</span>
               <span class="stat-label">Ocupação</span>
             </div>
           </div>
           <div class="event-row__actions">
-            <button class="btn-icon-alt" title="Editar"><span class="material-icons">edit</span></button>
+            <button class="btn-icon-alt" *ngIf="ev._status === 'em_analise'" [routerLink]="['/edit-event', ev.id]" title="Editar Evento">
+              <span class="material-icons">edit</span>
+            </button>
             <button class="btn-icon-alt" title="Dashboard"><span class="material-icons">bar_chart</span></button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { EventosService } from '../../services/services';
@@ -14,7 +14,7 @@ import { HeaderComponent } from '../../componentes/header/header';
   templateUrl: './detalhes.html',
   styleUrl: './detalhes.css'
 })
-export class DetalhesComponent implements OnInit {
+export class DetalhesComponent implements OnInit, OnDestroy {
   evento: Evento | null = null;
   produtor: Usuario | null = null;
   carregando = true;
@@ -24,6 +24,16 @@ export class DetalhesComponent implements OnInit {
   processando = false;
 
   quantidade = 1;
+
+  // Carousel
+  imagemAtivaIndex = 0;
+  timerCarousel: any;
+
+  // Modal de Imagem
+  imagemAberta: string | null = null;
+  imagemModalIndex = 0;
+  zoomAtivo = false;
+  posicaoZoom = { x: 0, y: 0 };
 
   constructor(
     private route: ActivatedRoute,
@@ -48,6 +58,39 @@ export class DetalhesComponent implements OnInit {
         this.carregando = false;
       }
     });
+
+    this.iniciarAutoplay();
+  }
+
+  ngOnDestroy(): void {
+    if (this.timerCarousel) {
+      clearInterval(this.timerCarousel);
+    }
+  }
+
+  iniciarAutoplay(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.timerCarousel = setInterval(() => {
+        this.proximaImagem();
+      }, 5000);
+    }
+  }
+
+  proximaImagem(): void {
+    if (this.evento?.imagens && this.evento.imagens.length > 1) {
+      this.imagemAtivaIndex = (this.imagemAtivaIndex + 1) % this.evento.imagens.length;
+      this.cdr.detectChanges();
+    }
+  }
+
+  irParaImagem(index: number): void {
+    this.imagemAtivaIndex = index;
+    // Reset timer when user manually interacts
+    if (this.timerCarousel) {
+      clearInterval(this.timerCarousel);
+      this.iniciarAutoplay();
+    }
+    this.cdr.detectChanges();
   }
 
   aprovar(): void {
@@ -86,6 +129,7 @@ export class DetalhesComponent implements OnInit {
     request.subscribe({
       next: (dados) => {
         this.evento = dados;
+        this.imagemAtivaIndex = 0;
         
         if (this.evento?.produtorId) {
           this.eventosService.getUsuarioById(this.evento.produtorId).subscribe({
@@ -183,5 +227,59 @@ export class DetalhesComponent implements OnInit {
   formatarPreco(valor: number): string {
     if (valor === 0) return 'Gratuito';
     return `R$ ${valor.toFixed(2).replace('.', ',')}`;
+  }
+
+  abrirModal(img: string): void {
+    this.imagemAberta = img;
+    this.imagemModalIndex = this.evento?.imagens?.indexOf(img) ?? 0;
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  proximaImagemModal(event?: MouseEvent): void {
+    if (event) event.stopPropagation();
+    if (this.evento?.imagens && this.evento.imagens.length > 1) {
+      this.imagemModalIndex = (this.imagemModalIndex + 1) % this.evento.imagens.length;
+      this.imagemAberta = this.evento.imagens[this.imagemModalIndex];
+      this.zoomAtivo = false;
+    }
+  }
+
+  voltarImagemModal(event?: MouseEvent): void {
+    if (event) event.stopPropagation();
+    if (this.evento?.imagens && this.evento.imagens.length > 1) {
+      this.imagemModalIndex = (this.imagemModalIndex - 1 + this.evento.imagens.length) % this.evento.imagens.length;
+      this.imagemAberta = this.evento.imagens[this.imagemModalIndex];
+      this.zoomAtivo = false;
+    }
+  }
+
+  fecharModal(): void {
+    this.imagemAberta = null;
+    this.zoomAtivo = false;
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  toggleZoom(event: MouseEvent): void {
+    event.stopPropagation();
+    this.zoomAtivo = !this.zoomAtivo;
+    if (this.zoomAtivo) {
+      this.atualizarPosicaoZoom(event);
+    }
+  }
+
+  atualizarPosicaoZoom(event: MouseEvent): void {
+    if (!this.zoomAtivo) return;
+    
+    const imgElement = event.currentTarget as HTMLElement;
+    const rect = imgElement.getBoundingClientRect();
+    
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    
+    this.posicaoZoom = { x, y };
   }
 }

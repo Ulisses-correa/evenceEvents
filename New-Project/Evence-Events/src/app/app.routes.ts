@@ -20,6 +20,7 @@ export const routes: Routes = [
     { path: 'cadastro', component: CadastroComponent},
     { path: 'extra-infos', component: ExtraInfosComponent },
     { path: 'new-event', component: CriarEventoComponent},
+    { path: 'edit-event/:id', component: CriarEventoComponent},
     { path: 'admin', component: AdminPageComponent },
     { path: 'perfil', component: ProfilePageComponent },
     { path: 'admin/aprovacoes/:id', component: DetalhesComponent, data: { modoAdmin: true } },
