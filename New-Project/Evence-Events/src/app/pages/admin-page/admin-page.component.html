@@ -1,4 +1,6 @@
 <div class="admin-layout" *ngIf="!carregando; else loading">
+  <app-header class="admin-mobile-header"></app-header>
+
   <!-- Sidebar de Gerenciamento -->
   <aside class="sidebar">
     <div class="sidebar__content">
@@ -14,53 +16,33 @@
       </div>
 
       <nav class="sidebar__nav">
-        <button 
-          class="nav-item" 
-          [class.nav-item--active]="abaAtiva === 'dashboard'"
-          (click)="trocarAba('dashboard')"
-        >
+        <button class="nav-item" [class.nav-item--active]="abaAtiva === 'dashboard'" (click)="trocarAba('dashboard')">
           <span class="material-icons">dashboard</span>
-          Dashboard
+          <span class="nav-label">Dashboard</span>
         </button>
-        <button 
-          class="nav-item" 
-          [class.nav-item--active]="abaAtiva === 'aprovacoes'"
-          (click)="trocarAba('aprovacoes')"
-        >
+        <button class="nav-item" [class.nav-item--active]="abaAtiva === 'aprovacoes'" (click)="trocarAba('aprovacoes')">
           <span class="material-icons">verified_user</span>
-          Aprovações
+          <span class="nav-label">Aprovações</span>
           <span class="nav-badge" *ngIf="stats.pendentes > 0">{{ stats.pendentes }}</span>
         </button>
-        <button 
-          class="nav-item" 
-          [class.nav-item--active]="abaAtiva === 'eventos'"
-          (click)="trocarAba('eventos')"
-        >
+        <button class="nav-item" [class.nav-item--active]="abaAtiva === 'eventos'" (click)="trocarAba('eventos')">
           <span class="material-icons">event</span>
-          Eventos
+          <span class="nav-label">Eventos</span>
         </button>
-        <button 
-          class="nav-item" 
-          [class.nav-item--active]="abaAtiva === 'admins'"
-          (click)="trocarAba('admins')"
-        >
+        <button class="nav-item" [class.nav-item--active]="abaAtiva === 'admins'" (click)="trocarAba('admins')">
           <span class="material-icons">admin_panel_settings</span>
-          Administradores
+          <span class="nav-label">Administradores</span>
         </button>
-        <button 
-          class="nav-item" 
-          [class.nav-item--active]="abaAtiva === 'produtores'"
-          (click)="trocarAba('produtores')"
-        >
+        <button class="nav-item" [class.nav-item--active]="abaAtiva === 'produtores'" (click)="trocarAba('produtores')">
           <span class="material-icons">people_alt</span>
-          Usuários/Produtores
+          <span class="nav-label">Usuários/Produtores</span>
         </button>
       </nav>
 
       <div class="sidebar__footer">
         <a routerLink="/" class="btn-home">
           <span class="material-icons">home</span>
-          Voltar ao Início
+          <span class="nav-label">Voltar ao Início</span>
         </a>
       </div>
     </div>
@@ -72,14 +54,14 @@
     <header class="content-header">
       <div class="content-header__left">
         <h1 class="page-title">
-          {{ abaAtiva === 'dashboard' ? 'Painel de Controle' : 
-             abaAtiva === 'eventos' ? 'Gerenciar Eventos' : 
-             abaAtiva === 'aprovacoes' ? 'Aprovação de Eventos' : 
-             abaAtiva === 'produtores' ? 'Verificação de Produtores' : 'Equipe Administrativa' }}
+          {{ abaAtiva === 'dashboard' ? 'Painel de Controle' :
+          abaAtiva === 'eventos' ? 'Gerenciar Eventos' :
+          abaAtiva === 'aprovacoes' ? 'Aprovação de Eventos' :
+          abaAtiva === 'produtores' ? 'Verificação de Produtores' : 'Equipe Administrativa' }}
         </h1>
         <p class="page-subtitle">Centro de curadoria e gestão da Evence Events.</p>
       </div>
-      
+
       <div class="content-header__actions">
         <div class="alert-badges">
           <div class="alerta-sucesso" *ngIf="sucessoMensagem">
@@ -96,47 +78,8 @@
 
     <!-- DASHBOARD VIEW -->
     <div class="view-container" *ngIf="abaAtiva === 'dashboard'">
-      <section class="stats-grid">
-        <div class="stat-card stat-card--orange">
-          <div class="stat-card__icon">
-            <span class="material-icons">pending_actions</span>
-          </div>
-          <div class="stat-card__data">
-            <span class="stat-value">{{ stats.pendentes }}</span>
-            <span class="stat-label">Aguardando Aprovação</span>
-          </div>
-        </div>
+      <!-- Stats Grid Removed per user request -->
 
-        <div class="stat-card stat-card--blue">
-          <div class="stat-card__icon">
-            <span class="material-icons">event</span>
-          </div>
-          <div class="stat-card__data">
-            <span class="stat-value">{{ stats.totalEventos }}</span>
-            <span class="stat-label">Eventos Ativos</span>
-          </div>
-        </div>
-
-        <div class="stat-card stat-card--purple">
-          <div class="stat-card__icon">
-            <span class="material-icons">confirmation_number</span>
-          </div>
-          <div class="stat-card__data">
-            <span class="stat-value">{{ stats.totalVendas }}</span>
-            <span class="stat-label">Ingressos Vendidos</span>
-          </div>
-        </div>
-
-        <div class="stat-card stat-card--green">
-          <div class="stat-card__icon">
-            <span class="material-icons">payments</span>
-          </div>
-          <div class="stat-card__data">
-            <span class="stat-value">{{ formatarPreco(stats.receitaEstimada) }}</span>
-            <span class="stat-label">Receita Estimada</span>
-          </div>
-        </div>
-      </section>
 
       <section class="dashboard-row">
         <div class="dashboard-card recent-events">
@@ -152,7 +95,7 @@
                   <span class="recent-item__meta">{{ sol.cidade }} • {{ sol.local }}</span>
                 </div>
                 <div class="recent-item__actions">
-                   <button class="btn-mini btn-mini--approve" (click)="aprovarEvento(sol)">Aprovar</button>
+                  <button class="btn-mini btn-mini--approve" (click)="aprovarEvento(sol)">Aprovar</button>
                 </div>
               </div>
               <div class="empty-state-sm" *ngIf="solicitacoes.length === 0">
@@ -176,14 +119,6 @@
                 <span class="material-icons">person_add</span>
                 Novo Admin
               </button>
-              <button class="action-btn">
-                <span class="material-icons">assessment</span>
-                Relatórios
-              </button>
-              <button class="action-btn">
-                <span class="material-icons">settings</span>
-                Configurações
-              </button>
             </div>
           </div>
         </div>
@@ -192,55 +127,55 @@
 
     <!-- APROVAÇÕES VIEW -->
     <div class="view-container" *ngIf="abaAtiva === 'aprovacoes'">
-       <div class="info-banner" *ngIf="solicitacoes.length > 0">
-         <span class="material-icons">info</span>
-         <p>Analise os detalhes de cada evento antes de aprovar para a listagem pública.</p>
-       </div>
+      <div class="info-banner" *ngIf="solicitacoes.length > 0">
+        <span class="material-icons">info</span>
+        <p>Analise os detalhes de cada evento antes de aprovar para a listagem pública.</p>
+      </div>
 
-       <div class="approval-grid">
-         <div class="approval-card" *ngFor="let sol of solicitacoes">
-           <div class="approval-card__header">
-             <span class="badge-cat">{{ getNomeCategoriaExibicao(sol.categoria) }}</span>
-             <h3 class="sol-title">{{ sol.titulo }}</h3>
-           </div>
-           
-           <div class="approval-card__body">
-             <div class="sol-detail">
-               <span class="material-icons">location_on</span>
-               <span>{{ sol.local }} — {{ sol.cidade }}</span>
-             </div>
-             <div class="sol-detail">
-               <span class="material-icons">calendar_today</span>
-               <span>{{ formatarData(sol.dataISO) }} às {{ sol.horario }}</span>
-             </div>
-             <div class="sol-detail">
-               <span class="material-icons">payments</span>
-               <span>A partir de {{ formatarPreco(sol.precoMinimo) }}</span>
-             </div>
-             <p class="sol-desc">{{ sol.descricaoLonga?.substring(0, 120) }}...</p>
-           </div>
+      <div class="approval-grid">
+        <div class="approval-card" *ngFor="let sol of solicitacoes">
+          <div class="approval-card__header">
+            <span class="badge-cat">{{ getNomeCategoriaExibicao(sol.categoria) }}</span>
+            <h3 class="sol-title">{{ sol.titulo }}</h3>
+          </div>
 
-           <div class="approval-card__footer">
-             <a [routerLink]="['/admin/aprovacoes', sol.id]" class="btn-preview">
-               <span class="material-icons">visibility</span>
-               Visualizar
-             </a>
-             <div class="approval-card__actions">
-               <button class="btn-approve" (click)="aprovarEvento(sol)" title="Aprovar">
-                 <span class="material-icons">check</span>
-               </button>
-               <button class="btn-reject" (click)="reprovarEvento(sol.id)" title="Reprovar">
-                 <span class="material-icons">close</span>
-               </button>
-             </div>
-           </div>
-         </div>
-       </div>
+          <div class="approval-card__body">
+            <div class="sol-detail">
+              <span class="material-icons">location_on</span>
+              <span>{{ sol.local }} — {{ sol.cidade }}</span>
+            </div>
+            <div class="sol-detail">
+              <span class="material-icons">calendar_today</span>
+              <span>{{ formatarData(sol.dataISO) }} às {{ sol.horario }}</span>
+            </div>
+            <div class="sol-detail">
+              <span class="material-icons">payments</span>
+              <span>A partir de {{ formatarPreco(sol.precoMinimo) }}</span>
+            </div>
+            <p class="sol-desc">{{ sol.descricaoLonga?.substring(0, 120) }}...</p>
+          </div>
 
-       <div class="empty-state" *ngIf="solicitacoes.length === 0">
-         <span class="material-icons">done_all</span>
-         <p>Tudo em dia! Nenhuma solicitação pendente no momento.</p>
-       </div>
+          <div class="approval-card__footer">
+            <a [routerLink]="['/admin/aprovacoes', sol.id]" class="btn-preview">
+              <span class="material-icons">visibility</span>
+              Visualizar
+            </a>
+            <div class="approval-card__actions">
+              <button class="btn-approve" (click)="aprovarEvento(sol)" title="Aprovar">
+                <span class="material-icons">check</span>
+              </button>
+              <button class="btn-reject" (click)="reprovarEvento(sol.id)" title="Reprovar">
+                <span class="material-icons">close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="solicitacoes.length === 0">
+        <span class="material-icons">done_all</span>
+        <p>Tudo em dia! Nenhuma solicitação pendente no momento.</p>
+      </div>
     </div>
 
     <!-- EVENTOS VIEW -->
@@ -248,12 +183,8 @@
       <div class="filter-bar">
         <div class="search-input">
           <span class="material-icons">search</span>
-          <input 
-            type="text" 
-            placeholder="Buscar eventos ativos..." 
-            [(ngModel)]="buscaTermo" 
-            (ngModelChange)="onBuscaChange()"
-          >
+          <input type="text" placeholder="Buscar eventos ativos..." [(ngModel)]="buscaTermo"
+            (ngModelChange)="onBuscaChange()">
         </div>
         <select class="category-select" [(ngModel)]="categoriaFiltro" (ngModelChange)="onCategoriaChange()">
           <option value="todas">Todas as categorias</option>
@@ -275,20 +206,20 @@
           </thead>
           <tbody>
             <tr *ngFor="let evento of eventosFiltrados">
-              <td>
+              <td data-label="Evento">
                 <div class="table-cell-event">
                   <span class="event-name">{{ evento.titulo }}</span>
                   <span class="event-cat">{{ getNomeCategoriaExibicao(evento.categoria) }}</span>
                 </div>
               </td>
-              <td>
+              <td data-label="Localização">
                 <div class="table-cell-info">
                   <span>{{ evento.local }}</span>
                   <span class="subtext">{{ evento.cidade }}</span>
                 </div>
               </td>
-              <td>{{ formatarData(evento.dataISO) }}</td>
-              <td>
+              <td data-label="Data">{{ formatarData(evento.dataISO) }}</td>
+              <td data-label="Vendas">
                 <div class="vendas-progress">
                   <div class="progress-bar">
                     <div class="progress-fill" [style.width.%]="(evento.vendidos / evento.totalIngressos) * 100"></div>
@@ -296,12 +227,12 @@
                   <span class="progress-text">{{ evento.vendidos }}/{{ evento.totalIngressos }}</span>
                 </div>
               </td>
-              <td>
+              <td data-label="Status">
                 <span class="badge" [class.badge--esgotado]="evento.esgotado">
                   {{ evento.esgotado ? 'Esgotado' : 'Ativo' }}
                 </span>
               </td>
-              <td class="actions-cell">
+              <td data-label="Ações" class="actions-cell">
                 <button class="btn-icon btn-icon--edit" (click)="abrirModalEdicao(evento)" title="Editar">
                   <span class="material-icons">edit</span>
                 </button>
@@ -320,12 +251,8 @@
       <div class="filter-bar">
         <div class="search-input">
           <span class="material-icons">search</span>
-          <input 
-            type="text" 
-            placeholder="Buscar administradores..." 
-            [(ngModel)]="buscaUsuario" 
-            (ngModelChange)="onBuscaUsuarioChange()"
-          >
+          <input type="text" placeholder="Buscar administradores..." [(ngModel)]="buscaUsuario"
+            (ngModelChange)="onBuscaUsuarioChange()">
         </div>
         <button class="btn-primary" (click)="abrirModalCriarAdmin()">
           <span class="material-icons">add</span>
@@ -346,7 +273,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let user of usuariosFiltrados">
-              <td>
+              <td data-label="Nome / Responsável">
                 <div class="user-cell">
                   <div class="avatar-sm" style="overflow: hidden;">
                     <img *ngIf="user.foto" [src]="user.foto" alt="Avatar" class="avatar-img-sm">
@@ -358,23 +285,19 @@
                   </div>
                 </div>
               </td>
-              <td>
+              <td data-label="Contato">
                 <div class="table-cell-info">
                   <span>{{ user.email }}</span>
                   <span class="subtext">{{ user.celular }}</span>
                 </div>
               </td>
-              <td>{{ user.cpf }}</td>
-              <td>
+              <td data-label="Documento">{{ user.cpf }}</td>
+              <td data-label="Tipo">
                 <span class="badge-type badge-type--admin">Admin</span>
               </td>
-              <td class="actions-cell">
-                <button 
-                  class="btn-icon btn-icon--delete" 
-                  (click)="abrirConfirmacaoExclusaoAdmin(user)" 
-                  [disabled]="usuarioLogado?.id === user.id"
-                  title="Remover Acesso"
-                >
+              <td data-label="Ações" class="actions-cell">
+                <button class="btn-icon btn-icon--delete" (click)="abrirConfirmacaoExclusaoAdmin(user)"
+                  [disabled]="usuarioLogado?.id === user.id" title="Remover Acesso">
                   <span class="material-icons">person_remove</span>
                 </button>
               </td>
@@ -389,27 +312,26 @@
       <div class="filter-bar">
         <div class="search-input">
           <span class="material-icons">search</span>
-          <input 
-            type="text" 
-            placeholder="Buscar por nome, email, CPF/CNPJ..." 
-            [(ngModel)]="buscaUsuario" 
-            (ngModelChange)="onBuscaUsuarioChange()"
-          >
+          <input type="text" placeholder="Buscar por nome, email, CPF/CNPJ..." [(ngModel)]="buscaUsuario"
+            (ngModelChange)="onBuscaUsuarioChange()">
         </div>
 
         <div class="filter-group">
           <!-- Filtro Tipo de Usuário -->
           <div class="premium-radio-group">
             <label class="radio-item" [class.active]="filtroTipoUsuario === 'todos'">
-              <input type="radio" name="tipoAcc" [(ngModel)]="filtroTipoUsuario" value="todos" (change)="onBuscaUsuarioChange()">
+              <input type="radio" name="tipoAcc" [(ngModel)]="filtroTipoUsuario" value="todos"
+                (change)="onBuscaUsuarioChange()">
               <span>Todos</span>
             </label>
             <label class="radio-item" [class.active]="filtroTipoUsuario === 'produtor'">
-              <input type="radio" name="tipoAcc" [(ngModel)]="filtroTipoUsuario" value="produtor" (change)="onBuscaUsuarioChange()">
+              <input type="radio" name="tipoAcc" [(ngModel)]="filtroTipoUsuario" value="produtor"
+                (change)="onBuscaUsuarioChange()">
               <span>Produtores</span>
             </label>
             <label class="radio-item" [class.active]="filtroTipoUsuario === 'usuario'">
-              <input type="radio" name="tipoAcc" [(ngModel)]="filtroTipoUsuario" value="usuario" (change)="onBuscaUsuarioChange()">
+              <input type="radio" name="tipoAcc" [(ngModel)]="filtroTipoUsuario" value="usuario"
+                (change)="onBuscaUsuarioChange()">
               <span>Usuários</span>
             </label>
           </div>
@@ -417,15 +339,18 @@
           <!-- Filtro Tipo de Pessoa -->
           <div class="premium-radio-group">
             <label class="radio-item" [class.active]="filtroTipoPessoa === 'todos'">
-              <input type="radio" name="tipoPes" [(ngModel)]="filtroTipoPessoa" value="todos" (change)="onBuscaUsuarioChange()">
+              <input type="radio" name="tipoPes" [(ngModel)]="filtroTipoPessoa" value="todos"
+                (change)="onBuscaUsuarioChange()">
               <span>Todas</span>
             </label>
             <label class="radio-item" [class.active]="filtroTipoPessoa === 'fisica'">
-              <input type="radio" name="tipoPes" [(ngModel)]="filtroTipoPessoa" value="fisica" (change)="onBuscaUsuarioChange()">
+              <input type="radio" name="tipoPes" [(ngModel)]="filtroTipoPessoa" value="fisica"
+                (change)="onBuscaUsuarioChange()">
               <span>Física</span>
             </label>
             <label class="radio-item" [class.active]="filtroTipoPessoa === 'juridica'">
-              <input type="radio" name="tipoPes" [(ngModel)]="filtroTipoPessoa" value="juridica" (change)="onBuscaUsuarioChange()">
+              <input type="radio" name="tipoPes" [(ngModel)]="filtroTipoPessoa" value="juridica"
+                (change)="onBuscaUsuarioChange()">
               <span>Jurídica</span>
             </label>
           </div>
@@ -446,9 +371,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let user of usuariosFiltrados" [class.row-suspended]="user.estaSuspenso">
-              <td>
+              <td data-label="Nome / Empresa">
                 <div class="user-cell">
-                  <div class="avatar-sm" [class.avatar-sm--prod]="user.isProdutor" [class.avatar-sm--suspended]="user.estaSuspenso" style="overflow: hidden;">
+                  <div class="avatar-sm" [class.avatar-sm--prod]="user.isProdutor"
+                    [class.avatar-sm--suspended]="user.estaSuspenso" style="overflow: hidden;">
                     <img *ngIf="user.foto" [src]="user.foto" alt="Avatar" class="avatar-img-sm">
                     <span *ngIf="!user.foto">{{ (user.nomeEmpresa || user.nome).substring(0, 2).toUpperCase() }}</span>
                   </div>
@@ -461,50 +387,39 @@
                   </div>
                 </div>
               </td>
-              <td>
+              <td data-label="Contato">
                 <div class="table-cell-info">
                   <span>{{ user.email }}</span>
                   <span class="subtext">{{ user.celular }}</span>
                 </div>
               </td>
-              <td>{{ user.cnpj || user.cpf }}</td>
-              <td>
-                <div class="account-type-pill" 
-                     [class.account-type-pill--prod]="user.isProdutor"
-                     [title]="user.tipoPessoa === 'juridica' ? 'Pessoa Jurídica' : 'Pessoa Física'">
+              <td data-label="Documento">{{ user.cnpj || user.cpf }}</td>
+              <td data-label="Tipo de Conta">
+                <div class="account-type-pill" [class.account-type-pill--prod]="user.isProdutor"
+                  [title]="user.tipoPessoa === 'juridica' ? 'Pessoa Jurídica' : 'Pessoa Física'">
                   <span class="material-icons">
                     {{ user.tipoPessoa === 'juridica' ? 'business' : 'person' }}
                   </span>
                   <span class="pill-label">{{ user.isProdutor ? 'Produtor' : 'Usuário' }}</span>
                 </div>
               </td>
-              <td>
-                <button 
-                  *ngIf="user.isProdutor"
-                  class="btn-verify" 
-                  [class.btn-verify--active]="user.verificado"
-                  (click)="alternarVerificacao(user)"
-                >
+              <td data-label="Status">
+                <button *ngIf="user.isProdutor" class="btn-verify" [class.btn-verify--active]="user.verificado"
+                  (click)="alternarVerificacao(user)">
                   <span class="material-icons">{{ user.verificado ? 'verified' : 'new_releases' }}</span>
                   {{ user.verificado ? 'Verificado' : 'Pendente' }}
                 </button>
                 <span *ngIf="!user.isProdutor" class="badge-status-user">Padrão</span>
               </td>
-              <td>
+              <td data-label="Ações">
                 <div class="actions-container">
-                  <button 
-                    class="btn-icon" 
-                    [class.btn-icon--active]="user.estaSuspenso"
-                    (click)="abrirConfirmacaoSuspensao(user)" 
-                    [title]="user.estaSuspenso ? 'Reativar Conta' : 'Suspender Conta'"
-                  >
+                  <button class="btn-icon" [class.btn-icon--active]="user.estaSuspenso"
+                    (click)="abrirConfirmacaoSuspensao(user)"
+                    [title]="user.estaSuspenso ? 'Reativar Conta' : 'Suspender Conta'">
                     <span class="material-icons">{{ user.estaSuspenso ? 'play_circle' : 'pause_circle' }}</span>
                   </button>
-                  <button 
-                    class="btn-icon btn-icon--delete" 
-                    (click)="abrirConfirmacaoExclusaoAdmin(user)" 
-                    title="Excluir Conta"
-                  >
+                  <button class="btn-icon btn-icon--delete" (click)="abrirConfirmacaoExclusaoAdmin(user)"
+                    title="Excluir Conta">
                     <span class="material-icons">delete</span>
                   </button>
                 </div>
@@ -526,7 +441,7 @@
         <span class="material-icons">close</span>
       </button>
     </header>
-    
+
     <div class="modal-card__body">
       <form [formGroup]="editarForm" class="premium-form">
         <div class="form-row">
@@ -619,19 +534,11 @@
     </header>
 
     <div class="modal-card__tabs">
-      <button 
-        class="tab-btn" 
-        [class.active]="tipoCadastroAdmin === 'novo'"
-        (click)="setTipoCadastro('novo')"
-      >
+      <button class="tab-btn" [class.active]="tipoCadastroAdmin === 'novo'" (click)="setTipoCadastro('novo')">
         <span class="material-icons">person_add</span>
         Criar Novo
       </button>
-      <button 
-        class="tab-btn" 
-        [class.active]="tipoCadastroAdmin === 'existente'"
-        (click)="setTipoCadastro('existente')"
-      >
+      <button class="tab-btn" [class.active]="tipoCadastroAdmin === 'existente'" (click)="setTipoCadastro('existente')">
         <span class="material-icons">group_add</span>
         Adicionar Existente
       </button>
@@ -670,20 +577,12 @@
       <div class="existente-container" *ngIf="tipoCadastroAdmin === 'existente'">
         <div class="search-input search-input--modal">
           <span class="material-icons">search</span>
-          <input 
-            type="text" 
-            placeholder="Buscar por nome ou email..." 
-            [(ngModel)]="buscaExistente"
-          >
+          <input type="text" placeholder="Buscar por nome ou email..." [(ngModel)]="buscaExistente">
         </div>
 
         <div class="user-selection-list premium-scroll">
-          <div 
-            class="user-selection-item" 
-            *ngFor="let user of usuariosFiltradosParaPromo"
-            [class.selected]="isUsuarioSelecionado(user.id)"
-            (click)="toggleSelecaoUsuario(user.id)"
-          >
+          <div class="user-selection-item" *ngFor="let user of usuariosFiltradosParaPromo"
+            [class.selected]="isUsuarioSelecionado(user.id)" (click)="toggleSelecaoUsuario(user.id)">
             <div class="user-selection-info">
               <div class="avatar-sm" [class.avatar-sm--prod]="user.isProdutor" style="overflow: hidden;">
                 <img *ngIf="user.foto" [src]="user.foto" alt="Avatar" class="avatar-img-sm">
@@ -711,28 +610,21 @@
 
     <footer class="modal-card__footer">
       <button class="btn-secondary" (click)="fecharModalCriarAdmin()">Cancelar</button>
-      
+
       <!-- Botão Criar Novo -->
-      <button 
-        *ngIf="tipoCadastroAdmin === 'novo'"
-        class="btn-primary" 
-        (click)="criarNovoAdmin()" 
-        [disabled]="criandoAdmin || criarAdminForm.invalid"
-      >
+      <button *ngIf="tipoCadastroAdmin === 'novo'" class="btn-primary" (click)="criarNovoAdmin()"
+        [disabled]="criandoAdmin || criarAdminForm.invalid">
         <span class="material-icons" *ngIf="!criandoAdmin">person_add</span>
         {{ criandoAdmin ? 'Criando...' : 'Criar Administrador' }}
       </button>
 
       <!-- Botão Promover Existente (Múltiplo) -->
-      <button 
-        *ngIf="tipoCadastroAdmin === 'existente'"
-        class="btn-primary" 
-        (click)="promoverParaAdmin()" 
-        [disabled]="criandoAdmin || idsSelecionadosParaAdmin.length === 0"
-      >
+      <button *ngIf="tipoCadastroAdmin === 'existente'" class="btn-primary" (click)="promoverParaAdmin()"
+        [disabled]="criandoAdmin || idsSelecionadosParaAdmin.length === 0">
         <span class="material-icons" *ngIf="!criandoAdmin">verified_user</span>
-        {{ criandoAdmin ? 'Promovendo...' : 
-           idsSelecionadosParaAdmin.length > 0 ? 'Promover (' + idsSelecionadosParaAdmin.length + ') selecionados' : 'Selecionar Usuários' }}
+        {{ criandoAdmin ? 'Promovendo...' :
+        idsSelecionadosParaAdmin.length > 0 ? 'Promover (' + idsSelecionadosParaAdmin.length + ') selecionados' :
+        'Selecionar Usuários' }}
       </button>
     </footer>
   </div>
@@ -744,13 +636,13 @@
     <div class="confirm-icon" [class.confirm-icon--suspend]="confirmacaoSuspensaoAberta">
       <span class="material-icons">{{ confirmacaoSuspensaoAberta ? 'block' : 'warning' }}</span>
     </div>
-    
+
     <ng-container *ngIf="confirmacaoSuspensaoAberta">
       <h2>{{ usuarioParaSuspender?.estaSuspenso ? 'Reativar Usuário?' : 'Suspender Usuário?' }}</h2>
       <p>
-        {{ usuarioParaSuspender?.estaSuspenso ? 
-           'O usuário voltará a ter acesso normal ao sistema.' : 
-           'O usuário será impedido de acessar a conta até que seja reativado.' }}
+        {{ usuarioParaSuspender?.estaSuspenso ?
+        'O usuário voltará a ter acesso normal ao sistema.' :
+        'O usuário será impedido de acessar a conta até que seja reativado.' }}
       </p>
     </ng-container>
 
@@ -765,12 +657,10 @@
     </ng-container>
 
     <div class="confirm-actions">
-      <button class="btn-secondary" (click)="fecharConfirmacaoExclusao(); fecharConfirmacaoAdmin(); fecharConfirmacaoSuspensao()">Cancelar</button>
-      <button 
-        class="btn-danger" 
-        [class.btn-warning]="confirmacaoSuspensaoAberta"
-        (click)="confirmacaoSuspensaoAberta ? confirmarSuspensaoUsuario() : (confirmacaoAberta ? confirmarExclusao() : confirmarExclusaoAdmin())"
-      >
+      <button class="btn-secondary"
+        (click)="fecharConfirmacaoExclusao(); fecharConfirmacaoAdmin(); fecharConfirmacaoSuspensao()">Cancelar</button>
+      <button class="btn-danger" [class.btn-warning]="confirmacaoSuspensaoAberta"
+        (click)="confirmacaoSuspensaoAberta ? confirmarSuspensaoUsuario() : (confirmacaoAberta ? confirmarExclusao() : confirmarExclusaoAdmin())">
         {{ suspendendoUsuario ? 'Processando...' : 'Confirmar' }}
       </button>
     </div>

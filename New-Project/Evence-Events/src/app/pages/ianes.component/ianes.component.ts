@@ -26,9 +26,9 @@ export class IanesComponent implements OnInit {
 
     { nome: 'Kenia Branger', funcao: 'Menina do Cafezinho', frase: '#feliz no simples', imagem: 'fotos-ianes/kenia.png' },
 
-    { nome: 'Kevin José S. Knoll', funcao: 'Desenvolvedor Full-Stack', frase: 'Chupa iLab', imagem: 'fotos-ianes/kevin.png' },
+    { nome: 'Kevin José S. Knoll', funcao: 'Desenvolvedor Full-Stack', frase: 'nunca deixe para amanha o que pode ser feito hoje.', imagem: 'fotos-ianes/kevin.png' },
 
-    { nome: 'Marlon Fernandes Garcia', funcao: 'Auxiliar Geral', frase: 'não trabalho com perdedores, iLab...', imagem: 'fotos-ianes/marlom.png' },
+    { nome: 'Marlon Fernandes Garcia', funcao: 'Auxiliar Geral', frase: 'se não agora, quando?', imagem: 'fotos-ianes/marlom.png' },
 
     { nome: 'Nathaly Cristina Carvalho Ruthes', funcao: 'Especialista em QA', frase: 'Nunca deixe para amanha o que pode ser feito hoje', imagem: 'fotos-ianes/natalie.png' },
 
