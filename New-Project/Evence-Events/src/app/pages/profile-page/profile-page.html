@@ -197,19 +197,57 @@
 
       <div class="tickets-grid" *ngIf="meusIngressos.length > 0; else noTickets">
         <div class="ticket-card" *ngFor="let tkt of meusIngressos">
+          <!-- Faixa lateral decorativa -->
+          <div class="ticket-stripe"></div>
+
           <div class="ticket-content">
-            <div class="ticket-status-badge">{{ tkt.status }}</div>
-            <h3 class="ticket-title">{{ tkt.eventoNome }}</h3>
-            <div class="ticket-meta">
-              <span><span class="material-icons">event</span> {{ tkt.data }}</span>
-              <span><span class="material-icons">location_on</span> {{ tkt.local }}</span>
+            <!-- Cabeçalho: imagem + nome + código -->
+            <div class="ticket-header">
+              <div class="ticket-img-wrap" *ngIf="tkt.imagem">
+                <img [src]="tkt.imagem" [alt]="tkt.eventoNome" class="ticket-img">
+              </div>
+              <div class="ticket-img-placeholder" *ngIf="!tkt.imagem">
+                <span class="material-icons">local_activity</span>
+              </div>
+              <div class="ticket-title-block">
+                <div class="ticket-status-badge" [class.ticket-status-badge--ativo]="tkt.status === 'Ativo'">
+                  <span class="material-icons">{{ tkt.status === 'Ativo' ? 'check_circle' : 'cancel' }}</span>
+                  {{ tkt.status }}
+                </div>
+                <h3 class="ticket-title">{{ tkt.eventoNome }}</h3>
+                <span class="ticket-codigo">{{ tkt.codigo }}</span>
+              </div>
             </div>
+
+            <!-- Detalhes do evento -->
+            <div class="ticket-meta">
+              <span class="ticket-meta-item">
+                <span class="material-icons">calendar_today</span>
+                {{ tkt.data }} · {{ tkt.horario }}
+              </span>
+              <span class="ticket-meta-item">
+                <span class="material-icons">location_on</span>
+                {{ tkt.local }}
+              </span>
+              <span class="ticket-meta-item">
+                <span class="material-icons">event_seat</span>
+                {{ tkt.setor }} · {{ tkt.quantidade }} {{ tkt.quantidade === 1 ? 'ingresso' : 'ingressos' }}
+              </span>
+            </div>
+
+            <!-- Rodapé: valores + data de compra -->
             <div class="ticket-footer">
-              <span class="ticket-id">Ref: {{ tkt.id }}</span>
-              <button class="btn-view-ticket">
-                <span class="material-icons">qr_code</span>
-                Ver Ingresso
-              </button>
+              <div class="ticket-footer-info">
+                <span class="ticket-compra-label">Comprado em {{ tkt.dataCompra }}</span>
+                <span class="ticket-pagamento">
+                  <span class="material-icons">payment</span>
+                  {{ tkt.metodoPagamento }}
+                </span>
+              </div>
+              <div class="ticket-valor-block">
+                <span class="ticket-valor-label">Total pago</span>
+                <span class="ticket-valor">{{ formatarPreco(tkt.valorTotal) }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -224,6 +262,7 @@
         </div>
       </ng-template>
     </div>
+
 
     <!-- ABA: EVENTOS (PRODUTOR) -->
     <div class="view-eventos" *ngIf="abaAtiva === 'eventos'">
@@ -278,4 +317,4 @@
       </ng-template>
     </div>
   </main>
-</div>
+</div><app-footer></app-footer>

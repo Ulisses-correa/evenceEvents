@@ -9,7 +9,7 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { EventosService } from '../../services/services';
 import { Usuario } from '../../interfaces/usuario.interface';
 
@@ -81,7 +81,8 @@ export class CadastroComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private eventosService: EventosService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     const hoje = new Date();
     hoje.setFullYear(hoje.getFullYear() - 13);
@@ -107,6 +108,13 @@ export class CadastroComponent implements OnInit {
       },
       { validators: senhasIguaisValidator('senha', 'confirmarSenha') }
     );
+
+    // Checar query params para pré-selecionar 'isProdutor'
+    this.route.queryParams.subscribe(params => {
+      if (params['produtor'] === 'true') {
+        this.cadastroForm.patchValue({ isProdutor: true });
+      }
+    });
 
     // Monitorar troca de tipoPessoa para ajustar validadores
     this.cadastroForm.get('tipoPessoa')?.valueChanges.subscribe(tipo => {

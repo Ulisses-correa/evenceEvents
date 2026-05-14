@@ -17,11 +17,12 @@ interface Colecao {
 }
 
 import { HeaderComponent } from '../../componentes/header/header';
+import { FooterComponent } from '../../componentes/footer/footer';
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, FooterComponent],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
 })
@@ -32,6 +33,8 @@ export class LandingPageComponent implements OnInit, OnDestroy {
 
   eventos: Evento[] = [];
   eventoEmDestaque: Evento | null = null;
+  cidades: string[] = [];
+  cidadeSelecionada = 'todas';
   private subscription = new Subscription();
 
   constructor(
@@ -46,7 +49,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     { id: 'teatro', nome: 'Teatros e Espetáculos', icone: 'theater_comedy' },
     { id: 'standup', nome: 'Stand Up', icone: 'mic' },
     { id: 'esportes', nome: 'Esportes', icone: 'sports_soccer' },
-    { id: 'gastro', nome: 'Gastronomia', icone: 'restaurant' },
+    { id: 'gastronomia', nome: 'Gastronomia', icone: 'restaurant' },
     { id: 'cultura', nome: 'Arte e Cultura', icone: 'palette' },
   ];
 
@@ -63,6 +66,11 @@ export class LandingPageComponent implements OnInit, OnDestroy {
         // Pega os destaques e limita a 10
         this.eventos = todos.filter(e => e.destaque).slice(0, 10);
         console.log('[LandingPage] Eventos em destaque:', this.eventos.length);
+        
+        // Extrai as cidades únicas de todos os eventos para o filtro
+        const cidadesSet = new Set(todos.map(e => e.cidade));
+        this.cidades = Array.from(cidadesSet).sort();
+
         if (this.eventos.length > 0) {
           this.eventoEmDestaque = this.eventos[0];
           this.iniciarAutoplay();
@@ -116,10 +124,13 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   }
 
   buscar(): void {
+    const queryParams: any = {};
     if (this.buscaTermo.trim()) {
-      this.router.navigate(['/eventos'], { queryParams: { q: this.buscaTermo.trim() } });
-    } else {
-      this.router.navigate(['/eventos']);
+      queryParams.q = this.buscaTermo.trim();
     }
+    if (this.cidadeSelecionada !== 'todas') {
+      queryParams.cidade = this.cidadeSelecionada;
+    }
+    this.router.navigate(['/eventos'], { queryParams });
   }
 }

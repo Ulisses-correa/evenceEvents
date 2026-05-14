@@ -180,6 +180,29 @@
         <!-- Divisor -->
         <div class="filtro-divisor"></div>
 
+        <!-- Grupo: Cidade -->
+        <div class="filtro-grupo">
+          <h3 class="filtro-grupo__titulo">Cidade</h3>
+          <div class="select-wrap" style="width: 100%;">
+            <span class="material-icons select-wrap__icone">location_city</span>
+            <select
+              class="select-ordenacao"
+              style="width: 100%;"
+              [(ngModel)]="cidadeAtiva"
+              (ngModelChange)="selecionarCidade($event)"
+              aria-label="Filtrar por cidade"
+            >
+              <option value="todas">Todas as cidades</option>
+              <option *ngFor="let cid of cidades" [value]="cid">
+                {{ cid }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Divisor -->
+        <div class="filtro-divisor"></div>
+
         <!-- Grupo: Preço máximo -->
         <div class="filtro-grupo">
           <h3 class="filtro-grupo__titulo">Preço máximo</h3>
@@ -468,3 +491,5 @@
   </div>
 
 </div>
+
+<app-footer></app-footer>

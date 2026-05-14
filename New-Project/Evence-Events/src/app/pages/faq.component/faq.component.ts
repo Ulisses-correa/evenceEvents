@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../../componentes/header/header';
-HeaderComponent
+import { FooterComponent } from '../../componentes/footer/footer';
 
 export interface PerguntaFaq {
   id: number;
@@ -22,7 +22,7 @@ export interface CategoriaFaq {
 @Component({
   selector: 'app-faq',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, FooterComponent],
   templateUrl: './faq.component.html',
   styleUrl: './faq.component.css',
 })

@@ -18,11 +18,12 @@ import { EventosService } from '../../services/services';
 import { Usuario } from '../../interfaces/usuario.interface';
 
 import { HeaderComponent } from '../../componentes/header/header';
+import { FooterComponent } from '../../componentes/footer/footer';
 
 @Component({
   selector: 'app-lista-eventos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, FooterComponent],
   templateUrl: './lista-eventos.component.html',
   styleUrl: './lista-eventos.component.css',
 })
@@ -44,6 +45,9 @@ export class ListaEventosComponent implements OnInit {
   /** Categoria selecionada no filtro */
   categoriaAtiva = 'todas';
 
+  /** Cidade selecionada no filtro */
+  cidadeAtiva = 'todas';
+
   /** Ordenação selecionada */
   ordenacaoAtiva = 'relevancia';
 
@@ -59,6 +63,9 @@ export class ListaEventosComponent implements OnInit {
 
   /** Categorias disponíveis para filtro */
   categorias: Categoria[] = [];
+
+  /** Lista de cidades únicas extraídas dos eventos */
+  cidades: string[] = [];
 
   /** Opções de ordenação disponíveis */
   readonly opcoesOrdenacao: OpcaoOrdenacao[] = [
@@ -100,6 +107,10 @@ export class ListaEventosComponent implements OnInit {
         this.categoriaAtiva = params['categoria'];
         this.aplicarFiltros();
       }
+      if (params['cidade']) {
+        this.cidadeAtiva = params['cidade'];
+        this.aplicarFiltros();
+      }
     });
 
     this.eventosService.getCategorias().subscribe({
@@ -115,6 +126,7 @@ export class ListaEventosComponent implements OnInit {
     this.eventosService.getEventos().subscribe({
       next: (eventos) => {
         this.todosEventos = eventos || [];
+        this.extrairCidades();
         // Aplica os filtros iniciais ao carregar os dados
         this.aplicarFiltros();
         this.cdr.detectChanges();
@@ -161,6 +173,18 @@ export class ListaEventosComponent implements OnInit {
     this.aplicarFiltros();
   }
 
+  /** Seleciona uma cidade e reaplica os filtros */
+  selecionarCidade(cidade: string): void {
+    this.cidadeAtiva = cidade;
+    this.aplicarFiltros();
+  }
+
+  /** Extrai as cidades únicas dos eventos carregados */
+  private extrairCidades(): void {
+    const cidadesSet = new Set(this.todosEventos.map(e => e.cidade));
+    this.cidades = Array.from(cidadesSet).sort();
+  }
+
   /** Muda a ordenação e reaplicar os filtros */
   mudarOrdenacao(valor: string): void {
     this.ordenacaoAtiva = valor;
@@ -195,6 +219,11 @@ export class ListaEventosComponent implements OnInit {
     // --- Filtro por categoria ---
     if (this.categoriaAtiva !== 'todas') {
       resultado = resultado.filter(e => e.categoria === this.categoriaAtiva);
+    }
+
+    // --- Filtro por cidade ---
+    if (this.cidadeAtiva !== 'todas') {
+      resultado = resultado.filter(e => e.cidade === this.cidadeAtiva);
     }
 
     // --- Filtro por preço máximo ---

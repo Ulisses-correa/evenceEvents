@@ -1,7 +1,7 @@
 <!-- Banner Superior -->
 <div class="banner-superior" *ngIf="bannersuperiorVisivel && !usuarioLogado">
   <nav class="banner-superior__nav">
-    <a href="#" class="banner-superior__link" routerLink="/new-event">É Produtor?</a>
+    <a class="banner-superior__link" routerLink="/cadastro" [queryParams]="{produtor: 'true'}">É Produtor?</a>
     <a href="#" class="banner-superior__link" routerLink="/faq">Como funciona</a>
     <button class="banner-superior__fechar" (click)="fecharBannerSuperior()" aria-label="Fechar banner">
       <span class="material-icons">close</span>
@@ -57,6 +57,9 @@
             <span class="material-icons">{{ usuarioLogado.tipoPessoa === 'juridica' ? 'business' : 'person' }}</span>
             {{ usuarioLogado.tipoPessoa === 'juridica' ? 'Minha Empresa' : 'Minha Conta' }}
           </a>
+          <a routerLink="/new-event" class="dropdown-menu__link" *ngIf="usuarioLogado.isProdutor">
+            <span class="material-icons">add_circle_outline</span> Adicionar Evento
+          </a>
           <a routerLink="/admin" class="dropdown-menu__link" *ngIf="usuarioLogado.isAdmin">
             <span class="material-icons">admin_panel_settings</span> Painel Admin
           </a>
@@ -91,6 +94,14 @@
       <li *ngIf="usuarioLogado && usuarioLogado.isAdmin">
         <a class="menu-mobile__link menu-mobile__link--admin" routerLink="/admin">
           <span class="material-icons">admin_panel_settings</span> Painel Admin
+        </a>
+      </li>
+
+      <!-- Aba de Produtor Mobile - Apenas para produtores -->
+      <li *ngIf="usuarioLogado && usuarioLogado.isProdutor">
+        <a class="menu-mobile__link" routerLink="/new-event">
+          <span class="material-icons" style="vertical-align: middle; margin-right: 8px; font-size: 1.2rem;">add_circle_outline</span>
+          Adicionar Evento
         </a>
       </li>
       

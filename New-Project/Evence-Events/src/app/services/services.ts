@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Evento, Categoria } from '../interfaces/evento.interface';
 import { Usuario } from '../interfaces/usuario.interface';
+import { ItemCarrinho } from '../interfaces/carrinho.interface';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -54,6 +55,10 @@ export class EventosService {
     return this.http.put<Evento>(`${this.apiUrl}/eventos/${id}`, evento);
   }
 
+  patchEvento(id: string | number, dados: Partial<Evento>): Observable<Evento> {
+    return this.http.patch<Evento>(`${this.apiUrl}/eventos/${id}`, dados);
+  }
+
   deletarEvento(id: string | number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/eventos/${id}`);
   }
@@ -100,5 +105,41 @@ export class EventosService {
 
   deletarSolicitacao(id: string | number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/solicitacoes/${id}`);
+  }
+
+  // --- Gerenciamento do Carrinho (Database) ---
+
+  getCarrinho(usuarioId: number | string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/carrinho?usuarioId=${usuarioId}`);
+  }
+
+  buscarItemCarrinho(usuarioId: number | string, eventoId: number | string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/carrinho?usuarioId=${usuarioId}&eventoId=${eventoId}`);
+  }
+
+  salvarItemCarrinho(item: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/carrinho`, item);
+  }
+
+  atualizarItemCarrinho(id: number | string, item: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/carrinho/${id}`, item);
+  }
+
+  removerItemCarrinho(id: number | string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/carrinho/${id}`);
+  }
+
+  // --- Ingressos Comprados ---
+
+  getIngressos(usuarioId: number | string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/ingressos?usuarioId=${usuarioId}`);
+  }
+
+  salvarIngresso(ingresso: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/ingressos`, ingresso);
+  }
+
+  deletarIngresso(id: number | string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/ingressos/${id}`);
   }
 }

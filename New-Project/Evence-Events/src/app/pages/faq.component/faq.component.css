@@ -40,7 +40,8 @@
   --transicao-rapida: 150ms ease;
   --transicao-normal: 250ms ease;
 
-  display: block;
+  display: flex;
+  flex-direction: column;
   font-family: 'Sora', 'Segoe UI', sans-serif;
   background-color: var(--cor-fundo);
   color: var(--cor-texto-principal);
@@ -50,6 +51,15 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 a { text-decoration: none; color: inherit; }
 button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+/* ----------------------------------------------------------------
+   PAGE WRAPPER
+   ---------------------------------------------------------------- */
+.faq-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
 /* ----------------------------------------------------------------
    HERO

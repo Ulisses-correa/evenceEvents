@@ -1,16 +1,18 @@
 import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { EventosService } from '../../services/services';
 import { Evento } from '../../interfaces/evento.interface';
 import { Usuario } from '../../interfaces/usuario.interface';
 
 import { HeaderComponent } from '../../componentes/header/header';
+import { FooterComponent } from '../../componentes/footer/footer';
 
 @Component({
   selector: 'app-detalhes',
   standalone: true,
-  imports: [CommonModule, RouterLink, HeaderComponent],
+  imports: [CommonModule, RouterLink, FormsModule, HeaderComponent, FooterComponent],
   templateUrl: './detalhes.html',
   styleUrl: './detalhes.css'
 })
@@ -24,6 +26,7 @@ export class DetalhesComponent implements OnInit, OnDestroy {
   processando = false;
 
   quantidade = 1;
+  loteSelecionado: any = null;
 
   // Carousel
   imagemAtivaIndex = 0;
@@ -131,6 +134,9 @@ export class DetalhesComponent implements OnInit, OnDestroy {
         this.evento = dados;
         this.imagemAtivaIndex = 0;
         
+        if (this.evento?.lotes && this.evento.lotes.length > 0) {
+          this.loteSelecionado = this.evento.lotes[0];
+        }
         if (this.evento?.produtorId) {
           this.eventosService.getUsuarioById(this.evento.produtorId).subscribe({
             next: (produtor) => {
@@ -190,7 +196,6 @@ export class DetalhesComponent implements OnInit, OnDestroy {
 
     const storedUser = localStorage.getItem('usuarioLogado');
     if (!storedUser) {
-      // Se não estiver logado, redireciona para login
       this.router.navigate(['/login']);
       return;
     }
@@ -198,29 +203,62 @@ export class DetalhesComponent implements OnInit, OnDestroy {
     const usuario: Usuario = JSON.parse(storedUser);
     const userId = usuario.id || 0;
 
-    // Chave do carrinho por usuário
-    const cartKey = `carrinho_usuario_${userId}`;
-    const cartStored = localStorage.getItem(cartKey);
-    let cart: any[] = cartStored ? JSON.parse(cartStored) : [];
-
     if (this.evento) {
-      const index = cart.findIndex(item => item.eventoId === this.evento?.id);
-      if (index > -1) {
-        cart[index].quantidade += this.quantidade;
-      } else {
-        cart.push({
-          eventoId: this.evento.id,
-          titulo: this.evento.titulo,
-          preco: this.evento.precoMinimo,
-          quantidade: this.quantidade,
-          data: this.evento.data,
-          horario: this.evento.horario,
-          local: this.evento.local
-        });
-      }
+      this.processando = true;
+      
+      // Busca se já existe este evento no carrinho do usuário
+      this.eventosService.buscarItemCarrinho(userId, this.evento.id).subscribe({
+        next: (itens) => {
+          const setorAtual = this.loteSelecionado ? this.loteSelecionado.nome : 'Ingresso Geral';
+          // Procura especificamente se ESTE LOTE já está no carrinho
+          const itemExistente = itens.find(i => i.setor === setorAtual);
 
-      localStorage.setItem(cartKey, JSON.stringify(cart));
-      this.router.navigate(['/carrinho']);
+          if (itemExistente) {
+            // Se já existe o mesmo lote, apenas adiciona à quantidade
+            const novaQuantidade = itemExistente.quantidade + this.quantidade;
+            const preco = this.loteSelecionado ? this.loteSelecionado.preco : this.evento!.precoMinimo;
+
+            this.eventosService.atualizarItemCarrinho(itemExistente.id, { 
+              ...itemExistente, 
+              quantidade: novaQuantidade,
+              preco: preco,
+              setor: setorAtual
+            }).subscribe({
+              next: () => {
+                this.processando = false;
+                this.router.navigate(['/carrinho']);
+              },
+              error: () => this.processando = false
+            });
+          } else {
+            // Se não existe, cria um novo item
+            const novoItem = {
+              usuarioId: userId,
+              eventoId: this.evento!.id,
+              titulo: this.evento!.titulo,
+              preco: this.loteSelecionado ? this.loteSelecionado.preco : this.evento!.precoMinimo,
+              setor: this.loteSelecionado ? this.loteSelecionado.nome : 'Ingresso Geral',
+              quantidade: this.quantidade,
+              data: this.evento!.data,
+              horario: this.evento!.horario,
+              local: this.evento!.local,
+              imagem: this.evento!.imagens && this.evento!.imagens.length > 0 ? this.evento!.imagens[0] : ''
+            };
+
+            this.eventosService.salvarItemCarrinho(novoItem).subscribe({
+              next: () => {
+                this.processando = false;
+                this.router.navigate(['/carrinho']);
+              },
+              error: () => this.processando = false
+            });
+          }
+        },
+        error: () => {
+          this.processando = false;
+          alert('Erro ao adicionar ao carrinho. Tente novamente.');
+        }
+      });
     }
   }
 

@@ -16,21 +16,27 @@
     </div>
   </header>
 
+  <!-- Carregamento -->
+  <div class="carrinho-loading" *ngIf="carregando">
+    <div class="spinner-lg"></div>
+    <p>Carregando seu carrinho...</p>
+  </div>
+
   <!-- Carrinho vazio -->
-  <div class="carrinho-vazio" *ngIf="carrinhoVazio">
+  <div class="carrinho-vazio" *ngIf="!carregando && carrinhoVazio">
     <div class="carrinho-vazio__icone-wrap">
       <span class="material-icons carrinho-vazio__icone">shopping_cart</span>
     </div>
     <h2 class="carrinho-vazio__titulo">Seu carrinho está vazio</h2>
     <p class="carrinho-vazio__texto">Explore nossos eventos e adicione ingressos ao carrinho.</p>
-    <a routerLink="/" class="carrinho-vazio__btn">
+    <a routerLink="/eventos" class="carrinho-vazio__btn">
       <span class="material-icons">explore</span>
       Explorar eventos
     </a>
   </div>
 
   <!-- Conteúdo principal -->
-  <div class="carrinho-conteudo" *ngIf="!carrinhoVazio">
+  <div class="carrinho-conteudo" *ngIf="!carregando && !carrinhoVazio">
     <div class="carrinho-conteudo__container">
 
       <!-- Coluna de itens -->
@@ -39,16 +45,19 @@
 
           <div class="item-card" *ngFor="let item of itens" [class.item-card--saindo]="itemRemovidoId === item.id">
             <!-- Imagem / Placeholder -->
-            <div class="item-card__imagem">
-              <div class="item-card__imagem-placeholder">
+            <a [routerLink]="['/eventos', item.eventoId]" class="item-card__imagem" style="display: block; cursor: pointer; overflow: hidden;">
+              <img *ngIf="item.imagem" [src]="item.imagem" alt="{{ item.evento }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--raio-md) 0 0 var(--raio-md);" />
+              <div class="item-card__imagem-placeholder" *ngIf="!item.imagem" style="height: 100%;">
                 <span class="material-icons">confirmation_number</span>
               </div>
-            </div>
+            </a>
 
             <!-- Informações -->
             <div class="item-card__info">
               <div class="item-card__cabecalho">
-                <h3 class="item-card__evento">{{ item.evento }}</h3>
+                <a [routerLink]="['/eventos', item.eventoId]" style="text-decoration: none;">
+                  <h3 class="item-card__evento" style="cursor: pointer; color: var(--cor-texto-principal); transition: color 0.2s;" onmouseover="this.style.color='var(--cor-primaria)'" onmouseout="this.style.color='var(--cor-texto-principal)'">{{ item.evento }}</h3>
+                </a>
                 <button class="item-card__remover" (click)="removerItem(item.id)" aria-label="Remover item">
                   <span class="material-icons">close</span>
                 </button>
@@ -209,4 +218,4 @@
     </div>
   </div>
 
-</div>
+</div><app-footer></app-footer>

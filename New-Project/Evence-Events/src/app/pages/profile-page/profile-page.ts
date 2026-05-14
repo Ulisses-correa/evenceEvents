@@ -6,12 +6,13 @@ import { forkJoin } from 'rxjs';
 import { Usuario } from '../../interfaces/usuario.interface';
 import { EventosService } from '../../services/services';
 import { HeaderComponent } from '../../componentes/header/header';
+import { FooterComponent } from '../../componentes/footer/footer';
 import { Evento } from '../../interfaces/evento.interface';
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, HeaderComponent],
+  imports: [CommonModule, RouterLink, FormsModule, HeaderComponent, FooterComponent],
   templateUrl: './profile-page.html',
   styleUrl: './profile-page.css'
 })
@@ -46,22 +47,18 @@ export class ProfilePageComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       setTimeout(() => {
         this.carregarUsuario();
-        this.carregarDadosAbas();
-
-        // Checa se veio do link do banner para autocompletar
-        if (this.router.url.includes('edit=true')) {
-          this.editMode = true;
-          this.abaAtiva = 'perfil';
-        }
 
         this.route.queryParams.subscribe(params => {
           if (params['edit'] === 'true') {
             this.editMode = true;
             this.abaAtiva = 'perfil';
           }
+          if (params['tab']) {
+            this.abaAtiva = params['tab'];
+          }
           this.cdr.detectChanges();
         });
-        
+
         this.cdr.detectChanges();
       }, 0);
     }
@@ -74,7 +71,11 @@ export class ProfilePageComponent implements OnInit {
         const userData = JSON.parse(userStr);
         this.usuarioOriginal = JSON.parse(JSON.stringify(userData));
         this.usuario = JSON.parse(JSON.stringify(userData));
-        
+
+        if (this.usuario?.id !== undefined && this.usuario?.id !== null) {
+          this.carregarIngressos(this.usuario.id);
+        }
+
         if (this.usuario?.isProdutor && this.usuario?.id !== undefined && this.usuario?.id !== null) {
           this.carregarEventosProdutor(this.usuario.id);
         }
@@ -108,20 +109,17 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  carregarDadosAbas(): void {
-    if (!this.usuario) return;
-
-    // Mock de ingressos para demonstração
-    this.meusIngressos = [
-      {
-        id: 'TKT-9982',
-        eventoNome: 'Rock in Evence 2026',
-        data: '10/10/2026',
-        local: 'Arena Central',
-        status: 'Ativo'
-      }
-    ];
+  carregarIngressos(usuarioId: string | number): void {
+    this.eventosService.getIngressos(usuarioId).subscribe({
+      next: (ingressos) => {
+        this.meusIngressos = ingressos;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erro ao carregar ingressos:', err)
+    });
   }
+
+  carregarDadosAbas(): void {}
 
   trocarAba(aba: string): void {
     console.log('Trocando para aba:', aba);
@@ -226,6 +224,11 @@ export class ProfilePageComponent implements OnInit {
     if (this.mostrarMenuFoto && !this.eRef.nativeElement.querySelector('.profile-avatar-container')?.contains(event.target)) {
       this.mostrarMenuFoto = false;
     }
+  }
+
+  formatarPreco(valor: number): string {
+    if (!valor && valor !== 0) return 'R$ 0,00';
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   }
 
   get labelConta(): string {

@@ -138,6 +138,17 @@
               </div>
             </section>
 
+            <!-- Política de Reembolso -->
+            <section class="info-secao" *ngIf="evento.politicaReembolso">
+              <h2 class="info-secao__titulo">
+                <span class="material-icons" style="vertical-align: middle; margin-right: 8px; color: var(--cor-primaria);">autorenew</span>
+                Política de Reembolso
+              </h2>
+              <p class="info-secao__texto">
+                {{ evento.politicaReembolso }}
+              </p>
+            </section>
+
             <!-- Galeria de Imagens -->
             <section class="info-secao galeria-secao" *ngIf="evento.imagens && evento.imagens.length > 1">
               <h2 class="info-secao__titulo">
@@ -158,13 +169,24 @@
           <!-- Lado Direito: Card de Compra (Sticky) -->
           <aside class="detalhes-sidebar">
             <div class="checkout-card" [class.checkout-card--preview]="modoAdmin">
-              <div class="checkout-card__cabecalho">
-                <span class="checkout-card__label">{{ modoAdmin ? 'Preço Sugerido' : 'Ingressos a partir de' }}</span>
-                <span class="checkout-card__preco">{{ formatarPreco(evento.precoMinimo) }}</span>
+              <div class="checkout-card__cabecalho" *ngIf="!modoAdmin">
+                <span class="checkout-card__label">{{ evento.tipoIngresso === 'gratuito' ? 'Ingresso' : 'Ingressos a partir de' }}</span>
+                <span class="checkout-card__preco">{{ formatarPreco(loteSelecionado ? loteSelecionado.preco : evento.precoMinimo) }}</span>
               </div>
 
               <!-- Modo Público: Fluxo de Compra -->
               <div class="checkout-card__corpo" *ngIf="!evento.esgotado && !modoAdmin">
+              
+                <!-- Seleção de Lote -->
+                <div class="seletor-lotes" *ngIf="evento.lotes && evento.lotes.length > 0 && evento.tipoIngresso !== 'gratuito'" style="margin-bottom: 20px;">
+                  <span class="seletor-quantidade__label" style="display:block; margin-bottom: 8px; font-weight: 700;">Selecione o Lote</span>
+                  <select class="lote-select" [(ngModel)]="loteSelecionado" style="width: 100%; padding: 12px 16px; border-radius: var(--raio-md); border: 1px solid var(--cor-borda); font-family: inherit; font-size: 0.95rem; font-weight: 600; color: var(--cor-texto-principal); background-color: var(--cor-fundo); outline: none; cursor: pointer;">
+                    <option *ngFor="let lote of evento.lotes" [ngValue]="lote">
+                      {{ lote.nome }} — {{ formatarPreco(lote.preco) }}
+                    </option>
+                  </select>
+                </div>
+
                 <div class="seletor-quantidade">
                   <span class="seletor-quantidade__label">Quantidade de ingressos</span>
                   <div class="seletor-quantidade__controles">
@@ -178,9 +200,20 @@
                   </div>
                 </div>
 
+                <!-- Barra de Progresso de Vendas -->
+                <div class="checkout-vendas" style="margin-bottom: 24px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; color: var(--cor-texto-terciario); margin-bottom: 8px;">
+                    <span>Ingressos Vendidos</span>
+                    <span>{{ evento.vendidos || 0 }} / {{ evento.totalIngressos }}</span>
+                  </div>
+                  <div class="vendas-progresso" style="margin-top: 0; height: 10px;">
+                    <div class="vendas-progresso__fill" [style.width.%]="((evento.vendidos || 0) / (evento.totalIngressos || 1)) * 100"></div>
+                  </div>
+                </div>
+
                 <div class="total-resumo">
                   <span class="total-resumo__label">Total</span>
-                  <span class="total-resumo__valor">{{ formatarPreco(evento.precoMinimo * quantidade) }}</span>
+                  <span class="total-resumo__valor">{{ formatarPreco((loteSelecionado ? loteSelecionado.preco : evento.precoMinimo) * quantidade) }}</span>
                 </div>
 
                 <button class="btn-comprar" (click)="adicionarAoCarrinho()">
@@ -191,8 +224,23 @@
 
               <!-- Modo Admin: Aviso de Prévia -->
               <div class="preview-notice" *ngIf="modoAdmin">
-                <span class="material-icons">info</span>
-                <p>Vendas bloqueadas em modo de curadoria.</p>
+                <div class="preview-notice__status">
+                  <span class="material-icons">info</span>
+                  <p>Vendas bloqueadas em curadoria.</p>
+                </div>
+
+                <div class="lotes-admin" *ngIf="evento.lotes && evento.lotes.length > 0 && evento.tipoIngresso !== 'gratuito'">
+                  <h4 class="lotes-admin__titulo">Lotes Cadastrados</h4>
+                  <ul class="lotes-admin__lista">
+                    <li class="lote-item-admin" *ngFor="let lote of evento.lotes">
+                      <div class="lote-item-admin__info">
+                        <span class="lote-item-admin__nome">{{ lote.nome }}</span>
+                        <span class="lote-item-admin__qtd">{{ lote.quantidade }} ingressos</span>
+                      </div>
+                      <span class="lote-item-admin__preco">{{ formatarPreco(lote.preco) }}</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
 
               <div class="checkout-card__esgotado" *ngIf="evento.esgotado && !modoAdmin">
@@ -265,3 +313,4 @@
       [style.transform-origin]="posicaoZoom.x + '% ' + posicaoZoom.y + '%'">
   </div>
 </div>
+<app-footer></app-footer>

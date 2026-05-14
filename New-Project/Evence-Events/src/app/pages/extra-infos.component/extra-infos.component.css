@@ -49,7 +49,8 @@
   --sombra-md: 0 4px 16px hsla(220, 30%, 15%, 0.12);
   --sombra-lg: 0 8px 32px hsla(220, 30%, 15%, 0.18);
 
-  display: block;
+  display: flex;
+  flex-direction: column;
   font-family: 'Sora', 'Segoe UI', sans-serif;
   color: var(--cor-texto-principal);
   background-color: var(--cor-fundo);
@@ -57,11 +58,12 @@
 }
 
 .extra-infos-page {
+  flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   overflow-x: hidden;
-  width: 100vw;
+  width: 100%;
 }
 
 /* ----------------------------------------------------------------

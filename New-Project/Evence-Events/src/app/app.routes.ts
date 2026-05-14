@@ -11,6 +11,7 @@ import { DetalhesComponent } from './pages/detalhes/detalhes';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { ProfilePageComponent } from './pages/profile-page/profile-page';
 import { IanesComponent } from './pages/ianes.component/ianes.component';
+import { PagamentoComponent } from './pages/pagamento.component/pagamento.component';
 
 export const routes: Routes = [
     { path: 'sobre-nos', component: IanesComponent },
@@ -25,6 +26,7 @@ export const routes: Routes = [
     { path: 'edit-event/:id', component: CriarEventoComponent},
     { path: 'admin', component: AdminPageComponent },
     { path: 'perfil', component: ProfilePageComponent },
+    { path: 'pagamento', component: PagamentoComponent },
     { path: 'admin/aprovacoes/:id', component: DetalhesComponent, data: { modoAdmin: true } },
     { path: 'eventos/:id', component: DetalhesComponent },
 ]

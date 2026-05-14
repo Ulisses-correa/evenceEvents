@@ -527,7 +527,7 @@
                     <span class="material-icons checkbox-label__check">check</span>
                   </span>
                   <span class="checkbox-label__texto">
-                    Li e aceito os <a href="#" class="campo__link">Termos de Uso</a> e a <a href="#" class="campo__link">Política de Privacidade</a> da Evence Events
+                    Li e aceito os <a routerLink="/extra-infos" fragment="termos" class="campo__link" target="_blank">Termos de Uso</a> e a <a routerLink="/extra-infos" fragment="privacidade" class="campo__link" target="_blank">Política de Privacidade</a>
                   </span>
                 </label>
                 <p class="campo__mensagem-erro" *ngIf="tentouPublicar && !eventoForm.get('aceitaTermos')?.value" role="alert">

@@ -139,10 +139,15 @@ ul {
   color: var(--cor-primaria);
 }
 
-.busca-secao__local-texto {
+.busca-secao__local-select {
+  font-family: var(--fonte-principal);
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--cor-primaria);
+  border: none;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
 }
 
 .busca-secao__campo {
@@ -574,53 +579,7 @@ ul {
   box-shadow: 0 6px 24px hsla(38, 80%, 40%, 0.55);
 }
 
-/* ----------------------------------------------------------------
-   11. FOOTER
-   ---------------------------------------------------------------- */
-.footer {
-  background-color: var(--cor-primaria-escura);
-  padding: var(--espaco-xl) 0;
-}
 
-.footer__container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--espaco-lg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--espaco-md);
-  text-align: center;
-}
-
-.footer__logo-texto {
-  font-size: 0.9rem;
-  font-weight: 800;
-  letter-spacing: 0.15em;
-  color: var(--cor-texto-invertido);
-}
-
-.footer__links {
-  display: flex;
-  gap: var(--espaco-lg);
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.footer__link {
-  font-size: 0.8rem;
-  color: hsla(0, 0%, 100%, 0.65);
-  transition: color var(--transicao-rapida);
-}
-
-.footer__link:hover {
-  color: var(--cor-texto-invertido);
-}
-
-.footer__copy {
-  font-size: 0.75rem;
-  color: hsla(0, 0%, 100%, 0.4);
-}
 
 /* ================================================================
    12. MEDIA QUERIES
@@ -744,12 +703,6 @@ ul {
   .produtor-secao__subtitulo {
     font-size: 1.05rem;
   }
-
-  .footer__container {
-    flex-direction: row;
-    justify-content: space-between;
-    text-align: left;
-  }
 }
 
 /* ----- Wide Desktop (1280px) ----- */
@@ -761,8 +714,7 @@ ul {
   .busca-secao__container,
   .carrossel-secao__container,
   .colecoes-secao__container,
-  .produtor-secao__container,
-  .footer__container {
+  .produtor-secao__container {
     padding: 0 var(--espaco-2xl);
   }
 }

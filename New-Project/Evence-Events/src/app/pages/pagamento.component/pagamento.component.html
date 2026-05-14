@@ -1,0 +1,460 @@
+<app-header></app-header>
+
+<div class="pagamento-page">
+
+  <!-- ======================================================
+       TELA DE SUCESSO
+       ====================================================== -->
+  <div class="sucesso-overlay" *ngIf="sucesso">
+    <div class="sucesso-card">
+      <div class="sucesso-icone-wrap">
+        <span class="material-icons sucesso-icone">check_circle</span>
+      </div>
+      <h2 class="sucesso-titulo">Pagamento Confirmado!</h2>
+      <p class="sucesso-subtitulo">
+        Seus ingressos foram reservados com sucesso e adicionados à sua conta. Você receberá uma confirmação por e-mail em breve.
+      </p>
+      <div class="sucesso-detalhes">
+        <div class="sucesso-detalhe-item">
+          <span class="material-icons">confirmation_number</span>
+          <span>{{ totalItens }} ingresso{{ totalItens !== 1 ? 's' : '' }} reservado{{ totalItens !== 1 ? 's' : '' }}</span>
+        </div>
+        <div class="sucesso-detalhe-item">
+          <span class="material-icons">payments</span>
+          <span>{{ formatarPreco(total) }}</span>
+        </div>
+      </div>
+      <div class="sucesso-loading">
+        <span>Redirecionando para seus ingressos...</span>
+        <div class="sucesso-barra">
+          <div class="sucesso-barra__fill" [style.width.%]="progressoSucesso"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       HEADER DA PÁGINA
+       ====================================================== -->
+  <header class="page-header">
+    <div class="page-header__container">
+      <a routerLink="/carrinho" class="page-header__voltar">
+        <span class="material-icons">arrow_back</span>
+        <span>Voltar ao Carrinho</span>
+      </a>
+      <div class="page-header__passos">
+        <span class="passo passo--concluido">
+          <span class="passo__num">1</span>
+          <span class="passo__label">Carrinho</span>
+        </span>
+        <span class="passo__linha"></span>
+        <span class="passo passo--ativo">
+          <span class="passo__num">2</span>
+          <span class="passo__label">Pagamento</span>
+        </span>
+        <span class="passo__linha"></span>
+        <span class="passo">
+          <span class="passo__num">3</span>
+          <span class="passo__label">Confirmação</span>
+        </span>
+      </div>
+      <div style="width: 120px;"></div>
+    </div>
+  </header>
+
+  <!-- ======================================================
+       CONTEÚDO PRINCIPAL
+       ====================================================== -->
+  <main class="pagamento-main">
+    <div class="pagamento-layout">
+
+      <!-- ======================================================
+           COLUNA ESQUERDA: FORMULÁRIO DE PAGAMENTO
+           ====================================================== -->
+      <section class="pagamento-form-section">
+
+        <!-- Seletor de Método -->
+        <div class="card">
+          <div class="card__header">
+            <span class="material-icons">payments</span>
+            <h2>Método de Pagamento</h2>
+          </div>
+          <div class="metodos-grid">
+
+            <!-- PIX -->
+            <button
+              class="metodo-btn"
+              [class.metodo-btn--ativo]="metodo === 'pix'"
+              (click)="selecionarMetodo('pix')"
+              id="btn-pix"
+            >
+              <span class="metodo-btn__icone metodo-btn__icone--pix">
+                <span class="material-icons">qr_code_2</span>
+              </span>
+              <span class="metodo-btn__label">PIX</span>
+              <span class="metodo-btn__desc">Instantâneo</span>
+            </button>
+
+            <!-- CARTÃO -->
+            <button
+              class="metodo-btn"
+              [class.metodo-btn--ativo]="metodo === 'cartao'"
+              (click)="selecionarMetodo('cartao')"
+              id="btn-cartao"
+            >
+              <span class="metodo-btn__icone metodo-btn__icone--cartao">
+                <span class="material-icons">credit_card</span>
+              </span>
+              <span class="metodo-btn__label">Cartão</span>
+              <span class="metodo-btn__desc">Débito ou Crédito</span>
+            </button>
+
+            <!-- BOLETO -->
+            <button
+              class="metodo-btn"
+              [class.metodo-btn--ativo]="metodo === 'boleto'"
+              (click)="selecionarMetodo('boleto')"
+              id="btn-boleto"
+            >
+              <span class="metodo-btn__icone metodo-btn__icone--boleto">
+                <span class="material-icons">receipt_long</span>
+              </span>
+              <span class="metodo-btn__label">Boleto</span>
+              <span class="metodo-btn__desc">Vence em 3 dias</span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- ======================================================
+             FORMULÁRIO: PIX
+             ====================================================== -->
+        <div class="card" *ngIf="metodo === 'pix'">
+          <div class="card__header">
+            <span class="material-icons">qr_code_2</span>
+            <h2>Pagar com PIX</h2>
+          </div>
+          <div class="pix-container">
+            <div class="pix-qr-area">
+              <div class="pix-qr-placeholder">
+                <span class="material-icons" style="font-size: 4rem; color: hsl(220, 15%, 75%);">qr_code_2</span>
+                <p>QR Code será gerado após confirmação</p>
+              </div>
+            </div>
+            <div class="pix-instrucoes">
+              <div class="pix-passo">
+                <span class="pix-passo__num">1</span>
+                <p>Abra o aplicativo do seu banco e acesse a área <strong>PIX</strong></p>
+              </div>
+              <div class="pix-passo">
+                <span class="pix-passo__num">2</span>
+                <p>Escaneie o QR Code ou copie o código de pagamento</p>
+              </div>
+              <div class="pix-passo">
+                <span class="pix-passo__num">3</span>
+                <p>Confirme o pagamento. A reserva é <strong>instantânea</strong></p>
+              </div>
+            </div>
+            <div class="pix-alerta">
+              <span class="material-icons">schedule</span>
+              <span>O QR Code expira em <strong>{{ pixExpiracaoMinutos }} minutos</strong> após a geração</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ======================================================
+             FORMULÁRIO: CARTÃO
+             ====================================================== -->
+        <div class="card" *ngIf="metodo === 'cartao'">
+          <div class="card__header">
+            <span class="material-icons">credit_card</span>
+            <h2>Dados do Cartão</h2>
+          </div>
+
+          <!-- Toggle Débito / Crédito -->
+          <div class="tipo-cartao-toggle">
+            <button
+              class="tipo-btn"
+              [class.tipo-btn--ativo]="tipoCartao === 'debito'"
+              (click)="selecionarTipoCartao('debito')"
+              id="btn-debito"
+            >
+              <span class="material-icons">account_balance_wallet</span>
+              Débito
+            </button>
+            <button
+              class="tipo-btn"
+              [class.tipo-btn--ativo]="tipoCartao === 'credito'"
+              (click)="selecionarTipoCartao('credito')"
+              id="btn-credito"
+            >
+              <span class="material-icons">credit_card</span>
+              Crédito
+            </button>
+          </div>
+
+          <!-- Preview do Cartão -->
+          <div class="cartao-preview" [class.cartao-preview--debito]="tipoCartao === 'debito'">
+            <div class="cartao-preview__chip"></div>
+            <div class="cartao-preview__numero">
+              {{ cartao.numero || '•••• •••• •••• ••••' }}
+            </div>
+            <div class="cartao-preview__rodape">
+              <div>
+                <p class="cartao-preview__label">Nome</p>
+                <p class="cartao-preview__valor">{{ cartao.nome || 'SEU NOME' }}</p>
+              </div>
+              <div>
+                <p class="cartao-preview__label">Validade</p>
+                <p class="cartao-preview__valor">{{ cartao.validade || 'MM/AA' }}</p>
+              </div>
+              <div>
+                <p class="cartao-preview__label">CVV</p>
+                <p class="cartao-preview__valor">{{ cartao.cvv ? '•••' : '•••' }}</p>
+              </div>
+            </div>
+            <div class="cartao-preview__tipo">
+              <span class="material-icons">{{ tipoCartao === 'debito' ? 'account_balance_wallet' : 'credit_card' }}</span>
+              {{ tipoCartao === 'debito' ? 'DÉBITO' : 'CRÉDITO' }}
+            </div>
+          </div>
+
+          <!-- Campos do Cartão -->
+          <div class="form-grid">
+            <div class="form-group form-group--full">
+              <label for="num-cartao">Número do Cartão <span class="campo-obrigatorio">*</span></label>
+              <div class="input-wrap" [class.input-wrap--erro]="temErro('numero')">
+                <span class="material-icons">credit_card</span>
+                <input
+                  id="num-cartao"
+                  type="text"
+                  [(ngModel)]="cartao.numero"
+                  (input)="formatarNumeroCartao()"
+                  placeholder="0000 0000 0000 0000"
+                  maxlength="19"
+                  autocomplete="cc-number"
+                >
+              </div>
+              <span class="campo-erro-msg" *ngIf="temErro('numero')">
+                <span class="material-icons">error_outline</span> Número inválido (16 dígitos)
+              </span>
+            </div>
+
+            <div class="form-group form-group--full">
+              <label for="nome-cartao">Nome no Cartão <span class="campo-obrigatorio">*</span></label>
+              <div class="input-wrap" [class.input-wrap--erro]="temErro('nome')">
+                <span class="material-icons">person</span>
+                <input
+                  id="nome-cartao"
+                  type="text"
+                  [(ngModel)]="cartao.nome"
+                  (input)="onNomeChange()"
+                  placeholder="Como está no cartão"
+                  autocomplete="cc-name"
+                  style="text-transform: uppercase;"
+                >
+              </div>
+              <span class="campo-erro-msg" *ngIf="temErro('nome')">
+                <span class="material-icons">error_outline</span> Nome obrigatório
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="validade-cartao">Validade <span class="campo-obrigatorio">*</span></label>
+              <div class="input-wrap" [class.input-wrap--erro]="temErro('validade')">
+                <span class="material-icons">calendar_today</span>
+                <input
+                  id="validade-cartao"
+                  type="text"
+                  [(ngModel)]="cartao.validade"
+                  (input)="formatarValidade()"
+                  placeholder="MM/AA"
+                  maxlength="5"
+                  autocomplete="cc-exp"
+                >
+              </div>
+              <span class="campo-erro-msg" *ngIf="temErro('validade')">
+                <span class="material-icons">error_outline</span> Data inválida
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="cvv-cartao">CVV <span class="campo-obrigatorio">*</span></label>
+              <div class="input-wrap" [class.input-wrap--erro]="temErro('cvv')">
+                <span class="material-icons">lock</span>
+                <input
+                  id="cvv-cartao"
+                  type="password"
+                  [(ngModel)]="cartao.cvv"
+                  (input)="onCvvChange()"
+                  placeholder="•••"
+                  maxlength="4"
+                  autocomplete="cc-csc"
+                >
+              </div>
+              <span class="campo-erro-msg" *ngIf="temErro('cvv')">
+                <span class="material-icons">error_outline</span> CVV inválido
+              </span>
+            </div>
+
+            <!-- Parcelas (apenas crédito) -->
+            <div class="form-group form-group--full" *ngIf="tipoCartao === 'credito'">
+              <label for="parcelas-select">Parcelamento</label>
+              <div class="select-wrap">
+                <span class="material-icons">receipt</span>
+                <select id="parcelas-select" [(ngModel)]="cartao.parcelas">
+                  <option *ngFor="let op of opcoesParcelas" [value]="op.valor">{{ op.label }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ======================================================
+             FORMULÁRIO: BOLETO
+             ====================================================== -->
+        <div class="card" *ngIf="metodo === 'boleto'">
+          <div class="card__header">
+            <span class="material-icons">receipt_long</span>
+            <h2>Pagar com Boleto</h2>
+          </div>
+          <div class="boleto-info">
+            <div class="boleto-alerta boleto-alerta--warning">
+              <span class="material-icons">info</span>
+              <div>
+                <strong>Atenção:</strong> O boleto vence em <strong>3 dias úteis</strong>. Os ingressos serão reservados apenas após a confirmação do pagamento.
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="nome-boleto">Nome Completo do Comprador</label>
+              <div class="input-wrap">
+                <span class="material-icons">person</span>
+                <input
+                  id="nome-boleto"
+                  type="text"
+                  [(ngModel)]="nomeComprador"
+                  placeholder="Seu nome completo"
+                >
+              </div>
+            </div>
+            <div class="boleto-passos">
+              <div class="pix-passo">
+                <span class="pix-passo__num">1</span>
+                <p>Clique em "Confirmar" para gerar o boleto</p>
+              </div>
+              <div class="pix-passo">
+                <span class="pix-passo__num">2</span>
+                <p>Pague em qualquer banco, lotérica ou aplicativo</p>
+              </div>
+              <div class="pix-passo">
+                <span class="pix-passo__num">3</span>
+                <p>Compensação em até <strong>2 dias úteis</strong> após o pagamento</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aviso de campos obrigatórios (cartão) -->
+        <div class="aviso-campos" *ngIf="metodo === 'cartao'">
+          <span class="material-icons">info_outline</span>
+          <span>Todos os campos marcados com <span class="campo-obrigatorio">*</span> são obrigatórios para concluir o pagamento</span>
+        </div>
+
+        <!-- Erro geral -->
+        <div class="erro-alerta" *ngIf="erro">
+          <span class="material-icons">error</span>
+          {{ erro }}
+        </div>
+
+      </section>
+
+      <!-- ======================================================
+           COLUNA DIREITA: RESUMO DO PEDIDO
+           ====================================================== -->
+      <aside class="resumo-section">
+        <div class="card card--sticky">
+          <div class="card__header">
+            <span class="material-icons">shopping_bag</span>
+            <h2>Resumo do Pedido</h2>
+          </div>
+
+          <ul class="resumo-itens">
+            <li class="resumo-item" *ngFor="let item of itens">
+              <div class="resumo-item__info">
+                <span class="resumo-item__nome">{{ item.evento }}</span>
+                <span class="resumo-item__detalhe">
+                  <span class="material-icons">confirmation_number</span>
+                  {{ item.setor }} · {{ item.quantidade }}x
+                </span>
+                <span class="resumo-item__detalhe">
+                  <span class="material-icons">calendar_today</span>
+                  {{ item.data }} · {{ item.horario }}
+                </span>
+                <span class="resumo-item__detalhe">
+                  <span class="material-icons">location_on</span>
+                  {{ item.local }}
+                </span>
+              </div>
+              <span class="resumo-item__preco">{{ formatarPreco(item.precoUnitario * item.quantidade) }}</span>
+            </li>
+          </ul>
+
+          <div class="resumo-totais">
+            <div class="resumo-linha">
+              <span>Subtotal ({{ totalItens }} ingresso{{ totalItens !== 1 ? 's' : '' }})</span>
+              <span>{{ formatarPreco(subtotal) }}</span>
+            </div>
+            <div class="resumo-linha resumo-linha--desconto" *ngIf="valorDesconto > 0">
+              <span>Desconto de cupom</span>
+              <span>- {{ formatarPreco(valorDesconto) }}</span>
+            </div>
+            <div class="resumo-linha">
+              <span>Taxa de serviço (10%)</span>
+              <span>{{ formatarPreco(valorTaxa) }}</span>
+            </div>
+            <hr class="resumo-divisor">
+            <div class="resumo-linha resumo-linha--total">
+              <span>Total</span>
+              <span>{{ formatarPreco(total) }}</span>
+            </div>
+            <div class="resumo-parcelas" *ngIf="metodo === 'cartao' && tipoCartao === 'credito' && cartao.parcelas > 1">
+              em {{ cartao.parcelas }}x de {{ formatarPreco(total / cartao.parcelas) }} sem juros
+            </div>
+          </div>
+
+          <div class="resumo-garantia">
+            <span class="material-icons">verified</span>
+            <div>
+              <strong>Garantia de Reembolso</strong>
+              <p>Em caso de cancelamento do evento, você recebe 100% do valor pago.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ======================================================
+           ÁREA DE CONFIRMAÇÃO (Fica abaixo do resumo no mobile)
+           ====================================================== -->
+      <div class="pagamento-confirmar-area">
+        <!-- Botão Confirmar -->
+        <button
+          class="btn-confirmar"
+          (click)="confirmarPagamento()"
+          [disabled]="processando"
+          id="btn-confirmar-pagamento"
+        >
+          <div class="loader-sm" *ngIf="processando"></div>
+          <span class="material-icons" *ngIf="!processando">lock</span>
+          {{ processando ? 'Processando pagamento...' : 'Confirmar Pagamento — ' + formatarPreco(total) }}
+        </button>
+        <p class="seguranca-texto">
+          <span class="material-icons">verified_user</span>
+          Pagamento 100% seguro e criptografado
+        </p>
+      </div>
+
+    </div>
+  </main>
+</div>
+<app-footer></app-footer>

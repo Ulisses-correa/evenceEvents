@@ -218,6 +218,10 @@
   border: none;
   background: transparent;
   padding: var(--espaco-sm);
+  padding-right: 28px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
   outline: none;
   color: var(--cor-texto-principal);
   font-weight: 500;

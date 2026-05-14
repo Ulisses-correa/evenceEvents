@@ -45,7 +45,8 @@
   --transicao-rapida: 150ms ease;
   --transicao-normal: 250ms ease;
 
-  display: block;
+  display: flex;
+  flex-direction: column;
   font-family: 'Sora', 'Segoe UI', sans-serif;
   background-color: var(--cor-fundo);
   min-height: 100vh;
@@ -55,6 +56,15 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 a { text-decoration: none; color: inherit; }
 button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+/* ----------------------------------------------------------------
+   PAGE WRAPPER
+   ---------------------------------------------------------------- */
+.carrinho-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
 /* ----------------------------------------------------------------
    PAGE HEADER
@@ -176,6 +186,29 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .carrinho-vazio__btn:hover {
   background-color: var(--cor-primaria-escura);
   transform: translateY(-1px);
+}
+
+/* ----------------------------------------------------------------
+   CARREGAMENTO
+   ---------------------------------------------------------------- */
+.carrinho-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: var(--espaco-md);
+  color: var(--cor-texto-secundario);
+  animation: entrar 0.3s ease both;
+}
+
+.spinner-lg {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--cor-borda);
+  border-top-color: var(--cor-primaria);
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
 }
 
 /* ----------------------------------------------------------------
