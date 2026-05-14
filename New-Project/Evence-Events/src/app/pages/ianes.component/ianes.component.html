@@ -1,0 +1,73 @@
+<main class="ianes-main">
+  <!-- Hero Section -->
+  <section class="ianes-hero">
+    <div class="ianes-hero__container">
+      <h1 class="ianes-hero__titulo">IANES <span style="font-weight: 300;">COMPANY</span></h1>
+      <p class="ianes-hero__subtitulo">Inovação, Qualidade e Excelência no Desenvolvimento</p>
+    </div>
+  </section>
+
+  <!-- Sobre a Empresa Section -->
+  <section class="ianes-sobre">
+    <div class="ianes-sobre__container">
+      <div class="ianes-card">
+        <h2 class="ianes-card__titulo">Nossa História</h2>
+        <p class="ianes-card__texto">
+          [Placeholder] A Ianes Company nasceu do desejo de transformar ideias em soluções digitais inovadoras. 
+          Desde a nossa fundação, temos o compromisso de entregar projetos que não apenas atendem, mas superam as expectativas de nossos clientes. 
+          Nossa jornada é marcada por desafios superados, aprendizado contínuo e paixão pela tecnologia.
+        </p>
+      </div>
+
+      <div class="ianes-card">
+        <h2 class="ianes-card__titulo">Nossa Missão</h2>
+        <p class="ianes-card__texto">
+          [Placeholder] Capacitar empresas e conectar pessoas através de soluções tecnológicas robustas, acessíveis e com um design centrado no usuário. 
+          Queremos ser a ponte que liga o problema do mundo real à solução digital definitiva.
+        </p>
+      </div>
+
+      <div class="ianes-card">
+        <h2 class="ianes-card__titulo">Nossos Valores</h2>
+        <p class="ianes-card__texto">
+          [Placeholder] 
+          <br>• <strong>Inovação:</strong> Pensar sempre fora da caixa.<br>
+          • <strong>Qualidade:</strong> Buscar a excelência em cada linha de código.<br>
+          • <strong>Colaboração:</strong> Entender que juntos somos sempre mais fortes.<br>
+          • <strong>Transparência:</strong> Ética, confiança e clareza em todas as relações.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção da Equipe -->
+  <section class="ianes-equipe">
+    <div class="ianes-equipe__cabecalho">
+      <h2 class="ianes-equipe__titulo">Conheça a Nossa Equipe</h2>
+      <p class="ianes-equipe__subtitulo">Os talentos por trás da Ianes Company</p>
+    </div>
+
+    <div class="ianes-equipe__grid">
+      <div class="funcionario-card" *ngFor="let func of funcionarios">
+        <div class="funcionario-card__imagem-wrapper">
+          <img [src]="func.imagem" [alt]="func.nome" class="funcionario-card__imagem">
+          <!-- Overlay no hover -->
+          <div class="funcionario-card__overlay">
+            <p class="funcionario-card__frase">"{{ func.frase }}"</p>
+          </div>
+        </div>
+        <div class="funcionario-card__info">
+          <h3 class="funcionario-card__nome">{{ func.nome }}</h3>
+          <p class="funcionario-card__funcao">{{ func.funcao }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer Simples para a página Ianes -->
+<footer class="footer" style="background-color: var(--cor-fundo); border-top: 1px solid var(--cor-borda); padding: var(--espaco-lg) 0;">
+  <div class="footer__container" style="display: flex; justify-content: center; text-align: center; max-width: 1200px; margin: 0 auto;">
+    <p class="footer__copy" style="color: var(--cor-texto-secundario); font-size: 0.9rem; font-weight: 600;">© 2026 Ianes Company. Todos os direitos reservados.</p>
+  </div>
+</footer>

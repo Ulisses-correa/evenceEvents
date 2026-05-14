@@ -1,0 +1,261 @@
+/* ================================================================
+   IANES COMPANY — Componente de Sobre Nós
+   ================================================================ */
+
+:host {
+  /* Paleta Ianes - Baseado no logo (Vermelho) */
+  --ianes-vermelho: hsl(356, 95%, 46%);
+  --ianes-vermelho-escuro: hsl(356, 95%, 35%);
+  --ianes-vermelho-claro: hsl(356, 95%, 55%);
+  --ianes-vermelho-bg: hsla(356, 95%, 46%, 0.04);
+
+  /* Variáveis Neutras */
+  --cor-fundo: hsl(0, 0%, 98%);
+  --cor-card: hsl(0, 0%, 100%);
+  --cor-texto-principal: hsl(220, 25%, 18%);
+  --cor-texto-secundario: hsl(220, 15%, 45%);
+  --cor-borda: hsl(220, 15%, 88%);
+  
+  /* Espaçamentos */
+  --espaco-xs: 0.25rem;
+  --espaco-sm: 0.5rem;
+  --espaco-md: 1rem;
+  --espaco-lg: 1.5rem;
+  --espaco-xl: 2.5rem;
+  --espaco-2xl: 4rem;
+
+  /* Bordas e Sombras */
+  --raio-md: 12px;
+  --raio-lg: 20px;
+  --raio-full: 9999px;
+  --sombra-md: 0 4px 16px hsla(220, 30%, 15%, 0.08);
+  --sombra-lg: 0 12px 32px hsla(220, 30%, 15%, 0.12);
+  --transicao: 300ms ease;
+
+  display: block;
+  font-family: 'Sora', 'Segoe UI', sans-serif;
+}
+
+.ianes-main {
+  background-color: var(--cor-fundo);
+  min-height: 100vh;
+}
+
+/* ----------------------------------------------------------------
+   Hero Section
+   ---------------------------------------------------------------- */
+.ianes-hero {
+  background: linear-gradient(135deg, var(--ianes-vermelho-escuro) 0%, var(--ianes-vermelho) 100%);
+  padding: 5rem var(--espaco-lg);
+  text-align: center;
+  color: white;
+}
+
+.ianes-hero__container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.ianes-hero__titulo {
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--espaco-sm);
+  margin-top: 0;
+  text-transform: uppercase;
+}
+
+.ianes-hero__subtitulo {
+  font-size: 1.2rem;
+  font-weight: 500;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* ----------------------------------------------------------------
+   Sobre a Empresa Section
+   ---------------------------------------------------------------- */
+.ianes-sobre {
+  padding: var(--espaco-2xl) var(--espaco-lg);
+  background-color: var(--cor-fundo);
+}
+
+.ianes-sobre__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--espaco-xl);
+}
+
+.ianes-card {
+  background-color: var(--cor-card);
+  padding: var(--espaco-xl);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-md);
+  border-top: 4px solid var(--ianes-vermelho);
+  transition: transform var(--transicao), box-shadow var(--transicao);
+}
+
+.ianes-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--sombra-lg);
+}
+
+.ianes-card__titulo {
+  color: var(--ianes-vermelho);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: var(--espaco-md);
+}
+
+.ianes-card__texto {
+  color: var(--cor-texto-secundario);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ----------------------------------------------------------------
+   Equipe Section
+   ---------------------------------------------------------------- */
+.ianes-equipe {
+  padding: var(--espaco-2xl) var(--espaco-lg);
+  background-color: var(--ianes-vermelho-bg);
+}
+
+.ianes-equipe__cabecalho {
+  text-align: center;
+  margin-bottom: var(--espaco-2xl);
+}
+
+.ianes-equipe__titulo {
+  color: var(--cor-texto-principal);
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-top: 0;
+  margin-bottom: var(--espaco-sm);
+}
+
+.ianes-equipe__subtitulo {
+  color: var(--ianes-vermelho);
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ianes-equipe__grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--espaco-2xl);
+  padding: 0;
+}
+
+/* ----------------------------------------------------------------
+   Card Funcionario
+   ---------------------------------------------------------------- */
+.funcionario-card {
+  background-color: var(--cor-card);
+  border-radius: var(--raio-lg);
+  overflow: hidden;
+  box-shadow: var(--sombra-md);
+  transition: transform var(--transicao), box-shadow var(--transicao);
+  display: flex;
+  flex-direction: column;
+}
+
+.funcionario-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--sombra-lg);
+}
+
+.funcionario-card__imagem-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background-color: #f8fafc;
+}
+
+.funcionario-card__imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms ease;
+}
+
+.funcionario-card:hover .funcionario-card__imagem {
+  transform: scale(1.08);
+}
+
+.funcionario-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: hsla(356, 95%, 40%, 0.85); /* Overlay no vermelho escuro com opacidade */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-lg);
+  opacity: 0;
+  transition: opacity var(--transicao);
+}
+
+.funcionario-card:hover .funcionario-card__overlay {
+  opacity: 1;
+}
+
+.funcionario-card__frase {
+  color: white;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.4;
+  transform: translateY(20px);
+  transition: transform var(--transicao);
+  margin: 0;
+}
+
+.funcionario-card:hover .funcionario-card__frase {
+  transform: translateY(0);
+}
+
+.funcionario-card__info {
+  padding: var(--espaco-lg);
+  text-align: center;
+}
+
+.funcionario-card__nome {
+  color: var(--cor-texto-principal);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: var(--espaco-xs);
+}
+
+.funcionario-card__funcao {
+  color: var(--ianes-vermelho);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+/* ----------------------------------------------------------------
+   Responsividade
+   ---------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .ianes-hero__titulo {
+    font-size: 2.5rem;
+  }
+  .ianes-equipe__titulo {
+    font-size: 2rem;
+  }
+  .ianes-equipe__grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}

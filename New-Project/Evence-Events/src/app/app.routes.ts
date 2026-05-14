@@ -10,8 +10,10 @@ import { CriarEventoComponent } from './pages/criar-evento.component/criar-event
 import { DetalhesComponent } from './pages/detalhes/detalhes';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { ProfilePageComponent } from './pages/profile-page/profile-page';
+import { IanesComponent } from './pages/ianes.component/ianes.component';
 
 export const routes: Routes = [
+    { path: 'sobre-nos', component: IanesComponent },
     { path:'', component:LandingPageComponent },
     { path: 'login', component: LoginComponent },
     { path: 'carrinho', component: CarrinhoComponent },
